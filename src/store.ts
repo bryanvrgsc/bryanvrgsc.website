@@ -13,12 +13,6 @@ export const performanceMode = map<{ lite: boolean }>({
   lite: false
 });
 
-// DEBUG: Temporary store to show detection data on screen (REMOVE AFTER TESTING)
-export const debugPerformance = map<{ stage: string; data: string }>({
-  stage: 'init',
-  data: 'Waiting for detection...'
-});
-
 // Dock Visibility Store
 export const dockState = map<{ hidden: boolean }>({
   hidden: false
@@ -123,24 +117,18 @@ export const checkPerformance = async () => {
       const { version, lite } = JSON.parse(cached);
       if (version === CACHE_VERSION) {
         console.log(`Performance: Using cached mode (lite: ${lite})`);
-        debugPerformance.set({ stage: 'cache', data: `v:${version} lite:${lite}` });
         enableLiteMode(lite);
         return;
-      } else {
-        debugPerformance.set({ stage: 'cache-miss', data: `Old version: ${version}, need: ${CACHE_VERSION}` });
       }
-    } else {
-      debugPerformance.set({ stage: 'no-cache', data: 'Starting detection...' });
     }
   } catch (e) {
-    debugPerformance.set({ stage: 'cache-error', data: String(e) });
+    // sessionStorage not available, continue with detection
   }
 
   // 2. Accessibility Preference (User explicitly asked for less motion)
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (prefersReducedMotion) {
     console.log('Performance: Lite Mode enabled (Prefers Reduced Motion)');
-    debugPerformance.set({ stage: 'reduced-motion', data: 'User prefers reduced motion' });
     cacheAndEnableLiteMode(true, CACHE_KEY, CACHE_VERSION);
     return;
   }
@@ -172,7 +160,6 @@ export const checkPerformance = async () => {
     if (!gpuTier) {
       // Timeout - assume capable device
       console.log('Performance: GPU detection timed out, assuming capable device');
-      debugPerformance.set({ stage: 'timeout', data: 'GPU detection timed out' });
       cacheAndEnableLiteMode(false, CACHE_KEY, CACHE_VERSION);
       return;
     }
@@ -195,12 +182,6 @@ export const checkPerformance = async () => {
     // 2. Device is low tier (0-1), unless it's a modern Apple device
     const shouldEnableLiteMode = isTrulyLowEnd || (isLowTier && !isModernAppleDevice);
 
-    // DEBUG: Store detection data for visual display
-    debugPerformance.set({
-      stage: 'gpu',
-      data: `T:${gpuTier.tier} FPS:${gpuTier.fps} Mobile:${(gpuTier as any).isMobile} Touch:${isTouchDevice} Result:${shouldEnableLiteMode ? 'LITE' : 'FULL'}`
-    });
-
     if (shouldEnableLiteMode) {
       console.log(`Performance: Lite Mode enabled (Tier: ${gpuTier.tier}, Apple: ${isAppleGPU})`);
       cacheAndEnableLiteMode(true, CACHE_KEY, CACHE_VERSION);
@@ -211,7 +192,6 @@ export const checkPerformance = async () => {
 
   } catch (error) {
     console.warn('GPU Detection failed, keeping default mode.', error);
-    debugPerformance.set({ stage: 'error', data: String(error) });
     cacheAndEnableLiteMode(false, CACHE_KEY, CACHE_VERSION);
   }
 };
