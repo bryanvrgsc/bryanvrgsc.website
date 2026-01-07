@@ -23,6 +23,26 @@ export const ResourcesView = () => {
     const t = UI_TEXT[lang].resources;
     const [filter, setFilter] = useState<FilterType>('all');
     const [previewDoc, setPreviewDoc] = useState<Document | null>(null);
+    const preloadedDocs = React.useRef<Set<string>>(new Set());
+
+    const preloadPDF = async (url: string) => {
+        if (preloadedDocs.current.has(url)) return;
+        preloadedDocs.current.add(url);
+
+        try {
+            // Ensure worker is configured for preload too
+            const pdfjsLib = await import('pdfjs-dist');
+            const { default: workerUrl } = await import('pdfjs-dist/build/pdf.worker.min.mjs?url');
+            pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
+
+            const loadingTask = pdfjsLib.getDocument(url);
+            await loadingTask.promise;
+            console.log(`Preloaded: ${url}`);
+        } catch (err) {
+            console.warn(`Failed to preload: ${url}`, err);
+            preloadedDocs.current.delete(url);
+        }
+    };
 
     const filteredDocs = filter === 'all'
         ? DOCUMENTS
@@ -95,6 +115,7 @@ export const ResourcesView = () => {
                             <div
                                 key={doc.id}
                                 onMouseMove={handleMouseMove}
+                                onMouseEnter={() => preloadPDF(doc.path)}
                                 onClick={() => setPreviewDoc(doc)}
                                 onKeyDown={handleKeyDown}
                                 tabIndex={0}
