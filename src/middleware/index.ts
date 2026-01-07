@@ -8,16 +8,15 @@ export const onRequest: MiddlewareHandler = async (_context, next) => {
         // Content Security Policy
         'Content-Security-Policy': [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://formspree.io",
+            "script-src 'self' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://formspree.io https://va.vercel-scripts.com",
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
             "font-src 'self' https://fonts.gstatic.com",
-            "img-src 'self' data: https:",
-            "connect-src 'self' https://formspree.io https://unpkg.com",
-            "frame-src https://www.google.com/recaptcha/",
+            "img-src 'self' data: blob: https:",
+            "connect-src 'self' https://formspree.io https://unpkg.com https://vitals.vercel-insights.com",
+            "frame-src 'self' blob: https://www.google.com/recaptcha/ https://bryanvrgsc.vercel.app https://bryanvrgsc-github-io.vercel.app https://*.vercel.app",
             "base-uri 'self'",
             "form-action 'self' https://formspree.io",
-            "frame-ancestors 'none'",
-            "upgrade-insecure-requests"
+            "frame-ancestors 'self'"
         ].join('; '),
 
         // HTTP Strict Transport Security
