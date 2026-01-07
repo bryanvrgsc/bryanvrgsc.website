@@ -108,7 +108,7 @@ export const checkPerformance = async () => {
   if (typeof window === 'undefined') return;
 
   const CACHE_KEY = 'performance-mode-cache';
-  const CACHE_VERSION = 'v1';
+  const CACHE_VERSION = 'v2'; // Incremented to force re-evaluation after logic change
 
   // 1. Check sessionStorage cache first (instant)
   try {
@@ -162,13 +162,24 @@ export const checkPerformance = async () => {
 
     console.log(`Hardware Detection: Tier ${gpuTier.tier}, FPS: ${gpuTier.fps}, GPU: ${gpuTier.gpu}`);
 
-    // Safari/Apple GPU fix
+    // Determine if device is low-end based on GPU tier and FPS
+    const isLowTier = gpuTier.tier <= 1;
+    const isLowFPS = gpuTier.fps !== undefined && gpuTier.fps < 30;
+    const isTrulyLowEnd = gpuTier.tier === 0 || isLowFPS;
+
+    // Apple GPU handling:
+    // - Tier 2-3 Apple GPUs (modern devices) are powerful, skip Lite Mode
+    // - Tier 0-1 Apple GPUs (older iPads/iPhones) should still use Lite Mode
     const isAppleGPU = gpuTier.gpu && gpuTier.gpu.toLowerCase().includes('apple');
-    const isTrulyLowEnd = gpuTier.tier === 0 || (gpuTier.fps !== undefined && gpuTier.fps < 30);
-    const shouldEnableLiteMode = isTrulyLowEnd && !isAppleGPU;
+    const isModernAppleDevice = isAppleGPU && gpuTier.tier >= 2;
+
+    // Enable Lite Mode if:
+    // 1. Device is truly low-end (tier 0 or fps < 30), OR
+    // 2. Device is low tier (0-1), unless it's a modern Apple device
+    const shouldEnableLiteMode = isTrulyLowEnd || (isLowTier && !isModernAppleDevice);
 
     if (shouldEnableLiteMode) {
-      console.log('Performance: Lite Mode enabled (GPU tier limit)');
+      console.log(`Performance: Lite Mode enabled (Tier: ${gpuTier.tier}, Apple: ${isAppleGPU})`);
       cacheAndEnableLiteMode(true, CACHE_KEY, CACHE_VERSION);
     } else {
       console.log('Performance: High Performance Mode enabled');
