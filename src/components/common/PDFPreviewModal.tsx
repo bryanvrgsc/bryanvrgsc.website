@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Icons } from '../Icons';
 import { DYNAMIC_COLORS } from '../../constants/colors';
+import { PDFViewer } from '../ui/PDFViewer';
 
 interface PDFPreviewModalProps {
     isOpen: boolean;
@@ -184,26 +185,13 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
                             </div>
                         )}
 
-                        {/* PDF object - better compatibility than iframe */}
-                        <object
-                            data={`${pdfUrl}#toolbar=1&navpanes=0&scrollbar=1&view=Fit`}
-                            type="application/pdf"
-                            className="w-full h-full border-0"
-                            title={title}
-                            onLoad={() => setIsLoading(false)}
-                            style={{
-                                backgroundColor: 'white',
-                                willChange: 'transform',
-                                transform: 'translateZ(0)'
-                            }}
-                        >
-                            {/* Fallback for browsers that don't support object */}
-                            <embed
-                                src={`${pdfUrl}#toolbar=1&navpanes=0&scrollbar=1&view=Fit`}
-                                type="application/pdf"
-                                className="w-full h-full"
-                            />
-                        </object>
+                        {/* PDF Viewer - Enhanced performance with PDF.js */}
+                        <PDFViewer
+                            url={pdfUrl}
+                            onLoadSuccess={() => setIsLoading(false)}
+                            className="bg-[var(--bg-secondary)]"
+                            showZoomControls={true}
+                        />
                     </div>
 
                     {/* Right Side Panel - Info */}

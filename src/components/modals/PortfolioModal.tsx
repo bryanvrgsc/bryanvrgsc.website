@@ -67,7 +67,7 @@ export const PortfolioModal = ({ project, onClose, lang }: PortfolioModalProps) 
                                 </h3>
                                 <div className="w-full h-[300px] md:h-[450px] rounded-xl overflow-hidden border border-[var(--card-border)] shadow-sm bg-[var(--card-bg)] relative">
                                     {isPdf ? (
-                                        <PDFViewer url={currentPdf} />
+                                        <PDFViewer url={currentPdf} showZoomControls={false} />
                                     ) : (
                                         <iframe src={pdfEmbedSrc!} title="Project Presentation" className="w-full h-full">
                                             <div className="flex flex-col items-center justify-center h-full">
