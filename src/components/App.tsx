@@ -139,7 +139,7 @@ export default function App() {
                 </ErrorBoundary>
             </main>
 
-            <Dock currentPath={path} />
+            <Dock path={path} />
             <ScrollToTop />
             <ShowDockButton />
             <SpeedInsights />

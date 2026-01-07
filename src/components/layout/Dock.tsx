@@ -38,6 +38,7 @@ const DockItem = React.memo(({
 }) => (
     <a
         ref={itemRef}
+        data-id={item.id}
         href={`#${item.href}`}
         onClick={(e) => { e.preventDefault(); onNavigate(item.href); }}
         className={`dock-item group relative flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-2xl transition-all duration-300 ease-[cubic-bezier(0.25,1,0.3,1)]
@@ -54,7 +55,7 @@ const DockItem = React.memo(({
 
 DockItem.displayName = 'DockItem';
 
-export const Dock = React.memo(({ currentPath }: { currentPath: string }) => {
+export const Dock = React.memo(({ path }: { path: string }) => {
     const { lang } = useStore(settings);
     const { hidden: isDockHidden } = useStore(dockState);
     const t = UI_TEXT[lang].nav;
@@ -62,7 +63,6 @@ export const Dock = React.memo(({ currentPath }: { currentPath: string }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, height: 0, opacity: 0 });
     const isFirstRender = useRef(true);
-    const updateTimerRef = useRef<number | undefined>(undefined);
     const lastScrollY = useRef(0);
 
     // Scroll detection - hide dock when scrolling down, show on scroll up
@@ -105,13 +105,14 @@ export const Dock = React.memo(({ currentPath }: { currentPath: string }) => {
     }, [isDockHidden]);
 
     const activeId = useMemo(() => {
-        if (currentPath === '/') return 'home';
-        if (currentPath.includes('services')) return 'services';
-        if (currentPath.includes('portfolio')) return 'portfolio';
-        if (currentPath.includes('resources')) return 'resources';
-        if (currentPath.includes('contact')) return 'contact';
+        const p = path || '/';
+        if (p === '/') return 'home';
+        if (p.includes('/services')) return 'services';
+        if (p.includes('/portfolio')) return 'portfolio';
+        if (p.includes('/resources')) return 'resources';
+        if (p.includes('/contact')) return 'contact';
         return 'home';
-    }, [currentPath]);
+    }, [path]);
 
     const navItems = useMemo<DockItemType[]>(() => [
         { id: 'home', label: t.home, Icon: Icons.Home, href: '/' },
@@ -124,10 +125,9 @@ export const Dock = React.memo(({ currentPath }: { currentPath: string }) => {
         navigateTo(href);
     }, []);
 
-    // Ref to track if we need to skip transition on next update
-    const skipTransitionRef = useRef(false);
+    // State to track if we should skip transition (e.g. initial render or re-appearing)
+    const [skipTransition, setSkipTransition] = useState(false);
 
-    // Function to recalculate indicator position
     const updateIndicator = useCallback(() => {
         // Hide indicator if activeId is contact (it's a separate button)
         if (activeId === 'contact') {
@@ -135,36 +135,82 @@ export const Dock = React.memo(({ currentPath }: { currentPath: string }) => {
             return;
         }
 
-        const activeElement = itemRefs.current[activeId];
-        const container = containerRef.current;
+        let container = containerRef.current;
 
-        if (activeElement && container) {
+        // Fallback: If ref is not attached yet or null, try to find it by class (especially useful during double-render cycles)
+        if (!container) {
+            container = document.querySelector('.visible-dock-container > div') as HTMLDivElement;
+        }
+
+        if (!container) return;
+
+        // Find the active item specifically INSIDE the visible container to avoid ref collision from double rendering in GlassDock
+        const activeElement = container.querySelector(`.dock-item[data-id="${activeId}"]`) as HTMLAnchorElement;
+
+        if (activeElement) {
             const containerRect = container.getBoundingClientRect();
             const activeRect = activeElement.getBoundingClientRect();
 
             // Only update if we have valid, reasonable dimensions
-            if (activeRect.width > 10 && activeRect.height > 10) {
+            if (activeRect.width > 0 && activeRect.height > 0) {
                 const left = activeRect.left - containerRect.left;
 
-                // Only update if left position is reasonable (not negative or too large)
-                if (left >= 0 && left < containerRect.width) {
-                    setIndicatorStyle({
-                        left,
-                        width: activeRect.width,
-                        height: activeRect.height,
-                        opacity: 1,
-                    });
+                setIndicatorStyle({
+                    left,
+                    width: activeRect.width,
+                    height: activeRect.height,
+                    opacity: 1,
+                });
 
-                    // After first successful positioning, enable transitions
-                    if (isFirstRender.current) {
-                        setTimeout(() => {
-                            isFirstRender.current = false;
-                        }, 100);
-                    }
+                // After first successful positioning, disable transitions
+                if (isFirstRender.current) {
+                    setTimeout(() => {
+                        isFirstRender.current = false;
+                    }, 100);
                 }
             }
         }
     }, [activeId]);
+
+    // Use ResizeObserver for highly robust positioning that handles any layout shifts
+    useEffect(() => {
+        if (isDockHidden) return;
+
+        const container = containerRef.current || document.querySelector('.visible-dock-container > div');
+        if (!container) return;
+
+        // Update immediately on mount/visibility change
+        updateIndicator();
+
+        const observer = new ResizeObserver(() => {
+            updateIndicator();
+        });
+
+        observer.observe(container as Element);
+        // Also observe children to catch any internal layout shifts
+        const items = (container as Element).querySelectorAll('.dock-item');
+        items.forEach(item => observer.observe(item));
+
+        return () => observer.disconnect();
+    }, [isDockHidden, updateIndicator]);
+
+    // Ensure indicator is updated when activeId changes, with fallback re-checks
+    useEffect(() => {
+        if (!isDockHidden) {
+            updateIndicator();
+
+            // Multiple re-checks to handle complex animations or lazy-loaded styles
+            const timer1 = setTimeout(updateIndicator, 50);
+            const timer2 = setTimeout(updateIndicator, 150);
+            const timer3 = setTimeout(updateIndicator, 300);
+
+            return () => {
+                clearTimeout(timer1);
+                clearTimeout(timer2);
+                clearTimeout(timer3);
+            };
+        }
+    }, [activeId, isDockHidden, updateIndicator]);
 
     // Hide indicator immediately when dock hides
     useEffect(() => {
@@ -172,61 +218,33 @@ export const Dock = React.memo(({ currentPath }: { currentPath: string }) => {
             // Hide indicator when dock is hidden
             setIndicatorStyle(prev => ({ ...prev, opacity: 0 }));
             // Next time we update, skip transition
-            skipTransitionRef.current = true;
+            setSkipTransition(true);
         }
     }, [isDockHidden]);
 
-    // Update indicator when dock becomes visible or active item changes
+    // Reposition when dock re-appears or layout changes
     useLayoutEffect(() => {
-        // Clear any pending timer
-        if (updateTimerRef.current) {
-            clearTimeout(updateTimerRef.current);
-        }
+        if (isDockHidden) return;
 
-        // Don't calculate if dock is hidden
-        if (isDockHidden) {
-            return;
-        }
-
-        // If dock just became visible, wait for CSS transition to complete
-        // then update without animation
-        if (skipTransitionRef.current) {
-            // Wait for dock slide animation to complete
-            updateTimerRef.current = window.setTimeout(() => {
+        if (skipTransition) {
+            // Wait for dock slide animation to complete, then position without transition
+            const timer = setTimeout(() => {
                 updateIndicator();
                 // Re-enable transitions after a frame
                 requestAnimationFrame(() => {
-                    skipTransitionRef.current = false;
+                    setSkipTransition(false);
                 });
-            }, 520);
+            }, 300);
+            return () => clearTimeout(timer);
         } else {
-            // Normal update with small delay
-            updateTimerRef.current = window.setTimeout(updateIndicator, 50);
+            updateIndicator();
         }
+    }, [isDockHidden, updateIndicator]);
 
-        const handleResize = () => {
-            if (updateTimerRef.current) {
-                clearTimeout(updateTimerRef.current);
-            }
-            updateTimerRef.current = window.setTimeout(updateIndicator, 150);
-        };
-
-        window.addEventListener('resize', handleResize);
-        return () => {
-            if (updateTimerRef.current) {
-                clearTimeout(updateTimerRef.current);
-            }
-            window.removeEventListener('resize', handleResize);
-        };
-    }, [activeId, isDockHidden, updateIndicator]);
-
-    // Dynamic transition - no transition when repositioning after dock reappears
-    const indicatorTransition = useMemo(() => {
-        if (isFirstRender.current || skipTransitionRef.current) {
-            return 'none';
-        }
-        return 'left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease';
-    }, []);
+    // Calculate transition dynamicly based on state to ensure animations work after mount
+    const indicatorTransition = (isFirstRender.current || skipTransition)
+        ? 'none'
+        : 'left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease';
 
     return (
         <>
@@ -259,7 +277,7 @@ export const Dock = React.memo(({ currentPath }: { currentPath: string }) => {
                     <div ref={containerRef} className="relative flex items-center gap-2 md:gap-3">
                         {/* Animated Sliding Liquid Indicator */}
                         <div
-                            className="liquid-indicator absolute top-1/2 rounded-2xl pointer-events-none overflow-hidden will-change-transform"
+                            className="liquid-indicator absolute top-1/2 rounded-2xl pointer-events-none will-change-transform"
                             style={{
                                 left: `${indicatorStyle.left}px`,
                                 width: `${indicatorStyle.width}px`,
@@ -272,7 +290,7 @@ export const Dock = React.memo(({ currentPath }: { currentPath: string }) => {
                         >
                             {/* Glass Background */}
                             <div
-                                className="absolute inset-0"
+                                className="absolute inset-0 rounded-[inherit]"
                                 style={{
                                     backgroundColor: DYNAMIC_COLORS.raw.light.primary,
                                     opacity: 0.15,

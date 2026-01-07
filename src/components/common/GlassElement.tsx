@@ -157,7 +157,7 @@ export const GlassDock = ({ children }: { children?: React.ReactNode }) => {
                     width={displaySize.width || 300}
                     height={displaySize.height || 60}
                     radius={(displaySize.height || 60) / 2}
-                    className="flex items-center gap-2 md:gap-3 p-1.5 md:p-2"
+                    className="visible-dock-container flex items-center gap-2 md:gap-3 p-1.5 md:p-2"
                 >
                     {children}
                 </GlassElement>
