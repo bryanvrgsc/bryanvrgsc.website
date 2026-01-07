@@ -48,7 +48,6 @@ export const GlassElement: React.FC<GlassElementProps> = ({
         justifyContent: 'center',
         transition: 'all 0.5s cubic-bezier(0.25, 1, 0.3, 1)',
         overflow: 'visible',
-        isolation: 'isolate',
     };
 
     return (

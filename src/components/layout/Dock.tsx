@@ -41,7 +41,7 @@ const DockItem = React.memo(({
         data-id={item.id}
         href={`#${item.href}`}
         onClick={(e) => { e.preventDefault(); onNavigate(item.href); }}
-        className={`dock-item group relative flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-2xl transition-all duration-300 ease-[cubic-bezier(0.25,1,0.3,1)]
+        className={`dock-item group relative flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-full transition-all duration-300 ease-[cubic-bezier(0.25,1,0.3,1)]
             ${isActive
                 ? 'text-[var(--text-primary)]'
                 : 'text-[var(--dock-text)] hover:text-[var(--text-primary)] hover:scale-105'}`}
@@ -251,12 +251,12 @@ export const Dock = React.memo(({ path }: { path: string }) => {
             {/* SVG Filters for Goo Effect */}
             <svg className="absolute w-0 h-0 pointer-events-none" aria-hidden="true">
                 <defs>
-                    <filter id="goo-filter">
+                    <filter id="goo-filter" x="-50%" y="-50%" width="200%" height="200%">
                         <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
                         <feColorMatrix
                             in="blur"
                             mode="matrix"
-                            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -10"
+                            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9"
                             result="goo"
                         />
                         <feBlend in="SourceGraphic" in2="goo" />
@@ -274,10 +274,10 @@ export const Dock = React.memo(({ path }: { path: string }) => {
                 aria-label="Main Navigation"
             >
                 <GlassDock>
-                    <div ref={containerRef} className="relative flex items-center gap-2 md:gap-3">
+                    <div ref={containerRef} className="relative flex items-center gap-2 md:gap-3 overflow-visible">
                         {/* Animated Sliding Liquid Indicator */}
                         <div
-                            className="liquid-indicator absolute top-1/2 rounded-2xl pointer-events-none will-change-transform"
+                            className="liquid-indicator absolute top-1/2 rounded-full pointer-events-none will-change-transform"
                             style={{
                                 left: `${indicatorStyle.left}px`,
                                 width: `${indicatorStyle.width}px`,
@@ -301,7 +301,7 @@ export const Dock = React.memo(({ path }: { path: string }) => {
                             />
                             {/* Glass Shine Effect */}
                             <div
-                                className="absolute inset-0 pointer-events-none"
+                                className="absolute inset-0 rounded-[inherit] pointer-events-none"
                                 style={{
                                     background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.08) 20%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.08) 80%, rgba(255, 255, 255, 0.2) 100%)',
                                     opacity: 0.5,
