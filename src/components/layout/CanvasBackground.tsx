@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
-import { settings, performanceMode } from '../../store';
+import { settings, performanceMode, debugPerformance } from '../../store';
 import { NETWORK_COLORS } from '../../constants/colors';
 
 /**
@@ -158,6 +158,7 @@ class SpatialGrid {
 export const CanvasBackground = () => {
   const { theme } = useStore(settings);
   const { lite } = useStore(performanceMode);
+  const debugData = useStore(debugPerformance);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -467,13 +468,19 @@ export const CanvasBackground = () => {
   //
   if (lite) {
     return (
-      <div
-        className="fixed inset-0 pointer-events-none lite-background"
-        style={{
-          background: 'linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%)',
-          willChange: 'auto'
-        }}
-      />
+      <>
+        <div
+          className="fixed inset-0 pointer-events-none lite-background"
+          style={{
+            background: 'linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%)',
+            willChange: 'auto'
+          }}
+        />
+        {/* DEBUG: Temporary visual indicator - REMOVE AFTER TESTING */}
+        <div className="fixed bottom-4 right-4 bg-green-500 text-white text-xs px-3 py-1 rounded-full z-[9999] pointer-events-none font-bold shadow-lg">
+          LITE MODE ✓
+        </div>
+      </>
     );
   }
 
@@ -490,6 +497,12 @@ export const CanvasBackground = () => {
           style={{ backgroundImage: `url(${noiseDataUrl})` }}
         />
       )}
+
+      {/* DEBUG: Visual overlay - REMOVE AFTER TESTING */}
+      <div className="fixed top-4 left-4 bg-red-500/90 text-white text-xs px-3 py-2 rounded-lg z-[9999] pointer-events-none font-mono shadow-lg max-w-[90vw]">
+        <div className="font-bold">🔍 DEBUG (FULL MODE)</div>
+        <div className="mt-1 break-all">{debugData.stage}: {debugData.data}</div>
+      </div>
     </>
   );
 };
