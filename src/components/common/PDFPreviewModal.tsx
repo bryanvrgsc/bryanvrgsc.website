@@ -63,6 +63,10 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
         if (isOpen) {
             document.body.style.overflow = 'hidden';
             setIsLoading(true);
+            // Auto-hide info panel on mobile to show PDF immediately
+            if (window.innerWidth < 768) {
+                setShowInfo(false);
+            }
         }
         return () => {
             document.body.style.overflow = '';
@@ -196,11 +200,36 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
 
                     {/* Right Side Panel - Info */}
                     <div
-                        className={`absolute right-0 top-0 bottom-0 w-full md:w-[320px] lg:w-[380px] bg-[var(--card-bg)] border-l border-[var(--card-border)] flex flex-col transform transition-all duration-300 ${showInfo
-                            ? 'translate-x-0 opacity-100'
-                            : 'translate-x-full opacity-0 pointer-events-none'
-                            }`}
+                        className={`absolute z-30 bg-[var(--card-bg)] backdrop-blur-xl flex flex-col transform transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
+                            
+                            /* Mobile: Bottom Sheet */
+                            bottom-0 left-0 right-0 
+                            h-[80vh] w-full 
+                            rounded-t-[2.5rem] 
+                            border-t border-[var(--card-border)]
+                            shadow-[0_-10px_40px_rgba(0,0,0,0.2)]
+                            ${showInfo 
+                                ? 'translate-y-0' 
+                                : 'translate-y-[110%] pointer-events-none'
+                            }
+
+                            /* Desktop: Side Panel (Overrides) */
+                            md:top-0 md:bottom-0 md:left-auto md:right-0 
+                            md:h-full md:w-[320px] lg:w-[380px] 
+                            md:rounded-none 
+                            md:border-t-0 md:border-l
+                            md:shadow-none
+                            md:${showInfo 
+                                ? 'translate-x-0 translate-y-0' 
+                                : 'translate-x-full translate-y-0'
+                            }
+                        `}
                     >
+                        {/* Mobile Drag Handle Indicator */}
+                        <div className="w-full flex justify-center pt-3 pb-1 md:hidden" onClick={() => setShowInfo(false)}>
+                            <div className="w-12 h-1.5 rounded-full bg-[var(--text-tertiary)]/30" />
+                        </div>
+
                         {/* Panel Header - Mobile close */}
                         <div className="md:hidden flex items-center justify-between p-4 border-b border-[var(--card-border)]/50">
                             <h2 className="text-[var(--text-primary)] font-bold">{t.docInfo}</h2>
