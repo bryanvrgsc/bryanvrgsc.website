@@ -29,11 +29,53 @@ export const ServicesView = () => {
                     const Icon = Icons[s.iconName as keyof typeof Icons];
                     const theme = getCategoryTheme(s.title);
                     return (
-                        <div onMouseMove={handleMouseMove} key={i} className="bento-card rounded-[2rem] md:rounded-[2.5rem] p-5 md:p-10 flex flex-col items-start text-left h-full group" style={theme.colors as React.CSSProperties}>
-                            <div className={`h-16 w-16 md:h-20 md:h-20 rounded-3xl bg-gradient-to-br ${theme.gradientFrom} to-transparent flex items-center justify-center mb-6 md:mb-10 border border-[var(--card-border)] ${theme.text} group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg relative z-10`}><Icon className="w-7 h-7 md:w-9 md:h-9 drop-shadow-sm" /></div>
-                            <h3 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] mb-4 md:mb-6 relative z-10 tracking-tight">{s.title}</h3>
-                            <div className="flex-grow space-y-3 md:space-y-5 relative z-10 w-full flex flex-col items-start">{s.items.map((item, idx) => (<div key={idx} className="flex items-start justify-start gap-3 md:gap-4 text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors w-full"><div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${theme.bullet} shadow-sm flex-shrink-0 mt-2`}></div><span className="text-sm md:text-[15px] font-medium leading-relaxed">{item}</span></div>))}</div>
-                            <div className="mt-8 md:mt-10 pt-6 md:pt-8 border-t border-[var(--card-border)] relative z-10 w-full flex flex-col items-start"><p className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-[0.2em] mb-4">{t.impact}</p><div className="space-y-3 w-full flex flex-col items-start">{s.valueProp.map((vp, vidx) => (<div key={vidx} className="flex items-center justify-start gap-3 text-xs text-[var(--text-secondary)] bg-[var(--input-bg)] p-3 rounded-xl border border-[var(--card-border)] group-hover:bg-[var(--glass-glow)] transition-colors w-full max-w-[280px]"><span className={theme.text}><Icons.CheckCircle className="w-4 h-4" /></span>{vp}</div>))}</div></div>
+                        <div
+                            onMouseMove={handleMouseMove}
+                            key={i}
+                            className="bento-card rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-10 flex flex-col items-start text-left h-full group transition-all duration-700 hover:-translate-y-2 relative overflow-hidden"
+                            style={theme.colors as React.CSSProperties}
+                        >
+                            {/* Animated Pulse Indicator */}
+                            <div className={`absolute top-6 right-6 md:top-10 md:right-10 flex items-center justify-center z-20 ${theme.text}`}>
+                                <div className="relative flex h-2 w-2 md:h-2.5 md:w-2.5">
+                                    <div className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-current"></div>
+                                    <div className="relative inline-flex rounded-full h-2 w-2 md:h-2.5 md:w-2.5 bg-current opacity-80"></div>
+                                </div>
+                            </div>
+
+                            <div className={`h-16 w-16 md:h-20 md:w-20 rounded-3xl bg-gradient-to-br ${theme.gradientFrom} to-transparent flex items-center justify-center mb-6 md:mb-10 border border-[var(--card-border)] ${theme.text} group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg relative z-10`}>
+                                <Icon className="w-7 h-7 md:w-9 md:h-9 drop-shadow-sm" />
+                            </div>
+
+                            <h3 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] mb-3 relative z-10 tracking-tight">{s.title}</h3>
+
+                            <p className="text-sm md:text-base text-[var(--text-secondary)] mb-6 md:mb-8 relative z-10 text-justify leading-relaxed opacity-90 group-hover:opacity-100 transition-opacity">
+                                {s.description}
+                            </p>
+
+                            <div className="flex-grow space-y-3 md:space-y-4 relative z-10 w-full flex flex-col items-start mb-8">
+                                {s.items.map((item, idx) => (
+                                    <div key={idx} className="flex items-start justify-start gap-3 md:gap-4 text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors w-full">
+                                        <div className={`w-1 h-1 md:w-1.5 md:h-1.5 rounded-full ${theme.bullet} shadow-sm flex-shrink-0 mt-2.5 opacity-60`}></div>
+                                        <span className="text-xs md:text-sm font-medium leading-relaxed text-justify">{item}</span>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="mt-auto pt-6 md:pt-8 border-t border-[var(--card-border)] relative z-10 w-full flex flex-col items-start">
+                                <p className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-[0.2em] mb-4 opacity-70">{t.impact}</p>
+                                <div className="grid grid-cols-1 gap-2 w-full">
+                                    {s.valueProp.map((vp, vidx) => (
+                                        <div key={vidx} className="flex items-center justify-start gap-3 text-[10px] md:text-xs text-[var(--text-secondary)] bg-[var(--input-bg)] p-2.5 md:p-3 rounded-xl border border-[var(--card-border)] group-hover:bg-[var(--glass-glow)] transition-colors w-full border-opacity-30">
+                                            <span className={theme.text}><Icons.CheckCircle className="w-3.5 h-3.5" /></span>
+                                            {vp}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Background Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                         </div>
                     );
                 })}

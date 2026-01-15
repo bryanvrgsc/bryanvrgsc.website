@@ -2,6 +2,7 @@ export type Language = 'en' | 'es';
 
 export interface Service {
     title: string;
+    description: string;
     iconName: string;
     items: string[];
     valueProp: string[];
@@ -43,6 +44,7 @@ export interface UIText {
         overview: string;
         collaboration: string;
         future: string;
+        values: string;
     };
     heroTitle: string;
     heroSubtitle: string;
@@ -60,6 +62,10 @@ export interface UIText {
         content: string;
     };
     vision: {
+        title: string;
+        content: string;
+    };
+    values: {
         title: string;
         content: string;
     };

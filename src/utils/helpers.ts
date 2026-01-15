@@ -85,6 +85,16 @@ export function getCategoryTheme(term: string) {
         };
     }
 
+    if (t.includes('inteligencia') || t.includes('artificial') || t.includes('ai')) {
+        return {
+            text: "text-amber-700 dark:text-amber-400",
+            bg: "bg-amber-50 dark:bg-amber-500/10",
+            bullet: "bg-amber-600",
+            gradientFrom: "from-amber-600/20",
+            colors: { '--card-border': 'rgba(217, 119, 6, 0.3)', '--glass-glow': 'rgba(217, 119, 6, 0.5)', '--neon-glow': 'rgba(217, 119, 6, 0.4)' }
+        };
+    }
+
     // Default theme
     return {
         text: "text-slate-700 dark:text-slate-400",

@@ -11,6 +11,7 @@ import { DYNAMIC_COLORS, getDynamicButtonStyles } from '../../constants/colors';
 import { useMousePosition } from '../../utils/helpers';
 import missionTeam from '../../assets/img/home/mission_team.webp';
 import futureVision from '../../assets/img/home/future_vision.webp';
+import coreValues from '../../assets/img/home/core_values.webp';
 
 /**
  * HomeView Component
@@ -60,7 +61,7 @@ export const HomeView = () => {
     return (
         <div className="relative flex flex-col items-center w-full">
             <div className="fixed left-3 md:left-8 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-4 md:gap-6 pointer-events-auto">
-                {[{ id: 1, label: t.homeLabels.overview }, { id: 2, label: t.mission.title }, { id: 3, label: t.vision.title }].map((step) => {
+                {[{ id: 1, label: t.homeLabels.overview }, { id: 2, label: t.mission.title }, { id: 3, label: t.vision.title }, { id: 4, label: t.homeLabels.values }].map((step) => {
                     const isActive = activeStep === step.id;
                     const activeStyle = isActive ? {
                         backgroundColor: DYNAMIC_COLORS.raw.light.primary,
@@ -138,8 +139,11 @@ export const HomeView = () => {
                                         <div className="p-2 md:p-2.5 rounded-xl transition-all duration-500 group-hover:scale-110" style={{ backgroundColor: stat.bg, color: stat.color }}>
                                             <stat.Icon className="w-4 h-4 md:w-6 md:h-6" />
                                         </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full animate-pulse" style={{ backgroundColor: stat.color, boxShadow: `0 0 10px ${stat.color}` }}></div>
+                                        <div className="flex items-center justify-center">
+                                            <div className="relative flex h-2 w-2 md:h-2.5 md:w-2.5">
+                                                <div className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: stat.color }}></div>
+                                                <div className="relative inline-flex rounded-full h-2 w-2 md:h-2.5 md:w-2.5" style={{ backgroundColor: stat.color, opacity: 0.8 }}></div>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -159,10 +163,10 @@ export const HomeView = () => {
                 </section>
 
                 <section ref={(el) => { sectionRefs.current[1] = el }} className="min-h-screen min-h-[100svh] w-full flex flex-col justify-center items-center py-12 md:py-20 snap-start">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 lg:gap-16 items-center w-full max-w-6xl h-auto md:h-[500px]">
+                    <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 lg:gap-16 items-center w-full max-w-6xl h-auto md:h-[500px] transition-all duration-500 ${activeStep >= 2 ? 'animate-slide-up-fade opacity-100' : 'opacity-0 translate-y-4'}`}>
                         <div className="order-2 md:order-1 h-full w-full">
                             <TechCard title={`/// ${t.mission.title.toUpperCase()}`} accentColor="primary" className="h-full flex flex-col justify-center w-full" disableHover={true}>
-                                <div className="flex flex-col h-full justify-center"><div className="text-base md:text-lg lg:text-xl leading-relaxed"><Typewriter text={t.mission.content} startDelay={80} cursorColor={DYNAMIC_COLORS.bg} delay={8} active={activeStep >= 2} /></div></div>
+                                <div className="flex flex-col h-full justify-center"><div className="text-base md:text-lg lg:text-xl leading-relaxed text-justify"><Typewriter text={t.mission.content} startDelay={20} cursorColor={DYNAMIC_COLORS.bg} delay={4} active={activeStep >= 2} /></div></div>
                             </TechCard>
                         </div>
                         <div className="order-1 md:order-2 h-[300px] md:h-full w-full rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-[var(--card-border)] relative group shadow-2xl">
@@ -186,7 +190,7 @@ export const HomeView = () => {
                 </section>
 
                 <section ref={(el) => { sectionRefs.current[2] = el }} className="min-h-screen min-h-[100svh] w-full flex flex-col justify-center items-center py-12 md:py-20 snap-start">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 lg:gap-16 items-center w-full max-w-6xl h-auto md:h-[500px]">
+                    <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 lg:gap-16 items-center w-full max-w-6xl h-auto md:h-[500px] transition-all duration-500 ${activeStep >= 3 ? 'animate-slide-up-fade opacity-100' : 'opacity-0 translate-y-4'}`}>
                         <div className="order-1 h-[300px] md:h-full w-full rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-[var(--card-border)] relative group shadow-2xl">
                             <div className="absolute inset-0 bg-gradient-to-t via-transparent to-transparent z-10 mix-blend-multiply" style={{ backgroundImage: `linear-gradient(to top, ${DYNAMIC_COLORS.raw.dark.secondary}99, transparent, transparent)` }}></div>
                             <img src={futureVision.src} alt="Future Vision" className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,1,0.3,1)] group-hover:scale-105" />
@@ -206,8 +210,45 @@ export const HomeView = () => {
                         </div>
                         <div className="order-2 h-full w-full flex flex-col">
                             <TechCard title={`/// ${t.vision.title.toUpperCase()}`} accentColor="primary" className="h-full flex flex-col justify-center w-full" disableHover={true}>
-                                <div className="flex flex-col h-full justify-center"><div className="text-base md:text-lg lg:text-xl leading-relaxed"><Typewriter text={t.vision.content} startDelay={80} cursorColor={DYNAMIC_COLORS.bg} delay={8} active={activeStep >= 3} /></div></div>
+                                <div className="flex flex-col h-full justify-center"><div className="text-base md:text-lg lg:text-xl leading-relaxed text-justify"><Typewriter text={t.vision.content} startDelay={20} cursorColor={DYNAMIC_COLORS.bg} delay={4} active={activeStep >= 3} /></div></div>
                             </TechCard>
+                        </div>
+                    </div>
+                </section>
+                <section ref={(el) => { sectionRefs.current[3] = el }} className="min-h-screen min-h-[100svh] w-full flex flex-col justify-center items-center py-12 md:py-20 snap-start">
+                    <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 lg:gap-16 items-center w-full max-w-6xl h-auto md:h-[500px] transition-all duration-500 ${activeStep >= 4 ? 'animate-slide-up-fade opacity-100' : 'opacity-0 translate-y-4'}`}>
+                        <div className="order-2 md:order-1 h-full w-full">
+                            <TechCard title={`/// ${t.values.title.toUpperCase()}`} accentColor="primary" className="h-full flex flex-col justify-center w-full" disableHover={true}>
+                                <div className="flex flex-col h-full justify-center"><div className="text-base md:text-lg lg:text-xl leading-relaxed text-justify"><Typewriter text={t.values.content} startDelay={20} cursorColor={DYNAMIC_COLORS.bg} delay={4} active={activeStep >= 4} /></div></div>
+                            </TechCard>
+                        </div>
+                        <div className="order-1 md:order-2 h-[300px] md:h-full w-full rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-[var(--card-border)] relative group shadow-2xl">
+                            <div className="absolute inset-0 bg-gradient-to-t via-transparent to-transparent z-10 mix-blend-multiply" style={{ backgroundImage: `linear-gradient(to top, ${DYNAMIC_COLORS.raw.dark.primary}99, transparent, transparent)` }}></div>
+                            <img src={coreValues.src} alt="Core Values" className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,1,0.3,1)] group-hover:scale-105" />
+                            <div className="absolute bottom-4 left-4 md:bottom-8 md:left-8 z-20">
+                                <div
+                                    className="backdrop-blur-xl text-white text-[10px] md:text-xs font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full uppercase tracking-widest shadow-lg flex items-center gap-2"
+                                    style={{
+                                        backgroundColor: `${DYNAMIC_COLORS.raw.light.primary}33`,
+                                        borderColor: `${DYNAMIC_COLORS.raw.light.primary}4D`,
+                                        border: '1px solid'
+                                    }}
+                                >
+                                    <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full animate-pulse" style={{ backgroundColor: DYNAMIC_COLORS.raw.light.accent }}></div>
+                                    {t.values.title}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-span-1 md:col-span-2 flex justify-center mt-8 md:mt-12 order-3">
+                            <LiquidButton
+                                onClick={() => navigateTo('/services')}
+                                className="px-8 py-4 md:px-12 md:py-6 text-sm md:text-lg rounded-full backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-500 group/btn"
+                            >
+                                <span className="flex items-center gap-3">
+                                    {t.nav.services}
+                                    <Icons.ArrowUp className="w-4 h-4 md:w-5 md:h-5 rotate-90 transition-transform group-hover/btn:translate-x-1" />
+                                </span>
+                            </LiquidButton>
                         </div>
                     </div>
                 </section>

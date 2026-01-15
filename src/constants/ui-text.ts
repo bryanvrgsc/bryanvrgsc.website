@@ -5,11 +5,12 @@ export const UI_TEXT: Record<'en' | 'es', UIText> = {
         homeLabels: {
             overview: "Overview",
             collaboration: "Collaboration",
-            future: "Future"
+            future: "Future",
+            values: "Values"
         },
         heroTitle: "Arquitectos del Futuro.",
         heroSubtitle: "Ingeniería de vanguardia para la próxima generación de productos digitales.",
-        heroTags: "iOS • Web • Inteligencia Artificial",
+        heroTags: "Apps • Cloud • Business Intelligence",
         startProject: "Iniciar Proyecto",
         exploreWork: "Ver Portafolio",
         stats: {
@@ -25,6 +26,10 @@ export const UI_TEXT: Record<'en' | 'es', UIText> = {
         vision: {
             title: "Vision",
             content: "To become a leading company in digital solutions and advanced analytics in Latin America, recognized for transforming data into value, optimizing processes, and creating technological products that drive sustainable growth for our clients."
+        },
+        values: {
+            title: "Values",
+            content: "Integrity in every project, excellence in engineering, and a constant commitment to innovation. We believe in transparency, technical rigor, and creating products that transcend, always putting ethics and professional quality first."
         },
         services: {
             title: "Services",
@@ -98,11 +103,12 @@ export const UI_TEXT: Record<'en' | 'es', UIText> = {
         homeLabels: {
             overview: "Resumen",
             collaboration: "Colaboración",
-            future: "Futuro"
+            future: "Futuro",
+            values: "Valores"
         },
         heroTitle: "Arquitectos del Futuro.",
         heroSubtitle: "Ingeniería de vanguardia para la próxima generación de productos digitales.",
-        heroTags: "iOS • Web • Inteligencia Artificial",
+        heroTags: "Apps • Cloud • Business Intelligence",
         startProject: "Iniciar Proyecto",
         exploreWork: "Ver Portafolio",
         stats: {
@@ -118,6 +124,10 @@ export const UI_TEXT: Record<'en' | 'es', UIText> = {
         vision: {
             title: "Visión",
             content: "Convertirnos en una empresa líder en soluciones digitales y analítica avanzada en Latinoamérica, reconocida por transformar datos en valor, optimizar procesos y crear productos tecnológicos que impulsen el crecimiento sostenible de nuestros clientes."
+        },
+        values: {
+            title: "Valores",
+            content: "Integridad en cada proyecto, excelencia en ingeniería y un compromiso constante con la innovación. Creemos en la transparencia, el rigor técnico y la creación de productos que trasciendan, anteponiendo siempre la ética y la calidad profesional."
         },
         services: {
             title: "Servicios",
