@@ -7,8 +7,8 @@ import { HomeViewSkeleton, PortfolioViewSkeleton, ContactViewSkeleton, ViewSkele
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { Analytics } from '@vercel/analytics/react';
 
+import { HomeView } from './views/HomeView';
 // Lazy load views for Code Splitting
-const HomeView = React.lazy(() => import('./views/HomeView').then(module => ({ default: module.HomeView })));
 const ServicesView = React.lazy(() => import('./views/ServicesView').then(module => ({ default: module.ServicesView })));
 const PortfolioView = React.lazy(() => import('./views/PortfolioView').then(module => ({ default: module.PortfolioView })));
 const ResourcesView = React.lazy(() => import('./views/ResourcesView').then(module => ({ default: module.ResourcesView })));

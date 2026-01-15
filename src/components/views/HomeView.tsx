@@ -33,7 +33,7 @@ export const HomeView = () => {
         // and bounces back.
         const timer = setTimeout(() => {
             document.documentElement.style.scrollSnapType = 'y mandatory';
-        }, 800);
+        }, 400);
 
         return () => {
             document.documentElement.style.scrollSnapType = '';
@@ -239,17 +239,18 @@ export const HomeView = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-span-1 md:col-span-2 flex justify-center mt-8 md:mt-12 order-3">
-                            <LiquidButton
-                                onClick={() => navigateTo('/services')}
-                                className="px-8 py-4 md:px-12 md:py-6 text-sm md:text-lg rounded-full backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-500 group/btn"
-                            >
-                                <span className="flex items-center gap-3">
-                                    {t.nav.services}
-                                    <Icons.ArrowUp className="w-4 h-4 md:w-5 md:h-5 rotate-90 transition-transform group-hover/btn:translate-x-1" />
-                                </span>
-                            </LiquidButton>
-                        </div>
+                    </div>
+                    {/* CTA Button - Outside the main grid to keep dimensions consistent */}
+                    <div className={`flex justify-center mt-8 md:mt-16 transition-all duration-700 delay-300 w-full ${activeStep >= 4 ? 'animate-slide-up-fade opacity-100' : 'opacity-0 translate-y-4'}`}>
+                        <LiquidButton
+                            onClick={() => navigateTo('/services')}
+                            className="px-8 py-4 md:px-12 md:py-6 text-sm md:text-lg rounded-full backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-500 group/btn"
+                        >
+                            <span className="flex items-center gap-3">
+                                {t.nav.services}
+                                <Icons.ArrowUp className="w-4 h-4 md:w-5 md:h-5 rotate-90 transition-transform group-hover/btn:translate-x-1" />
+                            </span>
+                        </LiquidButton>
                     </div>
                 </section>
             </div>
