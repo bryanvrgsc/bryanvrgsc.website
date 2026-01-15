@@ -9,6 +9,8 @@ import { UI_TEXT } from '../../constants/ui-text';
 import { navigateTo } from '../../utils/navigation';
 import { DYNAMIC_COLORS, getDynamicButtonStyles } from '../../constants/colors';
 import { useMousePosition } from '../../utils/helpers';
+import missionTeam from '../../assets/img/home/mission_team.webp';
+import futureVision from '../../assets/img/home/future_vision.webp';
 
 /**
  * HomeView Component
@@ -98,39 +100,57 @@ export const HomeView = () => {
                             >{t.heroTitle.split(' ').slice(1).join(' ')}</span>
                         </h1>
                         <p className="max-w-xl md:max-w-2xl mx-auto text-sm sm:text-lg md:text-xl text-[var(--text-secondary)] mb-8 md:mb-8 font-normal leading-relaxed tracking-wide px-2">{t.heroSubtitle}<br /><span className="text-[var(--text-tertiary)] text-xs md:text-lg mt-2 block font-light">{t.heroTags}</span></p>
-                        <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center items-center w-full px-4 mb-10 md:mb-12">
+                        <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-center w-full px-4 mb-12 md:mb-16">
                             <LiquidButton
+                                primary
                                 onClick={() => navigateTo('/contact')}
-                                className="w-full sm:w-auto px-8 py-3.5 md:px-10 md:py-5 text-base md:text-lg min-w-[180px] md:min-w-[200px] rounded-full"
-                                style={getDynamicButtonStyles().light as React.CSSProperties}
+                                className="w-full sm:w-auto px-10 py-4 md:px-12 md:py-6 text-base md:text-xl min-w-[200px] md:min-w-[240px] rounded-full"
                             >{t.startProject}</LiquidButton>
-                            <LiquidButton onClick={() => navigateTo('/portfolio')} className="w-full sm:w-auto px-8 py-3.5 md:px-10 md:py-5 text-base md:text-lg min-w-[180px] md:min-w-[200px] rounded-full">{t.exploreWork}</LiquidButton>
+                            <LiquidButton
+                                onClick={() => navigateTo('/portfolio')}
+                                className="w-full sm:w-auto px-10 py-4 md:px-12 md:py-6 text-base md:text-xl min-w-[200px] md:min-w-[240px] rounded-full backdrop-blur-xl bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-500"
+                            >{t.exploreWork}</LiquidButton>
                         </div>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 w-full max-w-4xl mx-auto px-1">
-                            {[{ val: "<50ms", label: t.stats.latency }, { val: "99.9%", label: t.stats.uptime }, { val: "A+", label: t.stats.security }, { val: "24/7", label: t.stats.global }].map((stat, i) => (
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 w-full max-w-6xl mx-auto px-1">
+                            {[
+                                { val: "<50ms", label: t.stats.latency, Icon: Icons.Gauge, color: 'rgb(59, 130, 246)', bg: 'rgba(59, 130, 246, 0.1)' },
+                                { val: "99.9%", label: t.stats.uptime, Icon: Icons.Server, color: 'rgb(6, 182, 212)', bg: 'rgba(6, 182, 212, 0.1)' },
+                                { val: "A+", label: t.stats.security, Icon: Icons.ShieldCheck, color: 'rgb(99, 102, 241)', bg: 'rgba(99, 102, 241, 0.1)' },
+                                { val: "24/7", label: t.stats.global, Icon: Icons.Globe, color: 'rgb(16, 185, 129)', bg: 'rgba(16, 185, 129, 0.1)' }
+                            ].map((stat, i) => (
                                 <div
                                     onMouseMove={handleMouseMove}
                                     key={i}
-                                    className="bento-card p-3 md:p-4 rounded-2xl md:rounded-3xl flex flex-col items-center justify-center h-20 md:h-28 group cursor-default"
+                                    className="bento-card p-4 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] flex flex-col items-start justify-between min-h-[120px] md:min-h-[200px] group cursor-default backdrop-blur-3xl bg-[var(--card-bg)] border border-white/5 shadow-2xl relative overflow-hidden transition-all duration-700 hover:-translate-y-2"
                                     onMouseEnter={(e) => {
-                                        const span = e.currentTarget.querySelector('span');
-                                        if (span) {
-                                            (span as HTMLElement).style.color = DYNAMIC_COLORS.raw.light.primary;
-                                            (span as HTMLElement).style.transform = 'scale(1.1)';
-                                        }
+                                        e.currentTarget.style.borderColor = `${stat.color}4D`;
+                                        e.currentTarget.style.backgroundColor = `${stat.color}0D`;
                                     }}
                                     onMouseLeave={(e) => {
-                                        const span = e.currentTarget.querySelector('span');
-                                        if (span) {
-                                            (span as HTMLElement).style.color = 'var(--text-primary)';
-                                            (span as HTMLElement).style.transform = 'scale(1)';
-                                        }
+                                        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)';
+                                        e.currentTarget.style.backgroundColor = 'var(--card-bg)';
                                     }}
                                 >
-                                    <span
-                                        className="text-lg md:text-3xl font-mono font-bold text-[var(--text-primary)] tracking-tight mb-1 transition-all duration-500"
-                                    >{stat.val}</span>
-                                    <span className="text-[9px] md:text-[11px] text-[var(--text-secondary)] uppercase font-bold tracking-[0.2em]">{stat.label}</span>
+                                    {/* Grid Pattern Background */}
+                                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `radial-gradient(${stat.color} 1px, transparent 1px)`, backgroundSize: '16px 16px' }}></div>
+
+                                    <div className="flex justify-between items-start w-full relative z-10">
+                                        <div className="p-2 md:p-2.5 rounded-xl transition-all duration-500 group-hover:scale-110" style={{ backgroundColor: stat.bg, color: stat.color }}>
+                                            <stat.Icon className="w-4 h-4 md:w-6 md:h-6" />
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full animate-pulse" style={{ backgroundColor: stat.color, boxShadow: `0 0 10px ${stat.color}` }}></div>
+                                        </div>
+                                    </div>
+
+                                    <div className="relative z-10 mt-4">
+                                        <span
+                                            className="text-xl md:text-5xl font-mono font-bold text-[var(--text-primary)] tracking-tight mb-1 md:mb-2 block transition-all duration-500 group-hover:translate-x-1"
+                                        >{stat.val}</span>
+                                        <span className="text-[8px] md:text-[12px] text-[var(--text-secondary)] uppercase font-bold tracking-[0.15em] md:tracking-[0.25em] opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:translate-x-1">{stat.label}</span>
+                                    </div>
+
+                                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                                 </div>
                             ))}
                         </div>
@@ -147,7 +167,7 @@ export const HomeView = () => {
                         </div>
                         <div className="order-1 md:order-2 h-[300px] md:h-full w-full rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-[var(--card-border)] relative group shadow-2xl">
                             <div className="absolute inset-0 bg-gradient-to-t via-transparent to-transparent z-10 mix-blend-multiply" style={{ backgroundImage: `linear-gradient(to top, ${DYNAMIC_COLORS.raw.dark.primary}99, transparent, transparent)` }}></div>
-                            <img src="/img/home/mission_team.webp" alt="Mission Team" className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,1,0.3,1)] group-hover:scale-105" />
+                            <img src={missionTeam.src} alt="Mission Team" className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,1,0.3,1)] group-hover:scale-105" />
                             <div className="absolute bottom-4 left-4 md:bottom-8 md:left-8 z-20">
                                 <div
                                     className="backdrop-blur-xl text-white text-[10px] md:text-xs font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full uppercase tracking-widest shadow-lg flex items-center gap-2"
@@ -169,7 +189,7 @@ export const HomeView = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 lg:gap-16 items-center w-full max-w-6xl h-auto md:h-[500px]">
                         <div className="order-1 h-[300px] md:h-full w-full rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-[var(--card-border)] relative group shadow-2xl">
                             <div className="absolute inset-0 bg-gradient-to-t via-transparent to-transparent z-10 mix-blend-multiply" style={{ backgroundImage: `linear-gradient(to top, ${DYNAMIC_COLORS.raw.dark.secondary}99, transparent, transparent)` }}></div>
-                            <img src="/img/home/future_vision.webp" alt="Future Vision" className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,1,0.3,1)] group-hover:scale-105" />
+                            <img src={futureVision.src} alt="Future Vision" className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,1,0.3,1)] group-hover:scale-105" />
                             <div className="absolute bottom-4 right-4 md:bottom-8 md:right-8 z-20">
                                 <div
                                     className="backdrop-blur-xl text-white text-[10px] md:text-xs font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full uppercase tracking-widest shadow-lg flex items-center gap-2"
