@@ -3,7 +3,7 @@ import { useStore } from '@nanostores/react';
 import { settings, dockState, hideDock, showDock } from '../../store';
 import { Icons } from '../Icons';
 import { UI_TEXT } from '../../constants';
-import { DOCK_COLORS, SEMANTIC_COLORS, DYNAMIC_COLORS } from '../../constants/colors';
+import { DYNAMIC_COLORS } from '../../constants/colors';
 import { GlassDock } from '../common/GlassElement';
 import { LiquidButton } from '../common/LiquidButton';
 import { navigateTo } from '../../utils/navigation';

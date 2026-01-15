@@ -7,7 +7,7 @@ import { TechCard } from '../ui/TechCard';
 import { Typewriter } from '../common/Typewriter';
 import { UI_TEXT } from '../../constants/ui-text';
 import { navigateTo } from '../../utils/navigation';
-import { DYNAMIC_COLORS, getDynamicButtonStyles } from '../../constants/colors';
+import { DYNAMIC_COLORS } from '../../constants/colors';
 import { useMousePosition } from '../../utils/helpers';
 import missionTeam from '../../assets/img/home/mission_team.webp';
 import futureVision from '../../assets/img/home/future_vision.webp';
