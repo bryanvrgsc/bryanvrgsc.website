@@ -1,59 +1,71 @@
+// Gymapp
+import gymCover from '../assets/img/portfolio/gymapp/cover.webp';
+import gymS1 from '../assets/img/portfolio/gymapp/screenshot_1.webp';
+import gymS2 from '../assets/img/portfolio/gymapp/screenshot_2.webp';
+import gymS3 from '../assets/img/portfolio/gymapp/screenshot_3.webp';
+
+// Datawarehouse
+import dataCover from '../assets/img/portfolio/datawarehouse/cover.webp';
+import dataS1 from '../assets/img/portfolio/datawarehouse/screenshot_1.webp';
+import dataS2 from '../assets/img/portfolio/datawarehouse/screenshot_2.webp';
+import dataS3 from '../assets/img/portfolio/datawarehouse/screenshot_3.webp';
+
+// C Animation
+import cAnimCover from '../assets/img/portfolio/c_animation/cover.webp';
+import cAnimS1 from '../assets/img/portfolio/c_animation/screenshot_1.webp';
+import cAnimS2 from '../assets/img/portfolio/c_animation/screenshot_2.webp';
+import cAnimS3 from '../assets/img/portfolio/c_animation/screenshot_3.webp';
+
+// iOS Store
+import iosStoreCover from '../assets/img/portfolio/ios_store/cover.webp';
+import iosStoreS1 from '../assets/img/portfolio/ios_store/screenshot_1.webp';
+import iosStoreS2 from '../assets/img/portfolio/ios_store/screenshot_2.webp';
+import iosStoreS3 from '../assets/img/portfolio/ios_store/screenshot_3.webp';
+
+// Appointment App
+import appointCover from '../assets/img/portfolio/appointment_app/cover.webp';
+import appointS1 from '../assets/img/portfolio/appointment_app/screenshot_1.webp';
+import appointS2 from '../assets/img/portfolio/appointment_app/screenshot_2.webp';
+import appointS3 from '../assets/img/portfolio/appointment_app/screenshot_3.webp';
+
+// Predictive Analysis
+import predictCover from '../assets/img/portfolio/predictive_analysis/cover.webp';
+import predictS1 from '../assets/img/portfolio/predictive_analysis/screenshot_1.webp';
+import predictS2 from '../assets/img/portfolio/predictive_analysis/screenshot_2.webp';
+import predictS3 from '../assets/img/portfolio/predictive_analysis/screenshot_3.webp';
+
 /**
  * Portfolio Projects Data
  * 
  * Contains all portfolio project information in both English and Spanish.
- * Images are now served locally from /img/portfolio/[project]/
+ * Images are now served locally from src/assets/img/portfolio/[project]/
  */
 
 // Image paths for portfolio projects
 const IMG = {
     gymapp: {
-        cover: '/img/portfolio/gymapp/cover.webp',
-        screenshots: [
-            '/img/portfolio/gymapp/screenshot_1.webp',
-            '/img/portfolio/gymapp/screenshot_2.webp',
-            '/img/portfolio/gymapp/screenshot_3.webp',
-        ]
+        cover: gymCover.src,
+        screenshots: [gymS1.src, gymS2.src, gymS3.src]
     },
     datawarehouse: {
-        cover: '/img/portfolio/datawarehouse/cover.webp',
-        screenshots: [
-            '/img/portfolio/datawarehouse/screenshot_1.webp',
-            '/img/portfolio/datawarehouse/screenshot_2.webp',
-            '/img/portfolio/datawarehouse/screenshot_3.webp',
-        ]
+        cover: dataCover.src,
+        screenshots: [dataS1.src, dataS2.src, dataS3.src]
     },
     c_animation: {
-        cover: '/img/portfolio/c_animation/cover.webp',
-        screenshots: [
-            '/img/portfolio/c_animation/screenshot_1.webp',
-            '/img/portfolio/c_animation/screenshot_2.webp',
-            '/img/portfolio/c_animation/screenshot_3.webp',
-        ]
+        cover: cAnimCover.src,
+        screenshots: [cAnimS1.src, cAnimS2.src, cAnimS3.src]
     },
     ios_store: {
-        cover: '/img/portfolio/ios_store/cover.webp',
-        screenshots: [
-            '/img/portfolio/ios_store/screenshot_1.webp',
-            '/img/portfolio/ios_store/screenshot_2.webp',
-            '/img/portfolio/ios_store/screenshot_3.webp',
-        ]
+        cover: iosStoreCover.src,
+        screenshots: [iosStoreS1.src, iosStoreS2.src, iosStoreS3.src]
     },
     appointment_app: {
-        cover: '/img/portfolio/appointment_app/cover.webp',
-        screenshots: [
-            '/img/portfolio/appointment_app/screenshot_1.webp',
-            '/img/portfolio/appointment_app/screenshot_2.webp',
-            '/img/portfolio/appointment_app/screenshot_3.webp',
-        ]
+        cover: appointCover.src,
+        screenshots: [appointS1.src, appointS2.src, appointS3.src]
     },
     predictive_analysis: {
-        cover: '/img/portfolio/predictive_analysis/cover.webp',
-        screenshots: [
-            '/img/portfolio/predictive_analysis/screenshot_1.webp',
-            '/img/portfolio/predictive_analysis/screenshot_2.webp',
-            '/img/portfolio/predictive_analysis/screenshot_3.webp',
-        ]
+        cover: predictCover.src,
+        screenshots: [predictS1.src, predictS2.src, predictS3.src]
     }
 };
 

@@ -1,3 +1,9 @@
+import calidadSoftware from '../assets/img/resources/calidad_software.webp';
+import madurezEmpresa from '../assets/img/resources/madurez_empresa.webp';
+import rsaCryptography from '../assets/img/resources/rsa_cryptography.webp';
+import roiAgile from '../assets/img/resources/roi_agile.webp';
+import roiTechSlides from '../assets/img/resources/roi_tech_slides.webp';
+
 /**
  * Digital Library Documents Data
  * 
@@ -35,7 +41,7 @@ export const DOCUMENTS: Document[] = [
         filename: 'paper - Calidad del producto software.pdf',
         path: '/docs/files/paper - Calidad del producto software.pdf',
         type: 'paper',
-        image: '/img/resources/calidad_software.webp',
+        image: calidadSoftware.src,
         title: {
             en: 'Software Product Quality',
             es: 'Calidad del producto software'
@@ -58,7 +64,7 @@ export const DOCUMENTS: Document[] = [
         filename: 'paper - Etapas de madurez de una empresa.pdf',
         path: '/docs/files/paper - Etapas de madurez de una empresa.pdf',
         type: 'paper',
-        image: '/img/resources/madurez_empresa.webp',
+        image: madurezEmpresa.src,
         title: {
             en: 'Company Maturity Stages',
             es: 'Etapas de madurez de una empresa'
@@ -81,7 +87,7 @@ export const DOCUMENTS: Document[] = [
         filename: 'paper - A Method for Obtaining Digital Signatures and Public-Key Cryptosystems.pdf',
         path: '/docs/files/paper - A Method for Obtaining Digital Signatures and Public-Key Cryptosystems.pdf',
         type: 'paper',
-        image: '/img/resources/rsa_cryptography.webp',
+        image: rsaCryptography.src,
         title: {
             en: 'A Method for Obtaining Digital Signatures and Public-Key Cryptosystems',
             es: 'Un método para obtener firmas digitales y criptosistemas de clave pública'
@@ -104,7 +110,7 @@ export const DOCUMENTS: Document[] = [
         filename: 'paper - Retorno Sobre la Inversión en Proyectos de Software Agiles.pdf',
         path: '/docs/files/paper - Retorno Sobre la Inversión en Proyectos de Software Agiles.pdf',
         type: 'paper',
-        image: '/img/resources/roi_agile.webp',
+        image: roiAgile.src,
         title: {
             en: 'ROI in Agile Software Projects',
             es: 'Retorno Sobre la Inversión en Proyectos de Software Ágiles'
@@ -127,7 +133,7 @@ export const DOCUMENTS: Document[] = [
         filename: 'slides - Como medir el ROI de un proyecto tecnologico.pdf',
         path: '/docs/files/slides - Como medir el ROI de un proyecto tecnologico.pdf',
         type: 'slides',
-        image: '/img/resources/roi_tech_slides.webp',
+        image: roiTechSlides.src,
         title: {
             en: 'How to Measure ROI in Tech Projects',
             es: 'Cómo medir el ROI de un proyecto tecnológico'
