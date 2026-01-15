@@ -36,12 +36,12 @@ export const GlassElement: React.FC<GlassElementProps> = ({
         ...(height ? { height: `${height}px` } : {}),
         ...(radius ? { borderRadius: `${radius}px` } : {}),
         position: 'relative',
-        background: 'var(--dock-bg, rgba(240, 240, 245, 0.65))',
-        backdropFilter: `blur(${blur}px) saturate(180%)`,
-        WebkitBackdropFilter: `blur(${blur}px) saturate(180%)`,
+        background: 'var(--dock-bg, rgba(255, 255, 255, 0.45))',
+        backdropFilter: `blur(${blur}px) saturate(160%)`,
+        WebkitBackdropFilter: `blur(${blur}px) saturate(160%)`,
         boxShadow: `
-            inset 0 0 0 1px var(--card-border, rgba(255, 255, 255, 0.2)),
-            0 20px 50px -12px rgba(0, 0, 0, 0.3)
+            inset 0 0 0 1px var(--card-border, rgba(255, 255, 255, 0.15)),
+            0 8px 32px -4px rgba(0, 0, 0, 0.1)
         `,
         display: 'flex',
         alignItems: 'center',
@@ -59,8 +59,8 @@ export const GlassElement: React.FC<GlassElementProps> = ({
                     inset: 0,
                     borderRadius: 'inherit',
                     pointerEvents: 'none',
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 20%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.1) 80%, rgba(255, 255, 255, 0.3) 100%)',
-                    opacity: 0.6,
+                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.15) 100%)',
+                    opacity: 0.4,
                     zIndex: 0,
                 }}
             />

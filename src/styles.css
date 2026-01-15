@@ -15,10 +15,10 @@
   --text-tertiary: #64748b;
 
   /* Increased contrast for glass on light backgrounds */
-  --card-bg: rgba(255, 255, 255, 0.75);
-  --card-border: rgba(15, 23, 42, 0.2);
+  --card-bg: rgba(255, 255, 255, 0.65);
+  --card-border: rgba(15, 23, 42, 0.12);
   /* Darker border for definition in light mode */
-  --card-hover-bg: rgba(255, 255, 255, 0.95);
+  --card-hover-bg: rgba(255, 255, 255, 0.9);
 
   --glass-glow: var(--primary-glow, rgba(5, 150, 105, 0.35));
   /* Dynamic glow */
@@ -64,9 +64,9 @@
   --text-secondary: #94a3b8;
   --text-tertiary: #4b5563;
 
-  --card-bg: rgba(22, 22, 22, 0.6);
-  --card-border: rgba(255, 255, 255, 0.08);
-  --card-hover-bg: rgba(30, 30, 30, 0.7);
+  --card-bg: rgba(10, 10, 12, 0.7);
+  --card-border: rgba(255, 255, 255, 0.05);
+  --card-hover-bg: rgba(20, 20, 25, 0.85);
 
   --glass-glow: rgba(255, 255, 255, 0.08);
   --neon-glow: var(--primary-glow, rgba(52, 211, 153, 0.4));
@@ -312,16 +312,16 @@ body {
 /* Bento Card - Premium Apple Glass Look */
 .bento-card {
   background: var(--card-bg);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  backdrop-filter: blur(48px) saturate(210%);
+  -webkit-backdrop-filter: blur(48px) saturate(210%);
   /* Border adaptation: Uses --card-border variable which can be overridden inline */
   border: 1px solid var(--card-border);
   box-shadow:
-    0 8px 32px -4px rgba(0, 0, 0, 0.05),
+    0 12px 40px -8px rgba(0, 0, 0, 0.1),
     /* Deeper shadow */
-    0 4px 8px -2px rgba(0, 0, 0, 0.02),
-    inset 0 0 0 1px var(--card-border);
-  transition: all 0.6s var(--apple-ease);
+    0 4px 12px -2px rgba(0, 0, 0, 0.04),
+    inset 0 0 0 1.5px var(--card-border);
+  transition: all 0.7s var(--apple-ease);
   position: relative;
   overflow: hidden;
   color: var(--text-primary);
@@ -343,9 +343,9 @@ body {
 
 [data-theme='dark'] .bento-card:hover {
   box-shadow:
-    0 30px 60px -15px rgba(0, 0, 0, 0.6),
-    0 0 30px var(--neon-glow),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+    0 40px 80px -20px rgba(0, 0, 0, 0.8),
+    0 0 40px var(--neon-glow),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
 

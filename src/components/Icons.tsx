@@ -120,6 +120,111 @@ export const Icons = {
       <rect x="1015" y="456" width="143" height="143" fill="#feb800" />
     </svg>
   ),
+  Android: (props: React.ComponentProps<'svg'>) => (
+    <svg viewBox="0 0 169.6 103.78" {...props}>
+      <defs>
+        <linearGradient id="android-3d-lg-1" x1="31.05" y1="259.47" x2="34.99" y2="261.64" gradientTransform="translate(-71.16 888.16) scale(3.32 -3.32)" gradientUnits="userSpaceOnUse">
+          <stop offset=".08" stopColor="#3b9261" />
+          <stop offset=".25" stopColor="#229a4e" />
+          <stop offset=".5" stopColor="#44a560" />
+          <stop offset=".75" stopColor="#42a95f" />
+          <stop offset="1" stopColor="#44ac66" />
+        </linearGradient>
+        <linearGradient id="android-3d-lg-2" x1="31.05" y1="259.47" x2="34.99" y2="261.64" gradientTransform="translate(-71.16 888.16) scale(3.32 -3.32)" gradientUnits="userSpaceOnUse">
+          <stop offset=".08" stopColor="#3b9261" />
+          <stop offset=".25" stopColor="#229a4e" />
+          <stop offset=".5" stopColor="#44a560" />
+          <stop offset=".75" stopColor="#42a95f" />
+          <stop offset="1" stopColor="#44ac66" />
+        </linearGradient>
+        <linearGradient id="android-3d-lg-3" x1="325.48" y1="259.47" x2="329.42" y2="261.64" gradientTransform="translate(1218.32 888.16) rotate(-180) scale(3.32)" gradientUnits="userSpaceOnUse">
+          <stop offset=".08" stopColor="#3b9261" />
+          <stop offset=".25" stopColor="#229a4e" />
+          <stop offset=".5" stopColor="#44a560" />
+          <stop offset=".75" stopColor="#42a95f" />
+          <stop offset="1" stopColor="#44ac66" />
+        </linearGradient>
+        <linearGradient id="android-3d-lg-4" x1="325.48" y1="259.47" x2="329.42" y2="261.64" gradientTransform="translate(1218.32 888.16) rotate(-180) scale(3.32)" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#4f9765" />
+          <stop offset=".12" stopColor="#449a5f" />
+          <stop offset=".25" stopColor="#229a4e" />
+          <stop offset=".5" stopColor="#44a560" />
+          <stop offset=".75" stopColor="#42a95f" />
+          <stop offset="1" stopColor="#44ac66" />
+        </linearGradient>
+        <radialGradient id="android-3d-rg-1" cx="53.16" cy="209.87" fx="53.16" fy="209.87" r="25.53" gradientTransform="translate(-99.5 731.41) scale(3.47 -2.99)" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#51aa63" />
+          <stop offset=".29" stopColor="#44aa59" />
+          <stop offset=".76" stopColor="#4daf60" />
+          <stop offset=".85" stopColor="#61a76a" />
+          <stop offset="1" stopColor="#7fa186" />
+        </radialGradient>
+        <linearGradient id="android-3d-lg-5" x1="22.73" y1="242.88" x2="26.02" y2="240.6" gradientTransform="translate(346.49 863.43) rotate(-180) scale(3.32 3.27) skewX(10)" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#0e2010" />
+          <stop offset=".41" stopColor="#050208" />
+          <stop offset=".76" stopColor="#0c090e" />
+          <stop offset="1" stopColor="#001406" />
+        </linearGradient>
+        <clipPath id="android-3d-cp-1">
+          <path d="M84.74,27.43C41.12,27.46,4.56,60.4,0,103.78h169.53c-4.56-43.4-41.16-76.35-84.79-76.35h0Z" />
+        </clipPath>
+        <filter id="android-3d-f-1" x="-0.18752626" y="-0.73417565" width="1.3750525" height="2.4683513">
+          <feGaussianBlur stdDeviation="3.340793" />
+        </filter>
+        <linearGradient id="android-3d-lg-6" x1="46.88" y1="258.56" x2="46.88" y2="248.14" gradientTransform="translate(-71.16 888.16) scale(3.32 -3.32)" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#a7d4aa" />
+          <stop offset=".53" stopColor="#9acfa1" />
+          <stop offset="1" stopColor="#89c98f" />
+        </linearGradient>
+        <radialGradient id="android-3d-rg-2" cx="74.55" cy="253.52" fx="74.55" fy="253.52" r="2.45" gradientTransform="translate(-394.5 989.49) scale(3.32 -3.61) skewX(12.89)" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#010001" />
+          <stop offset=".5" stopColor="#010203" />
+          <stop offset="1" stopColor="#001000" />
+        </radialGradient>
+        <clipPath id="android-3d-cp-2">
+          <path d="M84.74,27.43C41.12,27.46,4.56,60.4,0,103.78h169.53c-4.56-43.4-41.16-76.35-84.79-76.35Z" />
+        </clipPath>
+        <filter id="android-3d-f-2" x="-0.13333943" y="-0.55206027" width="1.2666789" height="2.1041205">
+          <feGaussianBlur stdDeviation="2.3970479" />
+        </filter>
+        <linearGradient id="android-3d-lg-7" x1="22.73" y1="242.88" x2="26.02" y2="240.6" gradientTransform="translate(346.49 863.43) rotate(-180) scale(3.32 3.27) skewX(10)" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#0e2010" />
+          <stop offset=".41" stopColor="#050208" />
+          <stop offset=".76" stopColor="#0c090e" />
+          <stop offset="1" stopColor="#001406" />
+        </linearGradient>
+      </defs>
+      <g>
+        <g>
+          <g>
+            <g>
+              <path fill="url(#android-3d-lg-1)" d="M32.22,5.26c-4.06,0-7.36,3.29-7.36,7.36,0,1.16.28,2.3.81,3.34l14.13,24.32,10.09-1.2,3.46-5.62-15.11-25.04c-1.38-1.97-3.63-3.14-6.03-3.14Z" />
+              <path fill="url(#android-3d-lg-2)" d="M32.22,5.26c-4.06,0-7.36,3.29-7.36,7.36,0,1.16.28,2.3.81,3.34l14.13,24.32,10.09-1.2,3.46-5.62-15.11-25.04c-1.38-1.97-3.63-3.14-6.03-3.14Z" />
+            </g>
+            <g>
+              <path fill="url(#android-3d-lg-3)" d="M137.37,5.26c4.06,0,7.36,3.29,7.36,7.36,0,1.16-.28,2.3-.81,3.34l-14.13,24.32-10.09-1.2-3.46-5.62,15.11-25.04c1.38-1.97,3.63-3.14,6.03-3.14Z" />
+              <path fill="url(#android-3d-lg-4)" d="M137.37,5.26c4.06,0,7.36,3.29,7.36,7.36,0,1.16-.28,2.3-.81,3.34l-14.13,24.32-10.09-1.2-3.46-5.62,15.11-25.04c1.38-1.97,3.63-3.14,6.03-3.14Z" />
+            </g>
+            <path fill="url(#android-3d-rg-1)" d="M84.74,27.43C41.12,27.46,4.56,60.4,0,103.78h169.53c-4.56-43.4-41.16-76.35-84.79-76.35h0Z" />
+            <path fill="url(#android-3d-lg-5)" d="M122.78,64.28c-4.49,0-7.42,3.96-6.55,8.85s5.23,8.85,9.72,8.85,7.42-3.96,6.55-8.85-5.23-8.85-9.72-8.85Z" />
+            <g clipPath="url(#android-3d-cp-1)">
+              <g filter="url(#android-3d-f-1)">
+                <path fill="url(#android-3d-lg-6)" d="M13.49,65.94h24.97c8.02-9.14,21.38-10.58,40.54-10.58,31.22,0,41.36-4.59,50.11,10.58h26.33c-5.62-20.96-38.97-36.26-70.72-36.26-34.03.5-66.34,17.96-71.24,36.26Z" />
+              </g>
+            </g>
+            <path fill="url(#android-3d-rg-2)" d="M47.45,64.28c4.49,0,7.3,3.96,6.27,8.85s-5.5,8.85-9.99,8.85-7.3-3.96-6.27-8.85,5.5-8.85,9.99-8.85Z" />
+            <g clipPath="url(#android-3d-cp-2)">
+              <g filter="url(#android-3d-f-2)">
+                <path fill="#a7d5aa" d="M33.77,54.17h17.84c5.73-6.53,18.83-6.31,30.26-6.31,18.64,0,28.24-4.52,34.5,6.31h18.81c-4.01-14.98-27.86-24.5-50.34-24.5-24.1.36-47.58,11.42-51.09,24.5Z" />
+              </g>
+            </g>
+            <path fill="url(#android-3d-lg-7)" d="M122.78,64.28c-4.49,0-7.42,3.96-6.55,8.85s5.23,8.85,9.72,8.85,7.42-3.96,6.55-8.85-5.23-8.85-9.72-8.85Z" />
+            <path fill="#afb4ad" d="M125.83,66.6s-.1,0-.15.01c-.17.04-.32.14-.42.28-.2.3-.12.72.18.92,1.11.74,1.75,1.52,2.27,2.25.21.3.63.36.93.15.29-.21.36-.62.16-.92-.56-.78-1.34-1.73-2.61-2.58-.1-.07-.23-.11-.35-.11h0ZM43.71,66.79c-.13,0-.25.04-.35.11-1.27.85-2.05,1.8-2.61,2.58-.22.3-.15.71.15.93.3.22.71.15.93-.15.52-.73,1.17-1.51,2.28-2.25.3-.2.39-.62.18-.92-.1-.15-.25-.25-.42-.28h0s-.1-.01-.15-.01h0ZM50.01,75.65c.12-.12-.35.07-.47.2-.57.56-1.13.91-1.75,1.28-.31.19-.42.59-.23.91.19.32.6.42.91.23.63-.37,1.32-.79,2.01-1.48.26-.26.26-.68,0-.94-.12-.13-.59-.07-.47-.2h0ZM119.71,75.62c-.18,0-.35.07-.47.2-.26.26-.26.68,0,.94.69.69,1.39,1.1,2.02,1.48.32.19.72.08.91-.23.19-.32.08-.72-.23-.91-.63-.37-1.18-.71-1.75-1.28-.12-.13-.29-.2-.47-.2h0Z" />
+          </g>
+        </g>
+      </g>
+    </svg>
+  ),
   Apple: (props: React.ComponentProps<'svg'>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" {...props}>
       <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-54.5-124.3-51.7-147.2zM221.3 73.8c16.1-21.5 34.4-45 30.4-68.7-34.3 2.5-62.8 22.7-79.5 48-26.7 38.8-18.6 74.9-18.6 74.9 33 .3 49.3-32.9 67.7-54.2z" />
@@ -441,6 +546,17 @@ export const Icons = {
       <path fill="url(#aU)" d="m103 59 1 1 2 1 1-1-1-1h-3z" filter="url(#aV)" opacity=".8" />
       <path fill="url(#aW)" d="M129 69a2 3 17 0 1-3 3 2 3 17 0 1-2-3 2 3 17 0 1 2 3z" clipPath="url(#aX)" filter="url(#aY)" />
     </svg>
+  ),
+
+  // OS Icons
+  Gauge: (props: React.ComponentProps<'svg'>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m12 14 4-4" /><path d="M3.34 19a10 10 0 1 1 17.32 0" /></svg>
+  ),
+  Server: (props: React.ComponentProps<'svg'>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="20" height="8" x="2" y="2" rx="2" ry="2" /><rect width="20" height="8" x="2" y="14" rx="2" ry="2" /><line x1="6" y1="6" x2="6.01" y2="6" /><line x1="6" y1="18" x2="6.01" y2="18" /></svg>
+  ),
+  Globe: (props: React.ComponentProps<'svg'>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" /></svg>
   ),
 
   // Document Icons

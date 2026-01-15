@@ -56,6 +56,7 @@ export const Header = () => {
                     <div className="flex items-center gap-2 md:gap-3">
                         <Icons.Windows className={`w-5 h-5 ${LOGO_COLORS.windows.color} ${LOGO_COLORS.windows.glow}`} />
                         <Icons.Apple className={`w-5 h-5 transition-colors duration-300 ${isDark ? `${LOGO_COLORS.apple.dark} ${LOGO_COLORS.apple.glowDark}` : `${LOGO_COLORS.apple.light} ${LOGO_COLORS.apple.glowLight}`}`} />
+                        <Icons.Android className={`h-4 w-auto ${LOGO_COLORS.android.glow}`} />
                         <Icons.Linux className={`w-5 h-5 ${LOGO_COLORS.linux.color} ${LOGO_COLORS.linux.glow}`} />
                     </div>
                     <span className="font-mono text-base md:text-lg font-bold tracking-tight text-[var(--text-primary)] flex items-center">

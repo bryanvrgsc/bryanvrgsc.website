@@ -7,11 +7,11 @@ export const UI_TEXT: Record<'en' | 'es', UIText> = {
             collaboration: "Collaboration",
             future: "Future"
         },
-        heroTitle: "Future Architects.",
-        heroSubtitle: "Engineering the next generation of digital experiences.",
-        heroTags: "iOS • Web • Intelligence",
-        startProject: "Start Project",
-        exploreWork: "Explore Work",
+        heroTitle: "Arquitectos del Futuro.",
+        heroSubtitle: "Ingeniería de vanguardia para la próxima generación de productos digitales.",
+        heroTags: "iOS • Web • Inteligencia Artificial",
+        startProject: "Iniciar Proyecto",
+        exploreWork: "Ver Portafolio",
         stats: {
             latency: "Latency",
             uptime: "Uptime",
@@ -101,8 +101,8 @@ export const UI_TEXT: Record<'en' | 'es', UIText> = {
             future: "Futuro"
         },
         heroTitle: "Arquitectos del Futuro.",
-        heroSubtitle: "Ingeniería para la próxima generación de experiencias digitales.",
-        heroTags: "iOS • Web • Inteligencia",
+        heroSubtitle: "Ingeniería de vanguardia para la próxima generación de productos digitales.",
+        heroTags: "iOS • Web • Inteligencia Artificial",
         startProject: "Iniciar Proyecto",
         exploreWork: "Ver Portafolio",
         stats: {

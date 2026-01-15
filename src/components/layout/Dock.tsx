@@ -41,13 +41,13 @@ const DockItem = React.memo(({
         data-id={item.id}
         href={`#${item.href}`}
         onClick={(e) => { e.preventDefault(); onNavigate(item.href); }}
-        className={`dock-item group relative flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-full transition-all duration-300 ease-[cubic-bezier(0.25,1,0.3,1)]
+        className={`dock-item group relative flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-full transition-all duration-500 ease-[cubic-bezier(0.25,1,0.3,1)]
             ${isActive
                 ? 'text-[var(--text-primary)]'
-                : 'text-[var(--dock-text)] hover:text-[var(--text-primary)] hover:scale-105'}`}
+                : 'text-[#8E8E93] hover:text-[var(--text-primary)] hover:scale-105'}`}
     >
-        <item.Icon className={`w-5 h-5 md:w-6 md:h-6 transition-all duration-300 relative z-10 ${isActive ? 'stroke-[2px]' : 'stroke-[1.5px]'}`} />
-        <span className={`text-[9px] md:text-[10px] font-semibold tracking-wide transition-all duration-300 relative z-10 ${isActive ? 'opacity-100' : 'opacity-70'}`}>
+        <item.Icon className={`w-5 h-5 md:w-6 md:h-6 transition-all duration-500 relative z-10 ${isActive ? 'stroke-[2px]' : 'stroke-[1.5px]'}`} />
+        <span className={`text-[10px] md:text-[11px] font-medium tracking-tight transition-all duration-500 relative z-10 ${isActive ? 'opacity-100' : 'opacity-60'}`}>
             {item.label}
         </span>
     </a>
@@ -288,23 +288,21 @@ export const Dock = React.memo(({ path }: { path: string }) => {
                                 filter: 'url(#goo-filter)',
                             }}
                         >
-                            {/* Glass Background */}
+                            {/* Glass Background - Soft blue capsule with light gradient */}
                             <div
                                 className="absolute inset-0 rounded-[inherit]"
                                 style={{
-                                    backgroundColor: DYNAMIC_COLORS.raw.light.primary,
-                                    opacity: 0.15,
-                                    backdropFilter: 'blur(12px) saturate(180%)',
-                                    WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-                                    boxShadow: `inset 0 0 0 1px ${DYNAMIC_COLORS.raw.light.primary}4D, 0 4px 12px -4px ${DYNAMIC_COLORS.raw.light.primary}66`,
+                                    background: `linear-gradient(135deg, ${DYNAMIC_COLORS.raw.light.primary}1A 0%, ${DYNAMIC_COLORS.raw.light.primary}0D 100%)`,
+                                    backdropFilter: 'blur(8px)',
+                                    WebkitBackdropFilter: 'blur(8px)',
+                                    boxShadow: `inset 0 0 0 1px ${DYNAMIC_COLORS.raw.light.primary}33, 0 4px 15px -5px ${DYNAMIC_COLORS.raw.light.primary}4D`,
                                 }}
                             />
-                            {/* Glass Shine Effect */}
+                            {/* Inner soft glow */}
                             <div
                                 className="absolute inset-0 rounded-[inherit] pointer-events-none"
                                 style={{
-                                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.08) 20%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.08) 80%, rgba(255, 255, 255, 0.2) 100%)',
-                                    opacity: 0.5,
+                                    background: `radial-gradient(circle at 50% 0%, ${DYNAMIC_COLORS.raw.light.primary}1A 0%, transparent 70%)`,
                                 }}
                             />
                         </div>
@@ -320,22 +318,17 @@ export const Dock = React.memo(({ path }: { path: string }) => {
                         ))}
                     </div>
 
-                    <div className="w-[1px] h-6 bg-[var(--card-border)] mx-1 md:mx-2 opacity-50"></div>
-
                     <LiquidButton
                         type="button"
-                        className={`rounded-full px-5 py-3 md:px-7 md:py-3.5 text-xs md:text-sm font-semibold transition-all duration-500
+                        primary={activeId === 'contact'}
+                        className={`rounded-full px-6 py-2.5 md:px-8 md:py-3 text-xs md:text-sm font-bold transition-all duration-500 shadow-lg shadow-black/5 active:shadow-sm
                             ${activeId === 'contact'
-                                ? `${DOCK_COLORS.hoverScale}`
+                                ? 'scale-105'
                                 : 'hover:scale-105 opacity-90 hover:opacity-100'}`}
                         style={{
-                            '--card-bg': activeId === 'contact' ? DOCK_COLORS.activeBg : DOCK_COLORS.inactiveBg,
-                            '--card-hover-bg': activeId === 'contact' ? `${DYNAMIC_COLORS.raw.light.primary}1A` : 'var(--dock-item-bg)',
-                            '--card-border': activeId === 'contact' ? `${DYNAMIC_COLORS.raw.light.primary}4D` : DOCK_COLORS.inactiveBorder,
-                            '--text-primary': activeId === 'contact' ? 'var(--button-text)' : 'var(--text-primary)',
-                            '--glass-glow': `${DYNAMIC_COLORS.raw.light.primary}66`,
-                            color: activeId === 'contact' ? SEMANTIC_COLORS.light.successText : undefined,
-                            boxShadow: activeId === 'contact' ? `0 0 20px ${DYNAMIC_COLORS.raw.light.primary}66` : undefined
+                            backgroundColor: activeId === 'contact' ? DYNAMIC_COLORS.raw.light.primary : 'rgba(255, 255, 255, 0.95)',
+                            color: activeId === 'contact' ? '#fff' : 'var(--text-primary)',
+                            border: activeId === 'contact' ? 'none' : '1px solid rgba(0,0,0,0.05)',
                         } as React.CSSProperties}
                         onClick={() => navigateTo('/contact')}
                     >

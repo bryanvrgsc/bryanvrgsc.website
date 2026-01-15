@@ -590,6 +590,9 @@ export const LOGO_COLORS = {
         color: 'text-blue-500',
         glow: 'drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]',
     },
+    android: {
+        glow: 'drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]',
+    },
 } as const;
 
 /**
