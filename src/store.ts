@@ -136,7 +136,7 @@ export const checkPerformance = async () => {
   // 3. Immediate signals for low-end devices (no async needed)
   const immediateSignals = detectImmediateLowEndSignals();
   if (immediateSignals.isDefinitelyLowEnd) {
-    console.log(`Performance: Lite Mode enabled (${immediateSignals.reason})`);
+    console.log(`%cPerformance: Lite Mode enabled (${immediateSignals.reason})`, "color: #ff9800; font-weight: bold;");
     cacheAndEnableLiteMode(true, CACHE_KEY, CACHE_VERSION);
     return;
   }
@@ -177,18 +177,23 @@ export const checkPerformance = async () => {
     const isAppleGPU = gpuTier.gpu && gpuTier.gpu.toLowerCase().includes('apple');
     const isModernAppleDevice = isAppleGPU && gpuTier.tier >= 2;
 
+    // Refined Tier 1 logic:
+    // Many laptops with integrated GPUs are Tier 1 but can handle 60fps.
+    // We only enable Lite Mode if Tier 1 AND (FPS is low OR it's a mobile device)
+    const isStrugglingTier1 = gpuTier.tier === 1 && (isTouchDevice || (gpuTier.fps !== undefined && gpuTier.fps < 45));
+
     // Enable Lite Mode if:
     // 1. Device is truly low-end (tier 0 or fps < 30), OR
-    // 2. Device is low tier (0-1), unless it's a modern Apple device
-    const shouldEnableLiteMode = isTrulyLowEnd || (isLowTier && !isModernAppleDevice);
+    // 2. Device is struggling Tier 1, unless it's a modern Apple device
+    const shouldEnableLiteMode = isTrulyLowEnd || (isStrugglingTier1 && !isModernAppleDevice);
 
-    if (shouldEnableLiteMode) {
-      console.log(`Performance: Lite Mode enabled (Tier: ${gpuTier.tier}, Apple: ${isAppleGPU})`);
-      cacheAndEnableLiteMode(true, CACHE_KEY, CACHE_VERSION);
-    } else {
-      console.log('Performance: High Performance Mode enabled');
-      cacheAndEnableLiteMode(false, CACHE_KEY, CACHE_VERSION);
-    }
+    console.group(`Performance Check [Tier ${gpuTier.tier}]`);
+    console.log(`GPU: ${gpuTier.gpu}`);
+    console.log(`FPS: ${gpuTier.fps}`);
+    console.log(`Mode: ${shouldEnableLiteMode ? 'Lite' : 'High Performance'}`);
+    console.groupEnd();
+
+    cacheAndEnableLiteMode(shouldEnableLiteMode, CACHE_KEY, CACHE_VERSION);
 
   } catch (error) {
     console.warn('GPU Detection failed, keeping default mode.', error);
@@ -200,7 +205,12 @@ export const checkPerformance = async () => {
 const detectImmediateLowEndSignals = (): { isDefinitelyLowEnd: boolean; reason: string } => {
   // Check device memory (Chrome/Edge only)
   const deviceMemory = (navigator as any).deviceMemory;
-  if (deviceMemory && deviceMemory <= 2) {
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+  // For mobile, we are more strict (4GB can still feel slow if system uses it all)
+  const memoryThreshold = isMobile ? 4 : 2;
+
+  if (deviceMemory && deviceMemory <= memoryThreshold) {
     return { isDefinitelyLowEnd: true, reason: `Low memory: ${deviceMemory}GB` };
   }
 
