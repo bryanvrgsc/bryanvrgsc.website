@@ -199,16 +199,11 @@ export const Dock = React.memo(({ path }: { path: string }) => {
         if (!isDockHidden) {
             updateIndicator();
 
-            // Multiple re-checks to handle complex animations or lazy-loaded styles
-            const timer1 = setTimeout(updateIndicator, 50);
-            const timer2 = setTimeout(updateIndicator, 150);
-            const timer3 = setTimeout(updateIndicator, 300);
+            // Reduced fallbacks: only one re-check to handle potential layout shifts
+            // during React's render/commit phase or CSS animations.
+            const timer = setTimeout(updateIndicator, 150);
 
-            return () => {
-                clearTimeout(timer1);
-                clearTimeout(timer2);
-                clearTimeout(timer3);
-            };
+            return () => clearTimeout(timer);
         }
     }, [activeId, isDockHidden, updateIndicator]);
 
