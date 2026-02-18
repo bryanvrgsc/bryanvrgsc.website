@@ -102,6 +102,12 @@ export interface UIText {
     resources: {
         title: string;
         subtitle: string;
+        searchPlaceholder: string;
+        allCategories: string;
+        allDocuments: string;
+        papers: string;
+        slides: string;
+        noResults: string;
     };
     contact: {
         title: string;

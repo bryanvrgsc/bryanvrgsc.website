@@ -22,31 +22,40 @@ export const ResourcesView = () => {
     const handleMouseMove = useMousePosition();
     const t = UI_TEXT[lang].resources;
     const [filter, setFilter] = useState<FilterType>('all');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [activeCategory, setActiveCategory] = useState<string>('all');
     const [previewDoc, setPreviewDoc] = useState<Document | null>(null);
     const preloadedDocs = React.useRef<Set<string>>(new Set());
+
+    const categories = ['all', ...Array.from(new Set(DOCUMENTS.map(doc => doc.category[lang])))];
 
     const preloadPDF = async (url: string) => {
         if (preloadedDocs.current.has(url)) return;
         preloadedDocs.current.add(url);
 
         try {
-            // Ensure worker is configured for preload too
             const pdfjsLib = await import('pdfjs-dist');
             const { default: workerUrl } = await import('pdfjs-dist/build/pdf.worker.min.mjs?url');
             pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
 
             const loadingTask = pdfjsLib.getDocument(url);
             await loadingTask.promise;
-            console.log(`Preloaded: ${url}`);
         } catch (err) {
             console.warn(`Failed to preload: ${url}`, err);
             preloadedDocs.current.delete(url);
         }
     };
 
-    const filteredDocs = filter === 'all'
-        ? DOCUMENTS
-        : DOCUMENTS.filter(doc => doc.type === filter);
+    const filteredDocs = DOCUMENTS.filter(doc => {
+        const matchesType = filter === 'all' || doc.type === filter;
+        const matchesCategory = activeCategory === 'all' || doc.category[lang] === activeCategory;
+        const matchesSearch = searchTerm === '' ||
+            doc.title[lang].toLowerCase().includes(searchTerm.toLowerCase()) ||
+            doc.description[lang].toLowerCase().includes(searchTerm.toLowerCase()) ||
+            doc.category[lang].toLowerCase().includes(searchTerm.toLowerCase());
+
+        return matchesType && matchesCategory && matchesSearch;
+    });
 
     const getDocIcon = (type: Document['type']) => {
         return type === 'paper' ? Icons.FileText : Icons.Presentation;
@@ -54,8 +63,8 @@ export const ResourcesView = () => {
 
     const getTypeBadge = (type: Document['type']) => {
         return type === 'paper'
-            ? { label: lang === 'en' ? 'Paper' : 'Artículo', color: DYNAMIC_COLORS.raw.light.primary }
-            : { label: lang === 'en' ? 'Slides' : 'Presentación', color: '#8b5cf6' };
+            ? { label: t.papers, color: DYNAMIC_COLORS.raw.light.primary }
+            : { label: t.slides, color: '#8b5cf6' };
     };
 
     return (
@@ -67,65 +76,86 @@ export const ResourcesView = () => {
                     <p className="text-[var(--text-secondary)] text-base md:text-lg">{t.subtitle}</p>
                 </div>
 
-                {/* Filter Tabs */}
-                <div className="flex justify-center gap-3 mb-8 md:mb-12">
-                    {(['all', 'paper', 'slides'] as FilterType[]).map((filterType) => (
-                        <button
-                            key={filterType}
-                            onClick={() => setFilter(filterType)}
-                            className="px-6 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 capitalize"
-                            style={{
-                                backgroundColor: filter === filterType
-                                    ? DYNAMIC_COLORS.raw.light.primary
-                                    : 'var(--input-bg)',
-                                color: filter === filterType
-                                    ? 'white'
-                                    : 'var(--text-secondary)',
-                                border: `1px solid ${filter === filterType
-                                    ? DYNAMIC_COLORS.raw.light.primary
-                                    : 'var(--card-border)'}`,
-                                transform: filter === filterType ? 'scale(1.05)' : 'scale(1)',
-                                boxShadow: filter === filterType
-                                    ? `0 0 20px ${DYNAMIC_COLORS.raw.light.primary}33`
-                                    : 'none'
-                            }}
-                        >
-                            {filterType === 'all'
-                                ? (lang === 'en' ? 'All Documents' : 'Todos')
-                                : filterType === 'paper'
-                                    ? (lang === 'en' ? 'Papers' : 'Artículos')
-                                    : (lang === 'en' ? 'Slides' : 'Presentaciones')}
-                        </button>
-                    ))}
+                <div className="flex flex-col gap-8 mb-12">
+                    {/* Search Bar */}
+                    <div className="relative max-w-2xl mx-auto w-full group">
+                        <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-[var(--text-secondary)] group-focus-within:text-[var(--primary-color)] transition-colors">
+                            <Icons.Search className="w-5 h-5" />
+                        </div>
+                        <input
+                            type="text"
+                            placeholder={t.searchPlaceholder}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full bg-[var(--input-bg)] border border-[var(--card-border)] text-[var(--text-primary)] rounded-[1.5rem] py-4 pl-14 pr-6 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]/30 focus:border-[var(--primary-color)] transition-all placeholder:text-[var(--text-secondary)]/50 shadow-sm hover:shadow-md"
+                        />
+                        {searchTerm && (
+                            <button
+                                onClick={() => setSearchTerm('')}
+                                className="absolute inset-y-0 right-5 flex items-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                            >
+                                <Icons.X className="w-5 h-5" />
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+                        {/* Type Tabs */}
+                        <div className="flex bg-[var(--input-bg)] p-1.5 rounded-2xl border border-[var(--card-border)] shadow-sm">
+                            {(['all', 'paper', 'slides'] as FilterType[]).map((filterType) => (
+                                <button
+                                    key={filterType}
+                                    onClick={() => setFilter(filterType)}
+                                    className="px-6 py-2 rounded-xl font-semibold text-sm transition-all duration-300"
+                                    style={{
+                                        backgroundColor: filter === filterType ? 'var(--bg-primary)' : 'transparent',
+                                        color: filter === filterType ? 'var(--primary-color)' : 'var(--text-secondary)',
+                                        boxShadow: filter === filterType ? '0 4px 12px rgba(0,0,0,0.1)' : 'none'
+                                    }}
+                                >
+                                    {filterType === 'all' ? t.allDocuments : filterType === 'paper' ? t.papers : t.slides}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Category Selector */}
+                        <div className="flex flex-wrap justify-center gap-2 max-w-3xl">
+                            {categories.map((cat) => (
+                                <button
+                                    key={cat}
+                                    onClick={() => setActiveCategory(cat)}
+                                    className="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 border"
+                                    style={{
+                                        backgroundColor: activeCategory === cat ? `${DYNAMIC_COLORS.raw.light.primary}20` : 'var(--input-bg)',
+                                        color: activeCategory === cat ? DYNAMIC_COLORS.raw.light.primary : 'var(--text-secondary)',
+                                        borderColor: activeCategory === cat ? DYNAMIC_COLORS.raw.light.primary : 'var(--card-border)',
+                                        transform: activeCategory === cat ? 'scale(1.05)' : 'scale(1)'
+                                    }}
+                                >
+                                    {cat === 'all' ? t.allCategories : cat}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Documents Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 min-h-[400px]">
                     {filteredDocs.map((doc) => {
                         const DocIcon = getDocIcon(doc.type);
                         const badge = getTypeBadge(doc.type);
-                        const handleKeyDown = (e: React.KeyboardEvent) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
-                                setPreviewDoc(doc);
-                            }
-                        };
-
+                        // ... rest of the card content (same as before)
                         return (
                             <div
                                 key={doc.id}
                                 onMouseMove={handleMouseMove}
                                 onMouseEnter={() => preloadPDF(doc.path)}
                                 onClick={() => setPreviewDoc(doc)}
-                                onKeyDown={handleKeyDown}
                                 tabIndex={0}
                                 role="button"
-                                aria-label={`${doc.title[lang]} - ${lang === 'en' ? 'View Document' : 'Ver Documento'}`}
                                 className="bento-card rounded-[2rem] md:rounded-[2.5rem] overflow-hidden group p-0 border-0 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)]"
                             >
-                                {/* Background Preview - Image */}
                                 <div className="h-[300px] md:h-[350px] overflow-hidden relative bg-[var(--input-bg)]">
-                                    {/* Document Cover Image */}
                                     <div className="absolute inset-0 z-0">
                                         <img
                                             src={doc.image}
@@ -134,29 +164,7 @@ export const ResourcesView = () => {
                                             loading="lazy"
                                         />
                                     </div>
-
-                                    {/* Gradient overlay */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)] via-[var(--bg-primary)]/80 to-transparent z-10"></div>
-
-                                    {/* Animated cursor pointer overlay */}
-                                    <div className="absolute inset-0 bg-black/30 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 z-20 flex items-center justify-center animate-[fadeOut_3s_ease-in-out_2s_forwards] md:animate-none">
-                                        <div className="relative">
-                                            {/* Pulsing ring */}
-                                            <div className="absolute inset-0 rounded-full bg-white/20 animate-ping"></div>
-                                            {/* Pointer icon */}
-                                            <div className="relative bg-white/90 backdrop-blur-sm rounded-full p-6 shadow-2xl">
-                                                <svg className="w-12 h-12 animate-pulse" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" style={{ color: badge.color }}>
-                                                    <path d="M22 14a8 8 0 0 1-8 8" />
-                                                    <path d="M18 11v-1a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0" />
-                                                    <path d="M14 10V9a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v1" />
-                                                    <path d="M10 9.5V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v10" />
-                                                    <path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Type badge */}
                                     <div className="absolute top-6 right-6 md:top-8 md:right-8 z-20 pointer-events-none">
                                         <span
                                             className="px-3 py-1.5 md:px-4 md:py-2 rounded-full text-[10px] md:text-[11px] font-bold uppercase tracking-widest backdrop-blur-xl shadow-xl border"
@@ -170,8 +178,6 @@ export const ResourcesView = () => {
                                         </span>
                                     </div>
                                 </div>
-
-                                {/* Content overlay */}
                                 <div className="p-6 md:p-8 relative z-20 -mt-16 md:-mt-20 pointer-events-none">
                                     <h3 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] mb-2 drop-shadow-lg tracking-tight line-clamp-2">
                                         {doc.title[lang]}
@@ -183,8 +189,6 @@ export const ResourcesView = () => {
                                     <p className="text-sm text-[var(--text-secondary)] leading-relaxed line-clamp-3 mb-4">
                                         {doc.description[lang]}
                                     </p>
-
-                                    {/* "View Document" button */}
                                     <div className="pointer-events-auto md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
                                         <div
                                             className="text-white px-6 py-3 rounded-xl font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all duration-300"
@@ -204,9 +208,10 @@ export const ResourcesView = () => {
 
                 {/* Empty State */}
                 {filteredDocs.length === 0 && (
-                    <div className="text-center py-16">
+                    <div className="text-center py-16 animate-in fade-in zoom-in duration-300">
+                        <Icons.FileSearch className="w-16 h-16 mx-auto mb-4 text-[var(--text-secondary)] opacity-20" />
                         <p className="text-[var(--text-secondary)] text-lg">
-                            {lang === 'en' ? 'No documents found' : 'No se encontraron documentos'}
+                            {t.noResults}
                         </p>
                     </div>
                 )}

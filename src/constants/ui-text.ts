@@ -63,7 +63,13 @@ export const UI_TEXT: Record<'en' | 'es', UIText> = {
         },
         resources: {
             title: "Resources",
-            subtitle: "Strategic thinking and tech deep dives."
+            subtitle: "Strategic thinking and tech deep dives.",
+            searchPlaceholder: "Search documents...",
+            allCategories: "All Categories",
+            allDocuments: "All Documents",
+            papers: "Papers",
+            slides: "Slides",
+            noResults: "No documents found matching your search."
         },
         contact: {
             title: "Let's talk business.",
@@ -161,7 +167,13 @@ export const UI_TEXT: Record<'en' | 'es', UIText> = {
         },
         resources: {
             title: "Recursos",
-            subtitle: "Pensamiento estratégico y tecnología profunda."
+            subtitle: "Pensamiento estratégico y tecnología profunda.",
+            searchPlaceholder: "Buscar documentos...",
+            allCategories: "Todos los Temas",
+            allDocuments: "Todos los Documentos",
+            papers: "Artículos",
+            slides: "Presentaciones",
+            noResults: "No se encontraron documentos que coincidan con tu búsqueda."
         },
         contact: {
             title: "Hablemos de negocios.",
