@@ -42,30 +42,16 @@ export const HomeView = () => {
     }, []);
 
     useEffect(() => {
-        const observerOptions = {
-            root: null,
-            rootMargin: '-50% 0px -50% 0px', // Center-point detection
-            threshold: 0
-        };
-
-        const observerCallback = (entries: IntersectionObserverEntry[]) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    const index = sectionRefs.current.indexOf(entry.target as HTMLElement);
-                    if (index !== -1) {
-                        setActiveStep(index + 1);
-                    }
+        const handleScroll = () => {
+            const scrollPosition = window.scrollY + window.innerHeight / 2;
+            sectionRefs.current.forEach((section, index) => {
+                if (section && scrollPosition >= section.offsetTop && scrollPosition < section.offsetTop + section.offsetHeight) {
+                    setActiveStep(index + 1);
                 }
             });
         };
-
-        const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-        sectionRefs.current.forEach((section) => {
-            if (section) observer.observe(section);
-        });
-
-        return () => observer.disconnect();
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     const scrollToSection = (index: number) => {

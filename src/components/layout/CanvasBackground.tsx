@@ -277,9 +277,11 @@ export const CanvasBackground = () => {
       configRef.current.h = h;
 
       const area = w * h;
+      const isMobile = w < 768;
 
-      let count = Math.min(Math.floor(area / 4000), 300);
-      count = Math.max(count, 80);
+      // Significantly reduce nodes on mobile to keep TBT low
+      let count = Math.min(Math.floor(area / (isMobile ? 8000 : 4000)), 300);
+      count = Math.max(count, isMobile ? 40 : 80);
 
       nodesRef.current = [];
       packetsRef.current = [];

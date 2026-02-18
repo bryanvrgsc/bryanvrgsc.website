@@ -119,6 +119,20 @@ export default function App() {
 
     const path = currentHash.replace(/^#/, '') || '/';
 
+    const [showAnalytics, setShowAnalytics] = useState(false);
+
+    useEffect(() => {
+        // Defer analytics even further to ensure main thread is free
+        const timer = setTimeout(() => {
+            if ('requestIdleCallback' in window) {
+                (window as any).requestIdleCallback(() => setShowAnalytics(true));
+            } else {
+                setShowAnalytics(true);
+            }
+        }, 3000);
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <div className="min-h-screen text-[var(--text-primary)] font-sans selection:bg-emerald-500/30">
             <CanvasBackground />
@@ -142,8 +156,12 @@ export default function App() {
             <Dock path={path} />
             <ScrollToTop />
             <ShowDockButton />
-            <SpeedInsights />
-            <Analytics />
+            {showAnalytics && (
+                <>
+                    <SpeedInsights />
+                    <Analytics />
+                </>
+            )}
         </div>
     );
 }
