@@ -7,6 +7,8 @@ import { PORTFOLIO } from '../../constants';
 import { PortfolioModal } from '../modals';
 import { DYNAMIC_COLORS } from '../../constants/colors';
 import { useMousePosition } from '../../utils/helpers';
+import { LiquidButton } from '../common/LiquidButton';
+import { navigateTo } from '../../utils/navigation';
 
 /**
  * PortfolioView Component
@@ -93,6 +95,20 @@ export const PortfolioView = () => {
                     })}
                 </div>
             </div>
+
+            {/* CTA Button to Resources */}
+            <div className="flex justify-center -mt-20 mb-32 md:-mt-24 md:mb-40">
+                <LiquidButton
+                    onClick={() => navigateTo('/resources')}
+                    className="px-8 py-4 md:px-12 md:py-6 text-sm md:text-lg rounded-full backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-500 group/btn"
+                >
+                    <span className="flex items-center gap-3 text-[var(--text-primary)]">
+                        {UI_TEXT[lang].nav.resources}
+                        <Icons.ArrowUp className="w-4 h-4 md:w-5 md:h-5 rotate-90 transition-transform group-hover/btn:translate-x-1" />
+                    </span>
+                </LiquidButton>
+            </div>
+
             {selectedProject && (<PortfolioModal project={selectedProject} onClose={() => setSelectedProject(null)} lang={lang} />)}
         </>
     );

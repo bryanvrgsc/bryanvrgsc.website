@@ -8,6 +8,8 @@ import type { Document } from '../../constants/resources';
 import { DYNAMIC_COLORS } from '../../constants/colors';
 import { PDFPreviewModal } from '../common/PDFPreviewModal';
 import { useMousePosition } from '../../utils/helpers';
+import { LiquidButton } from '../common/LiquidButton';
+import { navigateTo } from '../../utils/navigation';
 
 /**
  * ResourcesView Component
@@ -215,6 +217,19 @@ export const ResourcesView = () => {
                         </p>
                     </div>
                 )}
+
+                {/* CTA Button to Contact */}
+                <div className="flex justify-center mt-12 md:mt-20">
+                    <LiquidButton
+                        onClick={() => navigateTo('/contact')}
+                        className="px-8 py-4 md:px-12 md:py-6 text-sm md:text-lg rounded-full backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-500 group/btn"
+                    >
+                        <span className="flex items-center gap-3 text-[var(--text-primary)]">
+                            {UI_TEXT[lang].nav.contact}
+                            <Icons.ArrowUp className="w-4 h-4 md:w-5 md:h-5 rotate-90 transition-transform group-hover/btn:translate-x-1" />
+                        </span>
+                    </LiquidButton>
+                </div>
             </div>
 
             {/* PDF Preview Modal */}
