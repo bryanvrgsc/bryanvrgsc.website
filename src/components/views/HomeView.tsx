@@ -9,9 +9,9 @@ import { UI_TEXT } from '../../constants/ui-text';
 import { navigateTo } from '../../utils/navigation';
 import { DYNAMIC_COLORS } from '../../constants/colors';
 import { useMousePosition } from '../../utils/helpers';
-import missionTeam from '../../assets/img/home/mission_team.webp';
-import futureVision from '../../assets/img/home/future_vision.webp';
-import coreValues from '../../assets/img/home/core_values.webp';
+import missionTeam from '../../assets/img/home/mission_team.avif';
+import futureVision from '../../assets/img/home/future_vision.avif';
+import coreValues from '../../assets/img/home/core_values.avif';
 
 /**
  * HomeView Component

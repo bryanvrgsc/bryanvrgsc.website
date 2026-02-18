@@ -8,95 +8,114 @@ interface Props {
 
 const {
   title,
-  description = 'Ultra-fast, secure landing page built with Astro and Cloudflare Pages',
-  image = '/og-image.jpg',
-  canonicalURL = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname
+  description = "Ultra-fast, secure landing page built with Astro and Cloudflare Pages",
+  image = "/og-image.avif",
+  canonicalURL = Astro.site
+    ? new URL(Astro.url.pathname, Astro.site).href
+    : Astro.url.pathname,
 } = Astro.props;
 
 const imageUrl = Astro.site ? new URL(image, Astro.site).href : image;
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    
+
     <!-- Primary Meta Tags -->
     <title>{title}</title>
     <meta name="title" content={title} />
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={imageUrl} />
-    
+
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content={canonicalURL} />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={imageUrl} />
-    
+
     <!-- Security Headers (configured via HTTP headers in middleware) -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-    
+
     <!-- Mobile Web App -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+
     <!-- Theme Color -->
-    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
-    
+    <meta
+      name="theme-color"
+      content="#000000"
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta
+      name="theme-color"
+      content="#f8fafc"
+      media="(prefers-color-scheme: light)"
+    />
+
     <!-- Color Scheme for DarkReader detection -->
     <meta name="color-scheme" content="light dark" />
-    
+
     <!-- Prevent theme flash: Apply theme before body renders -->
     <script is:inline>
-      (function() {
+      (function () {
         // Theme application function
         function applyTheme() {
           var savedTheme = null;
           try {
-            savedTheme = localStorage.getItem('theme');
-          } catch(e) {}
-          
-          var theme = savedTheme || 'system';
-          var mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-          var isDark = theme === 'dark' || (theme === 'system' && mediaQuery.matches);
-          
+            savedTheme = localStorage.getItem("theme");
+          } catch (e) {}
+
+          var theme = savedTheme || "system";
+          var mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+          var isDark =
+            theme === "dark" || (theme === "system" && mediaQuery.matches);
+
           var root = document.documentElement;
           if (isDark) {
-            root.setAttribute('data-theme', 'dark');
-            root.classList.add('dark');
+            root.setAttribute("data-theme", "dark");
+            root.classList.add("dark");
           } else {
-            root.removeAttribute('data-theme');
-            root.classList.remove('dark');
+            root.removeAttribute("data-theme");
+            root.classList.remove("dark");
           }
-          
+
           return mediaQuery;
         }
-        
+
         // Apply immediately
         var mediaQuery = applyTheme();
-        
+
         // Chrome fix: Re-apply after a microtask to ensure matchMedia is ready
         Promise.resolve().then(applyTheme);
-        
+
         // Also listen for system theme changes (for when theme is 'system')
         // Listen for system theme changes
-        mediaQuery.addEventListener('change', function() {
+        mediaQuery.addEventListener("change", function () {
           var savedTheme = null;
-          try { savedTheme = localStorage.getItem('theme'); } catch(e) {}
-          if (!savedTheme || savedTheme === 'system') {
+          try {
+            savedTheme = localStorage.getItem("theme");
+          } catch (e) {}
+          if (!savedTheme || savedTheme === "system") {
             applyTheme();
           }
         });

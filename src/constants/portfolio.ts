@@ -1,38 +1,38 @@
 // Gymapp
-import gymCover from '../assets/img/portfolio/gymapp/cover.webp';
-import gymS1 from '../assets/img/portfolio/gymapp/screenshot_1.webp';
-import gymS2 from '../assets/img/portfolio/gymapp/screenshot_2.webp';
-import gymS3 from '../assets/img/portfolio/gymapp/screenshot_3.webp';
+import gymCover from '../assets/img/portfolio/gymapp/cover.avif';
+import gymS1 from '../assets/img/portfolio/gymapp/screenshot_1.avif';
+import gymS2 from '../assets/img/portfolio/gymapp/screenshot_2.avif';
+import gymS3 from '../assets/img/portfolio/gymapp/screenshot_3.avif';
 
 // Datawarehouse
-import dataCover from '../assets/img/portfolio/datawarehouse/cover.webp';
-import dataS1 from '../assets/img/portfolio/datawarehouse/screenshot_1.webp';
-import dataS2 from '../assets/img/portfolio/datawarehouse/screenshot_2.webp';
-import dataS3 from '../assets/img/portfolio/datawarehouse/screenshot_3.webp';
+import dataCover from '../assets/img/portfolio/datawarehouse/cover.avif';
+import dataS1 from '../assets/img/portfolio/datawarehouse/screenshot_1.avif';
+import dataS2 from '../assets/img/portfolio/datawarehouse/screenshot_2.avif';
+import dataS3 from '../assets/img/portfolio/datawarehouse/screenshot_3.avif';
 
 // C Animation
-import cAnimCover from '../assets/img/portfolio/c_animation/cover.webp';
-import cAnimS1 from '../assets/img/portfolio/c_animation/screenshot_1.webp';
-import cAnimS2 from '../assets/img/portfolio/c_animation/screenshot_2.webp';
-import cAnimS3 from '../assets/img/portfolio/c_animation/screenshot_3.webp';
+import cAnimCover from '../assets/img/portfolio/c_animation/cover.avif';
+import cAnimS1 from '../assets/img/portfolio/c_animation/screenshot_1.avif';
+import cAnimS2 from '../assets/img/portfolio/c_animation/screenshot_2.avif';
+import cAnimS3 from '../assets/img/portfolio/c_animation/screenshot_3.avif';
 
 // iOS Store
-import iosStoreCover from '../assets/img/portfolio/ios_store/cover.webp';
-import iosStoreS1 from '../assets/img/portfolio/ios_store/screenshot_1.webp';
-import iosStoreS2 from '../assets/img/portfolio/ios_store/screenshot_2.webp';
-import iosStoreS3 from '../assets/img/portfolio/ios_store/screenshot_3.webp';
+import iosStoreCover from '../assets/img/portfolio/ios_store/cover.avif';
+import iosStoreS1 from '../assets/img/portfolio/ios_store/screenshot_1.avif';
+import iosStoreS2 from '../assets/img/portfolio/ios_store/screenshot_2.avif';
+import iosStoreS3 from '../assets/img/portfolio/ios_store/screenshot_3.avif';
 
 // Appointment App
-import appointCover from '../assets/img/portfolio/appointment_app/cover.webp';
-import appointS1 from '../assets/img/portfolio/appointment_app/screenshot_1.webp';
-import appointS2 from '../assets/img/portfolio/appointment_app/screenshot_2.webp';
-import appointS3 from '../assets/img/portfolio/appointment_app/screenshot_3.webp';
+import appointCover from '../assets/img/portfolio/appointment_app/cover.avif';
+import appointS1 from '../assets/img/portfolio/appointment_app/screenshot_1.avif';
+import appointS2 from '../assets/img/portfolio/appointment_app/screenshot_2.avif';
+import appointS3 from '../assets/img/portfolio/appointment_app/screenshot_3.avif';
 
 // Predictive Analysis
-import predictCover from '../assets/img/portfolio/predictive_analysis/cover.webp';
-import predictS1 from '../assets/img/portfolio/predictive_analysis/screenshot_1.webp';
-import predictS2 from '../assets/img/portfolio/predictive_analysis/screenshot_2.webp';
-import predictS3 from '../assets/img/portfolio/predictive_analysis/screenshot_3.webp';
+import predictCover from '../assets/img/portfolio/predictive_analysis/cover.avif';
+import predictS1 from '../assets/img/portfolio/predictive_analysis/screenshot_1.avif';
+import predictS2 from '../assets/img/portfolio/predictive_analysis/screenshot_2.avif';
+import predictS3 from '../assets/img/portfolio/predictive_analysis/screenshot_3.avif';
 
 /**
  * Portfolio Projects Data
