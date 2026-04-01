@@ -1,479 +1,499 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  layoutWithLines,
+  prepareWithSegments,
+  setLocale,
+  type LayoutLine,
+} from '@chenglou/pretext';
 import { useStore } from '@nanostores/react';
-import { settings, performanceMode } from '../../store';
 import { NETWORK_COLORS } from '../../constants/colors';
+import { SERVICES } from '../../constants/services';
+import { UI_TEXT } from '../../constants/ui-text';
+import { performanceMode, settings, type Language, type Theme } from '../../store';
 
-/**
- * SpatialGrid Class
- * 
- * Optimizes neighbor detection from O(n²) to O(n) by partitioning space into cells.
- * Each node only checks neighbors in its cell and adjacent cells.
- */
-// --- CUSTOM CANVAS BACKGROUND (Network Data Traffic) ---
+type ScenePalette = {
+  canvasBg: string;
+  bodyText: string;
+  heroText: string;
+  accent: string;
+  accentSoft: string;
+  frame: string;
+  glow: string;
+};
 
-class NetworkNode {
+type ColumnScene = {
   x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  radius: number;
-  opacity: number;
-  pulseSpeed: number;
-  neighbors: NetworkNode[] = [];
-  index: number;
-
-  constructor(w: number, h: number, index: number) {
-    this.x = Math.random() * w;
-    this.y = Math.random() * h;
-
-    const speed = 0.08;
-    const angle = Math.random() * Math.PI * 2;
-    this.vx = Math.cos(angle) * speed;
-    this.vy = Math.sin(angle) * speed;
-
-    this.radius = 1 + Math.random() * 1.5;
-
-    // sin-wave opacity
-    this.opacity = 0.3;
-    this.pulseSpeed = 0.002 + Math.random() * 0.003;
-
-    this.index = index;
-  }
-
-  update(w: number, h: number, time: number) {
-    this.x += this.vx;
-    this.y += this.vy;
-
-    if (this.x < 0 || this.x > w) this.vx = -this.vx;
-    if (this.y < 0 || this.y > h) this.vy = -this.vy;
-
-    // MUCH smoother than random target opacity
-    this.opacity = 0.35 + Math.sin(time * this.pulseSpeed) * 0.25;
-  }
-}
-
-//
-// ─────────────────────────────────────────────────────
-//   DataPacket
-// ─────────────────────────────────────────────────────
-//
-
-class DataPacket {
-  from: NetworkNode;
-  to: NetworkNode;
-  progress = 0;
+  width: number;
+  lineHeight: number;
+  lines: LayoutLine[];
   speed: number;
+  startOffset: number;
+  amplitude: number;
+  drift: number;
+  opacity: number;
+  accentEvery: number;
+};
 
-  constructor(start: NetworkNode, end: NetworkNode) {
-    this.from = start;
-    this.to = end;
-    this.speed = 0.01 + Math.random() * 0.006;
+type HeroScene = {
+  font: string;
+  lineHeight: number;
+  lines: LayoutLine[];
+  totalHeight: number;
+};
+
+type Scene = {
+  width: number;
+  height: number;
+  font: string;
+  columns: ColumnScene[];
+  hero: HeroScene;
+};
+
+const FONT_STACK = '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", sans-serif';
+const NOISE_SIZE = 128;
+
+const resolveIsDark = (theme: Theme) =>
+  theme === 'dark' ||
+  (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+
+const rotateArray = <T,>(values: T[], offset: number) =>
+  values.map((_, index) => values[(index + offset) % values.length]);
+
+const normalizeLine = (value: string) =>
+  value.replace(/\s*•\s*/g, ' / ').replace(/\s+/g, ' ').trim();
+
+const withAlpha = (color: string, alpha: number) => {
+  const normalizedAlpha = clamp(alpha, 0, 1);
+  const rgbMatch = color.match(/^rgba?\(([^)]+)\)$/i);
+
+  if (rgbMatch) {
+    const channels = rgbMatch[1].split(',').map((channel) => channel.trim());
+    if (channels.length >= 3) {
+      return `rgba(${channels[0]}, ${channels[1]}, ${channels[2]}, ${normalizedAlpha})`;
+    }
   }
 
-  update() {
-    this.progress += this.speed;
-    return this.progress < 1;
+  const hex = color.replace('#', '');
+  if (hex.length === 3 || hex.length === 6) {
+    const safeHex =
+      hex.length === 3
+        ? hex
+            .split('')
+            .map((part) => `${part}${part}`)
+            .join('')
+        : hex;
+
+    const int = Number.parseInt(safeHex, 16);
+    const r = (int >> 16) & 255;
+    const g = (int >> 8) & 255;
+    const b = int & 255;
+    return `rgba(${r}, ${g}, ${b}, ${normalizedAlpha})`;
   }
 
-  // Glow batch (globalAlpha = 0.25)
-  drawGlow(ctx: CanvasRenderingContext2D) {
-    const x = this.from.x + (this.to.x - this.from.x) * this.progress;
-    const y = this.from.y + (this.to.y - this.from.y) * this.progress;
+  return color;
+};
 
-    ctx.beginPath();
-    ctx.arc(x, y, 4, 0, Math.PI * 2);
-    ctx.fill();
-  }
+const getPalette = (isDark: boolean): ScenePalette => {
+  const base = isDark ? NETWORK_COLORS.dark : NETWORK_COLORS.light;
 
-  // Core batch (globalAlpha = 1)
-  drawCore(ctx: CanvasRenderingContext2D) {
-    const x = this.from.x + (this.to.x - this.from.x) * this.progress;
-    const y = this.from.y + (this.to.y - this.from.y) * this.progress;
+  return {
+    canvasBg: base.canvasBg,
+    bodyText: isDark ? 'rgba(226, 232, 240, 1)' : 'rgba(15, 23, 42, 1)',
+    heroText: isDark ? 'rgba(248, 250, 252, 1)' : 'rgba(15, 23, 42, 1)',
+    accent: base.packetColor,
+    accentSoft: isDark ? 'rgba(148, 163, 184, 1)' : 'rgba(71, 85, 105, 1)',
+    frame: base.lineColor,
+    glow: base.packetColor,
+  };
+};
 
-    ctx.beginPath();
-    ctx.arc(x, y, 1.4, 0, Math.PI * 2);
-    ctx.fill();
-  }
-}
+const getTextGroups = (lang: Language) => {
+  const text = UI_TEXT[lang];
+  const services = SERVICES[lang];
 
-//
-// ─────────────────────────────────────────────────────
-//   Spatial Grid (Ultra-Fast)
-// ─────────────────────────────────────────────────────
-//
+  const serviceSummaries = services.map((service) =>
+    normalizeLine(
+      `${service.title} / ${service.description} / ${service.items.join(' / ')} / ${service.valueProp.join(' / ')}`
+    )
+  );
 
-class SpatialGrid {
-  cellSize: number;
-  cols: number;
-  rows: number;
-  grid: NetworkNode[][];
+  return [
+    [
+      normalizeLine(text.heroTitle),
+      normalizeLine(text.heroSubtitle),
+      normalizeLine(text.heroTags),
+      normalizeLine(`${text.services.title} / ${text.services.subtitle}`),
+      normalizeLine(`${text.portfolio.title} / ${text.portfolio.subtitle}`),
+      normalizeLine(`${text.resources.title} / ${text.resources.subtitle}`),
+      normalizeLine(`${text.contact.title} / ${text.contact.subtitle}`),
+    ],
+    serviceSummaries,
+    [
+      normalizeLine(text.mission.content),
+      normalizeLine(text.vision.content),
+      normalizeLine(text.values.content),
+      normalizeLine(
+        `${text.nav.home} / ${text.nav.services} / ${text.nav.work} / ${text.nav.resources} / ${text.nav.contact}`
+      ),
+      ...services.map((service) => normalizeLine(`${service.title} / ${service.valueProp.join(' / ')}`)),
+    ],
+  ];
+};
 
-  constructor(w: number, h: number, cellSize: number) {
-    this.cellSize = cellSize;
-    this.cols = Math.ceil(w / cellSize);
-    this.rows = Math.ceil(h / cellSize);
-    this.grid = new Array(this.cols * this.rows);
-    this.clear();
-  }
+const buildRepeatingLines = (
+  paragraphs: string[],
+  font: string,
+  width: number,
+  lineHeight: number,
+  minLoopHeight: number
+) => {
+  let repetition = 2;
+  let lines: LayoutLine[] = [];
 
-  clear() {
-    for (let i = 0; i < this.grid.length; i++) this.grid[i] = [];
-  }
+  while (repetition <= 12) {
+    const text = Array.from({ length: repetition }, (_, round) =>
+      rotateArray(paragraphs, round).join('\n\n')
+    ).join('\n\n');
 
-  insert(node: NetworkNode) {
-    const col = (node.x / this.cellSize) | 0;
-    const row = (node.y / this.cellSize) | 0;
-    const idx = row * this.cols + col;
-    this.grid[idx].push(node);
-  }
+    const prepared = prepareWithSegments(text, font, { whiteSpace: 'pre-wrap' });
+    const layout = layoutWithLines(prepared, width, lineHeight);
+    lines = layout.lines;
 
-  getNearby(n: NetworkNode): NetworkNode[] {
-    const col = (n.x / this.cellSize) | 0;
-    const row = (n.y / this.cellSize) | 0;
-
-    const res: NetworkNode[] = [];
-
-    for (let dy = -1; dy <= 1; dy++) {
-      for (let dx = -1; dx <= 1; dx++) {
-        const nc = col + dx;
-        const nr = row + dy;
-        if (nc < 0 || nr < 0 || nc >= this.cols || nr >= this.rows) continue;
-
-        const idx = nr * this.cols + nc;
-        const cell = this.grid[idx];
-        if (cell.length) res.push(...cell);
-      }
+    if (layout.height >= minLoopHeight) {
+      return lines;
     }
 
-    return res;
+    repetition += 2;
   }
-}
 
-//
-// ─────────────────────────────────────────────────────
-//   Canvas Component
-// ─────────────────────────────────────────────────────
-//
+  return lines;
+};
+
+const createScene = (
+  canvas: HTMLCanvasElement,
+  ctx: CanvasRenderingContext2D,
+  lang: Language
+): Scene => {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+
+  canvas.width = Math.floor(width * dpr);
+  canvas.height = Math.floor(height * dpr);
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  setLocale(lang);
+
+  const compact = width < 720;
+  const columnCount = compact ? 2 : width < 1200 ? 3 : 4;
+  const columnGap = compact ? 18 : width < 1200 ? 24 : 32;
+  const sidePadding = compact ? 20 : 44;
+  const availableWidth = width - sidePadding * 2 - columnGap * (columnCount - 1);
+  const columnWidth = Math.max(150, availableWidth / columnCount);
+  const fontSize = compact ? 12 : width < 1200 ? 13 : 14;
+  const lineHeight = compact ? 18 : width < 1200 ? 20 : 22;
+  const font = `500 ${fontSize}px ${FONT_STACK}`;
+  const heroFontSize = compact ? 32 : width < 1200 ? 46 : 64;
+  const heroLineHeight = Math.round(heroFontSize * 0.9);
+  const heroFont = `700 ${heroFontSize}px ${FONT_STACK}`;
+  const groups = getTextGroups(lang);
+  const minLoopHeight = height * 1.8;
+
+  const columns = Array.from({ length: columnCount }, (_, index) => {
+    const group = rotateArray(groups[index % groups.length], index);
+    const lines = buildRepeatingLines(group, font, columnWidth, lineHeight, minLoopHeight);
+
+    return {
+      x: sidePadding + index * (columnWidth + columnGap),
+      width: columnWidth,
+      lineHeight,
+      lines,
+      speed: (compact ? 16 : 20) + index * 3,
+      startOffset: (index * 120) % Math.max(lineHeight, lines.length * lineHeight),
+      amplitude: compact ? 6 : 10,
+      drift: index * 0.7,
+      opacity: compact ? 0.16 + index * 0.025 : 0.15 + index * 0.03,
+      accentEvery: 3 + (index % 3),
+    };
+  });
+
+  const heroText = UI_TEXT[lang].heroTags.split('•').map((tag) => tag.trim()).join('\n');
+  const heroLines = layoutWithLines(
+    prepareWithSegments(heroText, heroFont, { whiteSpace: 'pre-wrap' }),
+    Math.min(width * 0.68, compact ? width - 48 : 760),
+    heroLineHeight
+  ).lines;
+
+  return {
+    width,
+    height,
+    font,
+    columns,
+    hero: {
+      font: heroFont,
+      lineHeight: heroLineHeight,
+      lines: heroLines,
+      totalHeight: heroLines.length * heroLineHeight,
+    },
+  };
+};
+
+const drawAmbientGlow = (
+  ctx: CanvasRenderingContext2D,
+  scene: Scene,
+  palette: ScenePalette,
+  time: number
+) => {
+  const firstGlowX = scene.width * 0.2 + Math.sin(time * 0.00012) * 70;
+  const firstGlowY = scene.height * 0.24 + Math.cos(time * 0.00008) * 40;
+  const secondGlowX = scene.width * 0.78 + Math.cos(time * 0.0001) * 60;
+  const secondGlowY = scene.height * 0.72 + Math.sin(time * 0.00014) * 50;
+
+  const firstGlow = ctx.createRadialGradient(firstGlowX, firstGlowY, 0, firstGlowX, firstGlowY, scene.width * 0.38);
+  firstGlow.addColorStop(0, withAlpha(palette.glow, 0.15));
+  firstGlow.addColorStop(1, withAlpha(palette.glow, 0));
+  ctx.fillStyle = firstGlow;
+  ctx.fillRect(0, 0, scene.width, scene.height);
+
+  const secondGlow = ctx.createRadialGradient(secondGlowX, secondGlowY, 0, secondGlowX, secondGlowY, scene.width * 0.34);
+  secondGlow.addColorStop(0, withAlpha(palette.accentSoft, 0.08));
+  secondGlow.addColorStop(1, withAlpha(palette.accentSoft, 0));
+  ctx.fillStyle = secondGlow;
+  ctx.fillRect(0, 0, scene.width, scene.height);
+};
+
+const drawHeroLayer = (
+  ctx: CanvasRenderingContext2D,
+  scene: Scene,
+  palette: ScenePalette,
+  time: number
+) => {
+  const { hero } = scene;
+
+  ctx.save();
+  ctx.translate(scene.width * 0.55, scene.height * 0.5);
+  ctx.rotate(-0.12 + Math.sin(time * 0.00008) * 0.015);
+  ctx.font = hero.font;
+  ctx.textBaseline = 'top';
+
+  for (let index = 0; index < hero.lines.length; index++) {
+    const line = hero.lines[index];
+    const x = -line.width / 2;
+    const y = -hero.totalHeight / 2 + index * hero.lineHeight;
+    const alpha = 0.05 + index * 0.012 + (Math.sin(time * 0.0006 + index) + 1) * 0.012;
+
+    ctx.fillStyle = withAlpha(palette.heroText, alpha);
+    ctx.fillText(line.text, x, y);
+
+    if (index === hero.lines.length - 1) {
+      ctx.strokeStyle = withAlpha(palette.accent, alpha * 1.9);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, y + hero.lineHeight - 6);
+      ctx.lineTo(x + Math.min(line.width, 320), y + hero.lineHeight - 6);
+      ctx.stroke();
+    }
+  }
+
+  ctx.restore();
+};
+
+const drawColumns = (
+  ctx: CanvasRenderingContext2D,
+  scene: Scene,
+  palette: ScenePalette,
+  time: number
+) => {
+  ctx.font = scene.font;
+  ctx.textBaseline = 'top';
+
+  for (let columnIndex = 0; columnIndex < scene.columns.length; columnIndex++) {
+    const column = scene.columns[columnIndex];
+    const cycleHeight = Math.max(column.lineHeight, column.lines.length * column.lineHeight);
+    const scroll = ((time * column.speed) / 1000 + column.startOffset) % cycleHeight;
+
+    ctx.strokeStyle = withAlpha(palette.frame, 0.12);
+    ctx.lineWidth = 1;
+    ctx.strokeRect(column.x - 10, 28, column.width + 20, scene.height - 56);
+
+    for (let lineIndex = 0; lineIndex < column.lines.length; lineIndex++) {
+      const line = column.lines[lineIndex];
+
+      let y = lineIndex * column.lineHeight - scroll;
+      while (y < -column.lineHeight) y += cycleHeight;
+      while (y > scene.height + column.lineHeight) y -= cycleHeight;
+
+      const centerDistance = Math.abs(((y + column.lineHeight / 2) / scene.height) - 0.5) * 2;
+      const edgeFade = clamp(1 - centerDistance * 0.92, 0.06, 1);
+      const shimmer = 0.8 + Math.sin(time * 0.001 + lineIndex * 0.35 + column.drift) * 0.2;
+      const alpha = column.opacity * edgeFade * shimmer;
+      const waveX = Math.sin(time * 0.0007 + lineIndex * 0.22 + column.drift) * column.amplitude;
+      const x = column.x + waveX;
+      const isAccentLine = (lineIndex + columnIndex) % column.accentEvery === 0;
+
+      ctx.fillStyle = isAccentLine
+        ? withAlpha(palette.accent, alpha * 1.8)
+        : withAlpha(palette.bodyText, alpha);
+      ctx.fillText(line.text, x, y);
+
+      if (isAccentLine) {
+        const ruleStart = Math.min(x + line.width + 10, column.x + column.width - 32);
+        const ruleEnd = Math.min(ruleStart + 26 + (lineIndex % 3) * 14, column.x + column.width);
+
+        if (ruleEnd > ruleStart + 4) {
+          ctx.strokeStyle = withAlpha(palette.accentSoft, alpha * 1.2);
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(ruleStart, y + column.lineHeight * 0.6);
+          ctx.lineTo(ruleEnd, y + column.lineHeight * 0.6);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+};
 
 export const CanvasBackground = () => {
-  const { theme } = useStore(settings);
+  const { theme, lang, _systemThemeUpdate } = useStore(settings);
   const { lite } = useStore(performanceMode);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sceneRef = useRef<Scene | null>(null);
+  const paletteRef = useRef<ScenePalette>(getPalette(false));
+  const [noiseDataUrl, setNoiseDataUrl] = useState('');
 
-  const nodesRef = useRef<NetworkNode[]>([]);
-  const packetsRef = useRef<DataPacket[]>([]);
-  const linksRef = useRef<{ a: NetworkNode; b: NetworkNode }[]>([]);
-  const gridRef = useRef<SpatialGrid | null>(null);
-
-  const [noiseDataUrl, setNoiseDataUrl] = useState("");
-
-  const colorsRef = useRef({
-    nodeColor: theme === "dark" ? NETWORK_COLORS.dark.nodeColor : NETWORK_COLORS.light.nodeColor,
-    lineColor: theme === "dark" ? NETWORK_COLORS.dark.lineColor : NETWORK_COLORS.light.lineColor,
-    packetColor: theme === "dark" ? NETWORK_COLORS.dark.packetColor : NETWORK_COLORS.light.packetColor
-  });
-
-  const configRef = useRef({ w: 0, h: 0, isDark: false });
-
-  //
-  // NOISE BACKGROUND
-  //
   useEffect(() => {
-    if (lite) return;
+    paletteRef.current = getPalette(resolveIsDark(theme));
+  }, [theme, _systemThemeUpdate]);
 
-    const c = document.createElement("canvas");
-    c.width = 128;
-    c.height = 128;
-
-    const ctx = c.getContext("2d");
-    if (ctx) {
-      const id = ctx.createImageData(128, 128);
-      const buf = new Uint32Array(id.data.buffer);
-
-      for (let i = 0; i < buf.length; i++) {
-        buf[i] = Math.random() < 0.5 ? 0x08000000 : 0;
-      }
-      ctx.putImageData(id, 0, 0);
-      setNoiseDataUrl(c.toDataURL());
+  useEffect(() => {
+    if (lite) {
+      setNoiseDataUrl('');
+      return;
     }
-  }, []);
 
-  //
-  // THEME CHANGES → COLOR UPDATE
-  //
+    const canvas = document.createElement('canvas');
+    canvas.width = NOISE_SIZE;
+    canvas.height = NOISE_SIZE;
+
+    const context = canvas.getContext('2d');
+    if (!context) return;
+
+    const imageData = context.createImageData(NOISE_SIZE, NOISE_SIZE);
+    const buffer = new Uint32Array(imageData.data.buffer);
+
+    for (let index = 0; index < buffer.length; index++) {
+      buffer[index] = Math.random() < 0.5 ? 0x08000000 : 0;
+    }
+
+    context.putImageData(imageData, 0, 0);
+    setNoiseDataUrl(canvas.toDataURL());
+  }, [lite]);
+
   useEffect(() => {
-    const isDark =
-      theme === "dark" ||
-      (theme === "system" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
+    if (lite) {
+      sceneRef.current = null;
+      return;
+    }
 
-    colorsRef.current = {
-      nodeColor: isDark ? NETWORK_COLORS.dark.nodeColor : NETWORK_COLORS.light.nodeColor,
-      lineColor: isDark ? NETWORK_COLORS.dark.lineColor : NETWORK_COLORS.light.lineColor,
-      packetColor: isDark ? NETWORK_COLORS.dark.packetColor : NETWORK_COLORS.light.packetColor
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const context = canvas.getContext('2d', {
+      alpha: false,
+      desynchronized: true,
+    });
+    if (!context) return;
+
+    let resizeTimer: number | undefined;
+    let disposed = false;
+
+    const rebuild = () => {
+      if (disposed) return;
+      sceneRef.current = createScene(canvas, context, lang);
     };
 
-    configRef.current.isDark = isDark;
-  }, [theme]);
+    rebuild();
 
-  //
-  // LISTEN TO SYSTEM THEME CHANGES (when theme === 'system')
-  //
-  useEffect(() => {
-    if (theme !== 'system') return;
+    if ('fonts' in document) {
+      document.fonts.ready.then(() => {
+        rebuild();
+      });
+    }
 
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-    const handleChange = () => {
-      const isDark = mediaQuery.matches;
-
-      colorsRef.current = {
-        nodeColor: isDark ? NETWORK_COLORS.dark.nodeColor : NETWORK_COLORS.light.nodeColor,
-        lineColor: isDark ? NETWORK_COLORS.dark.lineColor : NETWORK_COLORS.light.lineColor,
-        packetColor: isDark ? NETWORK_COLORS.dark.packetColor : NETWORK_COLORS.light.packetColor
-      };
-
-      configRef.current.isDark = isDark;
+    const handleResize = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(rebuild, 160);
     };
 
-    mediaQuery.addEventListener('change', handleChange);
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      mediaQuery.removeEventListener('change', handleChange);
+      disposed = true;
+      window.clearTimeout(resizeTimer);
+      window.removeEventListener('resize', handleResize);
+      sceneRef.current = null;
     };
-  }, [theme]);
+  }, [lang, lite]);
 
-  //
-  // MAIN EFFECT (Rendering Loop)
-  //
   useEffect(() => {
     if (lite) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d", {
+    const context = canvas.getContext('2d', {
       alpha: false,
-      desynchronized: true
+      desynchronized: true,
     });
-    if (!ctx) return;
+    if (!context) return;
 
-    //
-    // INIT CANVAS + GRID + NODES
-    //
-    const init = () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
-      canvas.style.width = w + "px";
-      canvas.style.height = h + "px";
-      ctx.scale(dpr, dpr);
-
-      configRef.current.w = w;
-      configRef.current.h = h;
-
-      const area = w * h;
-      const isMobile = w < 768;
-
-      // Significantly reduce nodes on mobile to keep TBT low
-      let count = Math.min(Math.floor(area / (isMobile ? 8000 : 4000)), 300);
-      count = Math.max(count, isMobile ? 40 : 80);
-
-      nodesRef.current = [];
-      packetsRef.current = [];
-      linksRef.current = [];
-
-      const maxDist = 120;
-      gridRef.current = new SpatialGrid(w, h, maxDist);
-
-      for (let i = 0; i < count; i++) {
-        nodesRef.current.push(new NetworkNode(w, h, i));
-      }
-    };
-
-    init();
-
+    let animationFrameId = 0;
+    let active = true;
     let lastFrame = 0;
-    let lastTopoUpdate = 0;
+    const frameInterval = 1000 / 45;
 
-    const fpsInterval = 1000 / 60;
-    const topoInterval = 300;
+    const render = (time: number) => {
+      if (!active) return;
 
-    //
-    // DRAW LOOP
-    //
-    const draw = (time: number) => {
-      requestAnimationFrame(draw);
+      animationFrameId = window.requestAnimationFrame(render);
+
+      const scene = sceneRef.current;
+      if (!scene) return;
 
       const elapsed = time - lastFrame;
-      if (elapsed < fpsInterval) return;
+      if (elapsed < frameInterval) return;
+      lastFrame = time - (elapsed % frameInterval);
 
-      lastFrame = time - (elapsed % fpsInterval);
+      const palette = paletteRef.current;
 
-      const { w, h, isDark } = configRef.current;
+      context.fillStyle = palette.canvasBg;
+      context.fillRect(0, 0, scene.width, scene.height);
 
-      //
-      // CLEAR
-      //
-      ctx.fillStyle = isDark ? NETWORK_COLORS.dark.canvasBg : NETWORK_COLORS.light.canvasBg;
-      ctx.fillRect(0, 0, w, h);
-      ctx.globalCompositeOperation = "source-over";
-
-      const nodes = nodesRef.current;
-      const nodeCount = nodes.length;
-
-      //
-      // UPDATE NODES
-      //
-      for (let i = 0; i < nodeCount; i++) {
-        nodes[i].update(w, h, time);
-      }
-
-      //
-      // UPDATE TOPOLOGY (every 300 ms)
-      //
-      const grid = gridRef.current;
-      if (grid && time - lastTopoUpdate > topoInterval) {
-        lastTopoUpdate = time;
-        linksRef.current = [];
-
-        grid.clear();
-
-        for (let i = 0; i < nodeCount; i++) {
-          nodes[i].neighbors = [];
-          grid.insert(nodes[i]);
-        }
-
-        const maxDist = 120;
-        const maxDistSq = maxDist * maxDist;
-        const maxConn = 6;
-
-        const connCount = new Int8Array(nodeCount);
-
-        for (let i = 0; i < nodeCount; i++) {
-          if (connCount[i] >= maxConn) continue;
-
-          const a = nodes[i];
-          const nearby = grid.getNearby(a);
-
-          for (let b of nearby) {
-            if (a === b) continue;
-
-            const j = b.index;
-            if (j <= i) continue;
-            if (connCount[j] >= maxConn) continue;
-
-            const dx = a.x - b.x;
-            const dy = a.y - b.y;
-            const d2 = dx * dx + dy * dy;
-
-            if (d2 < maxDistSq) {
-              linksRef.current.push({ a, b });
-              a.neighbors.push(b);
-              b.neighbors.push(a);
-              connCount[i]++;
-              connCount[j]++;
-              if (connCount[i] >= maxConn) break;
-            }
-          }
-        }
-      }
-
-      //
-      // DRAW LINKS
-      //
-      const links = linksRef.current;
-      ctx.strokeStyle = colorsRef.current.lineColor;
-      ctx.lineWidth = 1;
-
-      ctx.beginPath();
-      for (const l of links) {
-        ctx.moveTo(l.a.x, l.a.y);
-        ctx.lineTo(l.b.x, l.b.y);
-      }
-      ctx.stroke();
-
-      //
-      // DRAW NODES
-      //
-      for (const n of nodes) {
-        ctx.fillStyle = colorsRef.current.nodeColor + n.opacity + ")";
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      //
-      // PACKETS UPDATE
-      //
-      const packets = packetsRef.current;
-
-      for (let i = packets.length - 1; i >= 0; i--) {
-        const p = packets[i];
-        if (!p.update()) {
-          const cur = p.to;
-
-          if (cur.neighbors.length && Math.random() < 0.25) {
-            const next =
-              cur.neighbors[(Math.random() * cur.neighbors.length) | 0];
-            packets.push(new DataPacket(cur, next));
-          }
-          packets.splice(i, 1);
-        }
-      }
-
-      //
-      // SPAWN PACKETS
-      //
-      const maxPackets = Math.min(nodeCount * 0.5, 200);
-      if (packets.length < maxPackets && Math.random() < 0.35) {
-        const n = nodes[(Math.random() * nodeCount) | 0];
-        if (n.neighbors.length) {
-          const t =
-            n.neighbors[(Math.random() * n.neighbors.length) | 0];
-          packets.push(new DataPacket(n, t));
-        }
-      }
-
-      //
-      // DRAW PACKETS (BATCHED)
-      //
-
-      // Glow (globalAlpha = 0.25)
-      ctx.globalAlpha = 0.25;
-      ctx.fillStyle = colorsRef.current.packetColor;
-      for (const p of packets) p.drawGlow(ctx);
-
-      // Core
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = colorsRef.current.packetColor;
-      for (const p of packets) p.drawCore(ctx);
+      drawAmbientGlow(context, scene, palette, time);
+      drawHeroLayer(context, scene, palette, time);
+      drawColumns(context, scene, palette, time);
     };
 
-    requestAnimationFrame(draw);
+    animationFrameId = window.requestAnimationFrame(render);
 
-    const resize = () => {
-      setTimeout(init, 200);
+    return () => {
+      active = false;
+      window.cancelAnimationFrame(animationFrameId);
     };
-
-    window.addEventListener("resize", resize);
-    return () => window.removeEventListener("resize", resize);
   }, [lite]);
 
-  //
-  // LITE MODE - Optimized: Pure CSS, no React logic
-  //
   if (lite) {
     return (
       <div
         className="fixed inset-0 pointer-events-none lite-background"
         style={{
           background: 'linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%)',
-          willChange: 'auto'
+          willChange: 'auto',
         }}
       />
     );
@@ -483,13 +503,15 @@ export const CanvasBackground = () => {
     <>
       <canvas
         ref={canvasRef}
-        className="fixed top-0 left-0 w-full h-full pointer-events-none opacity-60 dark:opacity-100"
+        className="fixed top-0 left-0 w-full h-full pointer-events-none opacity-85 dark:opacity-100"
+        aria-hidden="true"
       />
 
       {noiseDataUrl && (
         <div
           className="fixed top-0 left-0 w-full h-full pointer-events-none bg-noise"
           style={{ backgroundImage: `url(${noiseDataUrl})` }}
+          aria-hidden="true"
         />
       )}
     </>
