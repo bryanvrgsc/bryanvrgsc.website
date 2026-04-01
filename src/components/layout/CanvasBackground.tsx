@@ -5,7 +5,7 @@ import { NETWORK_COLORS } from '../../constants/colors';
 
 /**
  * SpatialGrid Class
- *
+ * 
  * Optimizes neighbor detection from O(n²) to O(n) by partitioning space into cells.
  * Each node only checks neighbors in its cell and adjacent cells.
  */
