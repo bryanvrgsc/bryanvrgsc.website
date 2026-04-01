@@ -34,3 +34,7 @@ wrangler.toml.local
 *.njsproj
 *.sln
 *.sw?
+.grepai/
+
+# Superpowers brainstorm sessions
+.superpowers/
