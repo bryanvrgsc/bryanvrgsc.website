@@ -25,13 +25,12 @@ class NetworkNode {
   constructor(w: number, h: number, index: number) {
     this.x = Math.random() * w;
     this.y = Math.random() * h;
+    this.radius = 1 + Math.random() * 1.5;
 
-    const speed = 0.08;
+    const speed = 4 + Math.random() * 2.5;
     const angle = Math.random() * Math.PI * 2;
     this.vx = Math.cos(angle) * speed;
     this.vy = Math.sin(angle) * speed;
-
-    this.radius = 1 + Math.random() * 1.5;
 
     // sin-wave opacity
     this.opacity = 0.3;
@@ -40,12 +39,25 @@ class NetworkNode {
     this.index = index;
   }
 
-  update(w: number, h: number, time: number) {
-    this.x += this.vx;
-    this.y += this.vy;
+  update(w: number, h: number, time: number, deltaSeconds: number) {
+    this.x += this.vx * deltaSeconds;
+    this.y += this.vy * deltaSeconds;
 
-    if (this.x < 0 || this.x > w) this.vx = -this.vx;
-    if (this.y < 0 || this.y > h) this.vy = -this.vy;
+    if (this.x < this.radius) {
+      this.x = this.radius;
+      this.vx = Math.abs(this.vx);
+    } else if (this.x > w - this.radius) {
+      this.x = w - this.radius;
+      this.vx = -Math.abs(this.vx);
+    }
+
+    if (this.y < this.radius) {
+      this.y = this.radius;
+      this.vy = Math.abs(this.vy);
+    } else if (this.y > h - this.radius) {
+      this.y = h - this.radius;
+      this.vy = -Math.abs(this.vy);
+    }
 
     // MUCH smoother than random target opacity
     this.opacity = 0.35 + Math.sin(time * this.pulseSpeed) * 0.25;
@@ -67,15 +79,15 @@ class DataPacket {
   constructor(start: NetworkNode, end: NetworkNode) {
     this.from = start;
     this.to = end;
-    this.speed = 0.01 + Math.random() * 0.006;
+    this.speed = 0.6 + Math.random() * 0.36;
   }
 
-  update() {
-    this.progress += this.speed;
+  update(deltaSeconds: number) {
+    this.progress += this.speed * deltaSeconds;
     return this.progress < 1;
   }
 
-  // Glow batch (globalAlpha = 0.25)
+  // Glow batch
   drawGlow(ctx: CanvasRenderingContext2D) {
     const x = this.from.x + (this.to.x - this.from.x) * this.progress;
     const y = this.from.y + (this.to.y - this.from.y) * this.progress;
@@ -85,7 +97,7 @@ class DataPacket {
     ctx.fill();
   }
 
-  // Core batch (globalAlpha = 1)
+  // Core batch
   drawCore(ctx: CanvasRenderingContext2D) {
     const x = this.from.x + (this.to.x - this.from.x) * this.progress;
     const y = this.from.y + (this.to.y - this.from.y) * this.progress;
@@ -117,7 +129,13 @@ class SpatialGrid {
   }
 
   clear() {
-    for (let i = 0; i < this.grid.length; i++) this.grid[i] = [];
+    for (let i = 0; i < this.grid.length; i++) {
+      if (this.grid[i]) {
+        this.grid[i].length = 0;
+      } else {
+        this.grid[i] = [];
+      }
+    }
   }
 
   insert(node: NetworkNode) {
@@ -127,11 +145,10 @@ class SpatialGrid {
     this.grid[idx].push(node);
   }
 
-  getNearby(n: NetworkNode): NetworkNode[] {
+  getNearby(n: NetworkNode, out: NetworkNode[]): NetworkNode[] {
     const col = (n.x / this.cellSize) | 0;
     const row = (n.y / this.cellSize) | 0;
-
-    const res: NetworkNode[] = [];
+    out.length = 0;
 
     for (let dy = -1; dy <= 1; dy++) {
       for (let dx = -1; dx <= 1; dx++) {
@@ -141,11 +158,15 @@ class SpatialGrid {
 
         const idx = nr * this.cols + nc;
         const cell = this.grid[idx];
-        if (cell.length) res.push(...cell);
+        if (!cell.length) continue;
+
+        for (let i = 0; i < cell.length; i++) {
+          out.push(cell[i]);
+        }
       }
     }
 
-    return res;
+    return out;
   }
 }
 
@@ -165,13 +186,18 @@ export const CanvasBackground = () => {
   const packetsRef = useRef<DataPacket[]>([]);
   const linksRef = useRef<{ a: NetworkNode; b: NetworkNode }[]>([]);
   const gridRef = useRef<SpatialGrid | null>(null);
+  const nearbyBufferRef = useRef<NetworkNode[]>([]);
+  const connectionCountsRef = useRef<Uint8Array | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+  const resizeTimeoutRef = useRef<number | null>(null);
 
   const [noiseDataUrl, setNoiseDataUrl] = useState("");
 
   const colorsRef = useRef({
     nodeColor: theme === "dark" ? NETWORK_COLORS.dark.nodeColor : NETWORK_COLORS.light.nodeColor,
     lineColor: theme === "dark" ? NETWORK_COLORS.dark.lineColor : NETWORK_COLORS.light.lineColor,
-    packetColor: theme === "dark" ? NETWORK_COLORS.dark.packetColor : NETWORK_COLORS.light.packetColor
+    packetColor: theme === "dark" ? NETWORK_COLORS.dark.packetColor : NETWORK_COLORS.light.packetColor,
+    packetGlow: theme === "dark" ? NETWORK_COLORS.dark.packetGlow : NETWORK_COLORS.light.packetGlow
   });
 
   const configRef = useRef({ w: 0, h: 0, isDark: false });
@@ -211,7 +237,8 @@ export const CanvasBackground = () => {
     colorsRef.current = {
       nodeColor: isDark ? NETWORK_COLORS.dark.nodeColor : NETWORK_COLORS.light.nodeColor,
       lineColor: isDark ? NETWORK_COLORS.dark.lineColor : NETWORK_COLORS.light.lineColor,
-      packetColor: isDark ? NETWORK_COLORS.dark.packetColor : NETWORK_COLORS.light.packetColor
+      packetColor: isDark ? NETWORK_COLORS.dark.packetColor : NETWORK_COLORS.light.packetColor,
+      packetGlow: isDark ? NETWORK_COLORS.dark.packetGlow : NETWORK_COLORS.light.packetGlow
     };
 
     configRef.current.isDark = isDark;
@@ -231,7 +258,8 @@ export const CanvasBackground = () => {
       colorsRef.current = {
         nodeColor: isDark ? NETWORK_COLORS.dark.nodeColor : NETWORK_COLORS.light.nodeColor,
         lineColor: isDark ? NETWORK_COLORS.dark.lineColor : NETWORK_COLORS.light.lineColor,
-        packetColor: isDark ? NETWORK_COLORS.dark.packetColor : NETWORK_COLORS.light.packetColor
+        packetColor: isDark ? NETWORK_COLORS.dark.packetColor : NETWORK_COLORS.light.packetColor,
+        packetGlow: isDark ? NETWORK_COLORS.dark.packetGlow : NETWORK_COLORS.light.packetGlow
       };
 
       configRef.current.isDark = isDark;
@@ -259,35 +287,42 @@ export const CanvasBackground = () => {
     });
     if (!ctx) return;
 
+    let maxDist = 120;
+
     //
     // INIT CANVAS + GRID + NODES
     //
     const init = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      const isMobile = w < 768;
+      const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.2 : 1.5);
 
       canvas.width = w * dpr;
       canvas.height = h * dpr;
       canvas.style.width = w + "px";
       canvas.style.height = h + "px";
-      ctx.scale(dpr, dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.imageSmoothingEnabled = true;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
 
       configRef.current.w = w;
       configRef.current.h = h;
 
       const area = w * h;
-      const isMobile = w < 768;
 
-      // Significantly reduce nodes on mobile to keep TBT low
-      let count = Math.min(Math.floor(area / (isMobile ? 8000 : 4000)), 300);
-      count = Math.max(count, isMobile ? 40 : 80);
+      // Slightly lower density keeps animation smoother on mid-tier devices.
+      let count = Math.min(Math.floor(area / (isMobile ? 9500 : 5200)), isMobile ? 110 : 260);
+      count = Math.max(count, isMobile ? 32 : 60);
 
       nodesRef.current = [];
       packetsRef.current = [];
       linksRef.current = [];
+      nearbyBufferRef.current.length = 0;
+      connectionCountsRef.current = new Uint8Array(count);
 
-      const maxDist = 120;
+      maxDist = isMobile ? 110 : 120;
       gridRef.current = new SpatialGrid(w, h, maxDist);
 
       for (let i = 0; i < count; i++) {
@@ -307,11 +342,17 @@ export const CanvasBackground = () => {
     // DRAW LOOP
     //
     const draw = (time: number) => {
-      requestAnimationFrame(draw);
+      animationFrameRef.current = requestAnimationFrame(draw);
+
+      if (!lastFrame) {
+        lastFrame = time;
+      }
 
       const elapsed = time - lastFrame;
       if (elapsed < fpsInterval) return;
 
+      const deltaMs = Math.min(elapsed, 32);
+      const deltaSeconds = deltaMs / 1000;
       lastFrame = time - (elapsed % fpsInterval);
 
       const { w, h, isDark } = configRef.current;
@@ -330,42 +371,44 @@ export const CanvasBackground = () => {
       // UPDATE NODES
       //
       for (let i = 0; i < nodeCount; i++) {
-        nodes[i].update(w, h, time);
+        nodes[i].update(w, h, time, deltaSeconds);
       }
 
       //
       // UPDATE TOPOLOGY (every 300 ms)
       //
       const grid = gridRef.current;
-      if (grid && time - lastTopoUpdate > topoInterval) {
+      const connectionCounts = connectionCountsRef.current;
+      const nearbyBuffer = nearbyBufferRef.current;
+
+      if (grid && connectionCounts && time - lastTopoUpdate > topoInterval) {
         lastTopoUpdate = time;
-        linksRef.current = [];
+        linksRef.current.length = 0;
 
         grid.clear();
+        connectionCounts.fill(0);
 
         for (let i = 0; i < nodeCount; i++) {
-          nodes[i].neighbors = [];
+          nodes[i].neighbors.length = 0;
           grid.insert(nodes[i]);
         }
 
-        const maxDist = 120;
         const maxDistSq = maxDist * maxDist;
         const maxConn = 6;
 
-        const connCount = new Int8Array(nodeCount);
-
         for (let i = 0; i < nodeCount; i++) {
-          if (connCount[i] >= maxConn) continue;
+          if (connectionCounts[i] >= maxConn) continue;
 
           const a = nodes[i];
-          const nearby = grid.getNearby(a);
+          const nearby = grid.getNearby(a, nearbyBuffer);
 
-          for (let b of nearby) {
+          for (let k = 0; k < nearby.length; k++) {
+            const b = nearby[k];
             if (a === b) continue;
 
             const j = b.index;
             if (j <= i) continue;
-            if (connCount[j] >= maxConn) continue;
+            if (connectionCounts[j] >= maxConn) continue;
 
             const dx = a.x - b.x;
             const dy = a.y - b.y;
@@ -375,9 +418,9 @@ export const CanvasBackground = () => {
               linksRef.current.push({ a, b });
               a.neighbors.push(b);
               b.neighbors.push(a);
-              connCount[i]++;
-              connCount[j]++;
-              if (connCount[i] >= maxConn) break;
+              connectionCounts[i]++;
+              connectionCounts[j]++;
+              if (connectionCounts[i] >= maxConn) break;
             }
           }
         }
@@ -400,12 +443,14 @@ export const CanvasBackground = () => {
       //
       // DRAW NODES
       //
+      ctx.fillStyle = colorsRef.current.nodeColor;
       for (const n of nodes) {
-        ctx.fillStyle = colorsRef.current.nodeColor + n.opacity + ")";
+        ctx.globalAlpha = n.opacity;
         ctx.beginPath();
         ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
         ctx.fill();
       }
+      ctx.globalAlpha = 1;
 
       //
       // PACKETS UPDATE
@@ -414,7 +459,7 @@ export const CanvasBackground = () => {
 
       for (let i = packets.length - 1; i >= 0; i--) {
         const p = packets[i];
-        if (!p.update()) {
+        if (!p.update(deltaSeconds)) {
           const cur = p.to;
 
           if (cur.neighbors.length && Math.random() < 0.25) {
@@ -430,7 +475,8 @@ export const CanvasBackground = () => {
       // SPAWN PACKETS
       //
       const maxPackets = Math.min(nodeCount * 0.5, 200);
-      if (packets.length < maxPackets && Math.random() < 0.35) {
+      const spawnChance = Math.min(0.35 * (deltaMs / fpsInterval), 0.75);
+      if (packets.length < maxPackets && Math.random() < spawnChance) {
         const n = nodes[(Math.random() * nodeCount) | 0];
         if (n.neighbors.length) {
           const t =
@@ -443,25 +489,49 @@ export const CanvasBackground = () => {
       // DRAW PACKETS (BATCHED)
       //
 
-      // Glow (globalAlpha = 0.25)
-      ctx.globalAlpha = 0.25;
-      ctx.fillStyle = colorsRef.current.packetColor;
+      ctx.fillStyle = colorsRef.current.packetGlow;
       for (const p of packets) p.drawGlow(ctx);
 
       // Core
-      ctx.globalAlpha = 1;
       ctx.fillStyle = colorsRef.current.packetColor;
       for (const p of packets) p.drawCore(ctx);
     };
 
-    requestAnimationFrame(draw);
+    animationFrameRef.current = requestAnimationFrame(draw);
 
     const resize = () => {
-      setTimeout(init, 200);
+      if (resizeTimeoutRef.current !== null) {
+        window.clearTimeout(resizeTimeoutRef.current);
+      }
+
+      resizeTimeoutRef.current = window.setTimeout(() => {
+        init();
+        lastFrame = performance.now();
+        lastTopoUpdate = 0;
+      }, 150);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        lastFrame = performance.now();
+      }
     };
 
     window.addEventListener("resize", resize);
-    return () => window.removeEventListener("resize", resize);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+
+      if (resizeTimeoutRef.current !== null) {
+        window.clearTimeout(resizeTimeoutRef.current);
+      }
+    };
   }, [lite]);
 
   //
