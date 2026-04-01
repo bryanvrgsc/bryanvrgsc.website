@@ -86,32 +86,15 @@ const { title, description, lang, image, type } = Astro.props;
         function applyTheme() {
           var savedTheme = null;
           try {
-            return localStorage.getItem("theme");
-          } catch (e) {
-            return null;
-          }
-        }
-
-        function syncRootClasses(root) {
-          // Preserve runtime-only root classes during Astro swaps.
-          if (document.documentElement.classList.contains("lite-mode")) {
-            root.classList.add("lite-mode");
-          } else {
-            root.classList.remove("lite-mode");
-          }
-        }
-
-        // Theme application function
-        function applyTheme(targetDocument) {
-          var savedTheme = getSavedTheme();
+            savedTheme = localStorage.getItem("theme");
+          } catch (e) {}
 
           var theme = savedTheme || "system";
           var mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
           var isDark =
             theme === "dark" || (theme === "system" && mediaQuery.matches);
 
-          var doc = targetDocument || document;
-          var root = doc.documentElement;
+          var root = document.documentElement;
           if (isDark) {
             root.setAttribute("data-theme", "dark");
             root.classList.add("dark");
@@ -120,34 +103,14 @@ const { title, description, lang, image, type } = Astro.props;
             root.classList.remove("dark");
           }
 
-          syncRootClasses(root);
-
           return mediaQuery;
         }
 
         // Apply immediately
-        var mediaQuery = applyTheme(document);
+        var mediaQuery = applyTheme();
 
         // Chrome fix: Re-apply after a microtask to ensure matchMedia is ready
-        Promise.resolve().then(function () {
-          applyTheme(document);
-        });
-
-        // Astro swaps <html> attributes during client navigation.
-        // Re-apply theme state to the incoming document before it becomes visible.
-        document.addEventListener("astro:before-swap", function (event) {
-          if (event && event.newDocument) {
-            applyTheme(event.newDocument);
-          }
-        });
-
-        document.addEventListener("astro:after-swap", function () {
-          applyTheme(document);
-        });
-
-        document.addEventListener("astro:page-load", function () {
-          applyTheme(document);
-        });
+        Promise.resolve().then(applyTheme);
 
         // Astro client-side navigation swaps in a fresh document shell.
         // Re-apply the stored theme so dark mode variables survive route changes.
@@ -155,10 +118,14 @@ const { title, description, lang, image, type } = Astro.props;
         document.addEventListener("astro:page-load", applyTheme);
 
         // Also listen for system theme changes (for when theme is 'system')
+        // Listen for system theme changes
         mediaQuery.addEventListener("change", function () {
-          var savedTheme = getSavedTheme();
+          var savedTheme = null;
+          try {
+            savedTheme = localStorage.getItem("theme");
+          } catch (e) {}
           if (!savedTheme || savedTheme === "system") {
-            applyTheme(document);
+            applyTheme();
           }
         });
       })();
