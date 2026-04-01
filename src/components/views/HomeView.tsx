@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { useStore } from '@nanostores/react';
-import { settings } from '../../store';
 import { Icons } from '../Icons';
 import { LiquidButton } from '../common/LiquidButton';
 import { TechCard } from '../ui/TechCard';
@@ -10,6 +8,7 @@ import { UI_TEXT } from '../../constants/ui-text';
 import { navigateTo } from '../../utils/navigation';
 import { DYNAMIC_COLORS } from '../../constants/colors';
 import { useMousePosition } from '../../utils/helpers';
+import type { Language } from '../../types';
 import missionTeam from '../../assets/img/home/mission_team.avif';
 import futureVision from '../../assets/img/home/future_vision.avif';
 import coreValues from '../../assets/img/home/core_values.avif';
@@ -21,8 +20,11 @@ import coreValues from '../../assets/img/home/core_values.avif';
  * Features scroll-snapping sections and animated typewriter effects.
  */
 
-export const HomeView = () => {
-    const { lang } = useStore(settings);
+interface HomeViewProps {
+    lang?: Language;
+}
+
+export const HomeView = ({ lang = 'es' }: HomeViewProps) => {
     const t = UI_TEXT[lang];
     const [activeStep, setActiveStep] = useState(1);
     const handleMouseMove = useMousePosition();

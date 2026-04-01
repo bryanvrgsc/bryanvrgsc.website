@@ -9,6 +9,7 @@ export interface Service {
 }
 
 export interface PortfolioProject {
+    slug: string;
     title: string;
     problem: string;
     solution: string;

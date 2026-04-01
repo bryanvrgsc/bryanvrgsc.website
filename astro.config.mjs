@@ -1,42 +1,51 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
+import sitemap from '@astrojs/sitemap';
 import { imagetools } from 'vite-imagetools';
 
-// https://astro.build/config
 export default defineConfig({
   output: 'static',
+  site: 'https://bryanvrgsc.com',
+
+  i18n: {
+    defaultLocale: 'es',
+    locales: ['es', 'en'],
+    routing: {
+      prefixDefaultLocale: true,
+      redirectToDefaultLocale: false,
+    },
+  },
 
   integrations: [
-    react()
+    react(),
+    sitemap({
+      i18n: {
+        defaultLocale: 'es',
+        locales: {
+          es: 'es-MX',
+          en: 'en-US',
+        },
+      },
+    }),
   ],
 
   vite: {
     plugins: [imagetools()],
     build: {
-      cssMinify: 'lightningcss'
+      cssMinify: 'lightningcss',
     },
     ssr: {
-      noExternal: ['@nanostores/react', 'nanostores']
+      noExternal: ['@nanostores/react', 'nanostores'],
     },
-    // Fix Safari localhost issues
-    server: {
-      hmr: {
-        // Use polling for HMR to fix Safari WebSocket issues
-        protocol: 'ws',
-        host: 'localhost',
-      }
-    }
   },
 
-  // Dev server configuration
   server: {
-    host: true, // Allow external connections
+    host: true,
     port: 4321,
   },
 
-  // Image optimization
   image: {
     domains: ['images.unsplash.com'],
-    remotePatterns: [{ protocol: 'https' }]
-  }
+    remotePatterns: [{ protocol: 'https' }],
+  },
 });

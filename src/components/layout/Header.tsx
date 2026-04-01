@@ -3,7 +3,7 @@ import { useStore } from '@nanostores/react';
 import { settings } from '../../store';
 import { Icons } from '../Icons';
 import { LOGO_COLORS, injectPaletteCSS, DYNAMIC_COLORS } from '../../constants/colors';
-import { navigateTo } from '../../utils/navigation';
+import type { Language } from '../../types';
 
 /**
  * Header Component
@@ -12,22 +12,33 @@ import { navigateTo } from '../../utils/navigation';
  * Transforms into a pill-shaped button when user scrolls down.
  * Clicking the header navigates to the home page.
  */
-export const Header = () => {
+interface HeaderProps {
+    lang?: Language;
+}
+
+export const Header = ({ lang = 'es' }: HeaderProps) => {
     const [scrolled, setScrolled] = useState(false);
     const [mounted, setMounted] = useState(false);
+    const [currentLang, setCurrentLang] = useState<Language>(lang);
     const { theme } = useStore(settings);
 
     useEffect(() => {
         setMounted(true);
+        setCurrentLang(window.location.pathname.split('/')[1] === 'en' ? 'en' : 'es');
         // Inject palette CSS variables on mount
         injectPaletteCSS();
 
         // Detect scroll to toggle 'pill' mode
         const handleScroll = () => setScrolled(window.scrollY > 50);
+        const syncLang = () => setCurrentLang(window.location.pathname.split('/')[1] === 'en' ? 'en' : 'es');
         window.addEventListener('scroll', handleScroll);
+        document.addEventListener('astro:page-load', syncLang);
         // Initial check
         handleScroll();
-        return () => window.removeEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            document.removeEventListener('astro:page-load', syncLang);
+        };
     }, []);
 
     // Default to dark theme during SSR to match the expected client render
@@ -43,8 +54,7 @@ export const Header = () => {
     return (
         <header className="fixed top-0 left-0 right-0 z-40 flex justify-center pt-4 md:pt-6 pointer-events-none">
             <a
-                href="#/"
-                onClick={(e) => { e.preventDefault(); navigateTo('/'); }}
+                href={`/${currentLang}/`}
                 className={`pointer-events-auto cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 ${DYNAMIC_COLORS.ring} rounded-full
           w-auto px-6 h-[44px]
           ${scrolled

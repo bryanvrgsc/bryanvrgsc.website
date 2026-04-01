@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { ContactView } from '../../components/views/ContactView';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'en' } },
+  ];
+}
+
+const { lang } = Astro.params as { lang: 'es' | 'en' };
+
+const meta = {
+  es: {
+    title: 'Contacto — Bryan Vargas',
+    description:
+      'Contáctame para discutir tu próximo proyecto web o aplicación móvil.',
+  },
+  en: {
+    title: 'Contact — Bryan Vargas',
+    description:
+      'Get in touch to discuss your next web or mobile application project.',
+  },
+};
+---
+
+<BaseLayout title={meta[lang].title} description={meta[lang].description} {lang}>
+  <ContactView client:load {lang} />
+</BaseLayout>

@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { ServicesView } from '../../components/views/ServicesView';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'en' } },
+  ];
+}
+
+const { lang } = Astro.params as { lang: 'es' | 'en' };
+
+const meta = {
+  es: {
+    title: 'Servicios — Bryan Vargas',
+    description:
+      'Desarrollo web, aplicaciones móviles y soluciones cloud. Cotiza tu proyecto con Bryan Vargas.',
+  },
+  en: {
+    title: 'Services — Bryan Vargas',
+    description:
+      'Web development, mobile apps, and cloud solutions. Get a quote for your project with Bryan Vargas.',
+  },
+};
+---
+
+<BaseLayout title={meta[lang].title} description={meta[lang].description} {lang}>
+  <ServicesView client:load {lang} />
+</BaseLayout>

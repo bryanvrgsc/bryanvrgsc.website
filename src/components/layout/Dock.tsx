@@ -1,12 +1,13 @@
 import React, { useLayoutEffect, useRef, useState, useMemo, useCallback, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
-import { settings, dockState, hideDock, showDock } from '../../store';
+import { navigate } from 'astro:transitions/client';
+import { dockState, hideDock, showDock } from '../../store';
 import { Icons } from '../Icons';
 import { UI_TEXT } from '../../constants';
 import { DYNAMIC_COLORS } from '../../constants/colors';
 import { GlassDock } from '../common/GlassElement';
 import { LiquidButton } from '../common/LiquidButton';
-import { navigateTo } from '../../utils/navigation';
+import type { Language } from '../../types';
 
 /**
  * Dock Component
@@ -14,8 +15,6 @@ import { navigateTo } from '../../utils/navigation';
  * Main navigation dock displayed at the bottom of the screen.
  * Features a glass morphism design with animated liquid indicator that slides between items.
  * Includes navigation items and a contact button.
- * 
- * @param currentPath - The current route path for active state detection
  */
 
 interface DockItemType {
@@ -39,7 +38,7 @@ const DockItem = React.memo(({
     <a
         ref={itemRef}
         data-id={item.id}
-        href={`#${item.href}`}
+        href={item.href}
         onClick={(e) => { e.preventDefault(); onNavigate(item.href); }}
         className={`dock-item group relative flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-full transition-all duration-500 ease-[cubic-bezier(0.25,1,0.3,1)]
             ${isActive
@@ -55,15 +54,29 @@ const DockItem = React.memo(({
 
 DockItem.displayName = 'DockItem';
 
-export const Dock = React.memo(({ path }: { path: string }) => {
-    const { lang } = useStore(settings);
+interface DockProps {
+    lang?: Language;
+}
+
+export const Dock = React.memo(({ lang = 'es' }: DockProps) => {
     const { hidden: isDockHidden } = useStore(dockState);
-    const t = UI_TEXT[lang].nav;
     const itemRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
     const containerRef = useRef<HTMLDivElement>(null);
     const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, height: 0, opacity: 0 });
     const isFirstRender = useRef(true);
     const lastScrollY = useRef(0);
+    const [currentPath, setCurrentPath] = useState<string>(
+        typeof window !== 'undefined' ? window.location.pathname : `/${lang}/`,
+    );
+
+    useEffect(() => {
+        const onPageLoad = () => setCurrentPath(window.location.pathname);
+        document.addEventListener('astro:page-load', onPageLoad);
+        return () => document.removeEventListener('astro:page-load', onPageLoad);
+    }, []);
+
+    const currentLang: Language = currentPath.split('/')[1] === 'en' ? 'en' : 'es';
+    const t = UI_TEXT[currentLang].nav;
 
     // Scroll detection - hide dock when scrolling down, show on scroll up
     useEffect(() => {
@@ -105,24 +118,25 @@ export const Dock = React.memo(({ path }: { path: string }) => {
     }, [isDockHidden]);
 
     const activeId = useMemo(() => {
-        const p = path || '/';
-        if (p === '/') return 'home';
-        if (p.includes('/services')) return 'services';
-        if (p.includes('/portfolio')) return 'portfolio';
-        if (p.includes('/resources')) return 'resources';
-        if (p.includes('/contact')) return 'contact';
+        const pathWithoutLang = currentPath.replace(/^\/(es|en)/, '') || '/';
+        if (pathWithoutLang === '/' || pathWithoutLang === '') return 'home';
+        if (pathWithoutLang.startsWith('/services')) return 'services';
+        if (pathWithoutLang.startsWith('/portfolio')) return 'portfolio';
+        if (pathWithoutLang.startsWith('/resources')) return 'resources';
+        if (pathWithoutLang.startsWith('/contact')) return 'contact';
         return 'home';
-    }, [path]);
+    }, [currentPath]);
 
     const navItems = useMemo<DockItemType[]>(() => [
-        { id: 'home', label: t.home, Icon: Icons.Home, href: '/' },
-        { id: 'services', label: t.services, Icon: Icons.Layers, href: '/services' },
-        { id: 'portfolio', label: t.work, Icon: Icons.Briefcase, href: '/portfolio' },
-        { id: 'resources', label: t.resources, Icon: Icons.Book, href: '/resources' },
-    ], [t]);
+        { id: 'home', label: t.home, Icon: Icons.Home, href: `/${currentLang}/` },
+        { id: 'services', label: t.services, Icon: Icons.Layers, href: `/${currentLang}/services` },
+        { id: 'portfolio', label: t.work, Icon: Icons.Briefcase, href: `/${currentLang}/portfolio` },
+        { id: 'resources', label: t.resources, Icon: Icons.Book, href: `/${currentLang}/resources` },
+    ], [currentLang, t]);
 
     const handleNavigate = useCallback((href: string) => {
-        navigateTo(href);
+        navigate(href);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
     // State to track if we should skip transition (e.g. initial render or re-appearing)
@@ -330,7 +344,7 @@ export const Dock = React.memo(({ path }: { path: string }) => {
                             color: activeId === 'contact' ? '#fff' : 'var(--text-primary)',
                             border: activeId === 'contact' ? 'none' : '1px solid rgba(0,0,0,0.05)',
                         } as React.CSSProperties}
-                        onClick={() => navigateTo('/contact')}
+                        onClick={() => handleNavigate(`/${currentLang}/contact`)}
                     >
                         {t.contact}
                     </LiquidButton>

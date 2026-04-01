@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { useStore } from '@nanostores/react';
-import { settings } from '../../store';
 import { Icons } from '../Icons';
 import { UI_TEXT } from '../../constants/ui-text';
 import { DOCUMENTS } from '../../constants/resources';
@@ -10,6 +8,7 @@ import { PDFPreviewModal } from '../common/PDFPreviewModal';
 import { useMousePosition } from '../../utils/helpers';
 import { LiquidButton } from '../common/LiquidButton';
 import { navigateTo } from '../../utils/navigation';
+import type { Language } from '../../types';
 
 /**
  * ResourcesView Component
@@ -19,8 +18,11 @@ import { navigateTo } from '../../utils/navigation';
 
 type FilterType = 'all' | 'paper' | 'slides';
 
-export const ResourcesView = () => {
-    const { lang } = useStore(settings);
+interface ResourcesViewProps {
+    lang?: Language;
+}
+
+export const ResourcesView = ({ lang = 'es' }: ResourcesViewProps) => {
     const handleMouseMove = useMousePosition();
     const t = UI_TEXT[lang].resources;
     const [filter, setFilter] = useState<FilterType>('all');

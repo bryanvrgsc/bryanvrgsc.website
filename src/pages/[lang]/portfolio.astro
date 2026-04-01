@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { PortfolioView } from '../../components/views/PortfolioView';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'en' } },
+  ];
+}
+
+const { lang } = Astro.params as { lang: 'es' | 'en' };
+
+const meta = {
+  es: {
+    title: 'Portafolio — Bryan Vargas',
+    description:
+      'Proyectos destacados de desarrollo web, aplicaciones iOS y soluciones de datos por Bryan Vargas.',
+  },
+  en: {
+    title: 'Portfolio — Bryan Vargas',
+    description:
+      'Featured web development, iOS app, and data solution projects by Bryan Vargas.',
+  },
+};
+---
+
+<BaseLayout title={meta[lang].title} description={meta[lang].description} {lang}>
+  <PortfolioView client:load {lang} />
+</BaseLayout>

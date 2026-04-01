@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { PortfolioView } from '../../../components/views/PortfolioView';
+import { PORTFOLIO, PORTFOLIO_SLUGS } from '../../../constants/portfolio';
+
+export function getStaticPaths() {
+  const paths = [];
+
+  for (const lang of ['es', 'en'] as const) {
+    for (const slug of PORTFOLIO_SLUGS) {
+      paths.push({ params: { lang, slug } });
+    }
+  }
+
+  return paths;
+}
+
+const { lang, slug } = Astro.params as { lang: 'es' | 'en'; slug: string };
+const project = PORTFOLIO[lang].find((item) => item.slug === slug);
+
+const title = project ? `${project.title} — Bryan Vargas` : 'Portfolio — Bryan Vargas';
+const description = project
+  ? project.problem
+  : lang === 'es'
+    ? 'Proyectos de Bryan Vargas'
+    : 'Bryan Vargas projects';
+const image = project?.image;
+---
+
+<BaseLayout {title} {description} {lang} {image}>
+  <PortfolioView client:load {lang} initialSlug={slug} />
+</BaseLayout>

@@ -8,11 +8,11 @@ export const UI_TEXT: Record<'en' | 'es', UIText> = {
             future: "Future",
             values: "Values"
         },
-        heroTitle: "Arquitectos del Futuro.",
-        heroSubtitle: "Ingeniería de vanguardia para la próxima generación de productos digitales.",
+        heroTitle: "Architecting the Future.",
+        heroSubtitle: "Cutting-edge engineering for the next generation of digital products.",
         heroTags: "Apps • Cloud • Business Intelligence",
-        startProject: "Iniciar Proyecto",
-        exploreWork: "Ver Portafolio",
+        startProject: "Start a Project",
+        exploreWork: "View Portfolio",
         stats: {
             latency: "Latency",
             uptime: "Uptime",
@@ -100,7 +100,7 @@ export const UI_TEXT: Record<'en' | 'es', UIText> = {
         nav: {
             home: "Home",
             services: "Services",
-            work: "Work",
+            work: "Portfolio",
             resources: "Resources",
             contact: "Contact"
         }

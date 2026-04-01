@@ -1,0 +1,76 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  lang: 'es' | 'en';
+  canonical?: string;
+  image?: string;
+  type?: 'website' | 'profile';
+}
+
+const {
+  title,
+  description,
+  lang,
+  image = '/og-image.avif',
+  type = 'website',
+} = Astro.props;
+
+const siteURL = Astro.site ?? new URL('https://bryanvrgsc.com');
+const canonicalURL = Astro.props.canonical ?? new URL(Astro.url.pathname, siteURL).href;
+const imageURL = new URL(image, siteURL).href;
+const ogLocale = lang === 'es' ? 'es_MX' : 'en_US';
+const otherLang = lang === 'es' ? 'en' : 'es';
+const otherURL = new URL(
+  Astro.url.pathname.replace(/^\/(es|en)/, `/${otherLang}`),
+  siteURL,
+).href;
+
+const jsonLdPerson = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Bryan Vargas',
+  jobTitle: 'Full-Stack Developer',
+  url: siteURL.href,
+  sameAs: [
+    'https://github.com/bryanvrgsc',
+    'https://linkedin.com/in/bryanvrgsc',
+  ],
+  knowsAbout: ['Astro', 'React', 'TypeScript', 'Cloudflare', 'Node.js'],
+};
+
+const jsonLdWebPage = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: title,
+  description,
+  url: canonicalURL,
+  inLanguage: lang === 'es' ? 'es-MX' : 'en-US',
+  author: { '@type': 'Person', name: 'Bryan Vargas' },
+};
+---
+
+<title>{title}</title>
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={imageURL} />
+<meta property="og:locale" content={ogLocale} />
+
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={canonicalURL} />
+<meta property="twitter:title" content={title} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={imageURL} />
+
+<link rel="alternate" hreflang={lang} href={canonicalURL} />
+<link rel="alternate" hreflang={otherLang} href={otherURL} />
+<link rel="alternate" hreflang="x-default" href={canonicalURL} />
+
+<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLdPerson)} />
+<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLdWebPage)} />

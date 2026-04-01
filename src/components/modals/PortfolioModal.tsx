@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { Icons } from '../Icons';
 import { PDFViewer } from '../ui/PDFViewer';
 import { UI_TEXT } from '../../constants/ui-text';
-import type { Language } from '../../types';
+import type { Language, PortfolioProject } from '../../types';
 import { DYNAMIC_COLORS } from '../../constants/colors';
 import { getEmbedUrl } from '../../utils/helpers';
 
@@ -15,7 +15,7 @@ import { getEmbedUrl } from '../../utils/helpers';
  */
 
 interface PortfolioModalProps {
-    project: any;
+    project: PortfolioProject;
     onClose: () => void;
     lang: Language;
 }
@@ -26,6 +26,7 @@ export const PortfolioModal = ({ project, onClose, lang }: PortfolioModalProps) 
     const t = UI_TEXT[lang].portfolio.modal;
 
     useEffect(() => {
+        setActiveScreenshot(0);
         setCurrentPdf(project.presentationUrl || project.details?.documents?.[0]?.url || null);
     }, [project]);
 
@@ -36,7 +37,7 @@ export const PortfolioModal = ({ project, onClose, lang }: PortfolioModalProps) 
         };
     }, []);
 
-    if (!project) return null;
+    if (!project || typeof document === 'undefined') return null;
 
     const images = project.screenshots && project.screenshots.length > 0 ? project.screenshots : [project.image];
 

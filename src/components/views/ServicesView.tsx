@@ -1,6 +1,4 @@
 import React from 'react';
-import { useStore } from '@nanostores/react';
-import { settings } from '../../store';
 import { Icons } from '../Icons';
 import { UI_TEXT } from '../../constants/ui-text';
 import { SERVICES, ENGAGEMENT_MODELS } from '../../constants';
@@ -8,6 +6,7 @@ import { getCategoryTheme, useMousePosition } from '../../utils/helpers';
 import { DYNAMIC_COLORS } from '../../constants/colors';
 import { LiquidButton } from '../common/LiquidButton';
 import { navigateTo } from '../../utils/navigation';
+import type { Language } from '../../types';
 
 /**
  * ServicesView Component
@@ -16,8 +15,11 @@ import { navigateTo } from '../../utils/navigation';
  * value propositions, and engagement models.
  */
 
-export const ServicesView = () => {
-    const { lang } = useStore(settings);
+interface ServicesViewProps {
+    lang?: Language;
+}
+
+export const ServicesView = ({ lang = 'es' }: ServicesViewProps) => {
     const handleMouseMove = useMousePosition();
     const t = UI_TEXT[lang].services;
 

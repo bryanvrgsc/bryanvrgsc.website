@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-import { useStore } from '@nanostores/react';
-import { settings } from '../../store';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Icons } from '../Icons';
 import { UI_TEXT } from '../../constants/ui-text';
 import { PORTFOLIO } from '../../constants';
@@ -9,19 +7,102 @@ import { DYNAMIC_COLORS } from '../../constants/colors';
 import { useMousePosition } from '../../utils/helpers';
 import { LiquidButton } from '../common/LiquidButton';
 import { navigateTo } from '../../utils/navigation';
+import type { Language, PortfolioProject } from '../../types';
 
 /**
  * PortfolioView Component
- * 
+ *
  * Displays portfolio projects in a grid layout.
  * Clicking on a project opens a detailed modal.
  */
 
-export const PortfolioView = () => {
-    const { lang } = useStore(settings);
+interface PortfolioViewProps {
+    lang?: Language;
+    initialSlug?: string;
+}
+
+export const PortfolioView = ({ lang = 'es', initialSlug }: PortfolioViewProps) => {
     const handleMouseMove = useMousePosition();
-    const [selectedProject, setSelectedProject] = useState<any>(null);
+    const [openSlug, setOpenSlug] = useState<string | null>(initialSlug ?? null);
     const t = UI_TEXT[lang].portfolio;
+    const projects = PORTFOLIO[lang];
+
+    const selectedProject = useMemo<PortfolioProject | null>(
+        () => projects.find((project) => project.slug === openSlug) ?? null,
+        [openSlug, projects],
+    );
+
+    useEffect(() => {
+        setOpenSlug(initialSlug ?? null);
+    }, [initialSlug]);
+
+    useEffect(() => {
+        if (typeof window === 'undefined' || !openSlug) {
+            return;
+        }
+
+        const basePath = `/${lang}/portfolio`;
+        const slugPath = `${basePath}/${openSlug}`;
+        const currentPath = window.location.pathname;
+        const currentState = window.history.state;
+
+        if (currentPath === slugPath && currentState?.modalSlug === openSlug) {
+            return;
+        }
+
+        if (currentPath === slugPath) {
+            window.history.replaceState({ portfolioBase: true }, '', basePath);
+            window.history.pushState({ modalSlug: openSlug }, '', slugPath);
+            return;
+        }
+
+        window.history.pushState({ modalSlug: openSlug }, '', slugPath);
+    }, [openSlug, lang]);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
+        const basePath = `/${lang}/portfolio`;
+        const slugPrefix = `${basePath}/`;
+        const onPopState = () => {
+            const currentPath = window.location.pathname;
+
+            if (currentPath.startsWith(slugPrefix)) {
+                const nextSlug = currentPath.slice(slugPrefix.length);
+                setOpenSlug(nextSlug || null);
+                return;
+            }
+
+            if (currentPath === basePath || currentPath === `${basePath}/`) {
+                setOpenSlug(null);
+            }
+        };
+
+        window.addEventListener('popstate', onPopState);
+        return () => window.removeEventListener('popstate', onPopState);
+    }, [lang]);
+
+    const openProject = useCallback((slug: string) => {
+        setOpenSlug(slug);
+    }, []);
+
+    const closeProject = useCallback(() => {
+        if (typeof window === 'undefined') {
+            setOpenSlug(null);
+            return;
+        }
+
+        const basePath = `/${lang}/portfolio`;
+
+        if (window.location.pathname.startsWith(`${basePath}/`)) {
+            window.history.back();
+            return;
+        }
+
+        setOpenSlug(null);
+    }, [lang]);
 
     return (
         <>
@@ -31,17 +112,18 @@ export const PortfolioView = () => {
                     <p className="text-[var(--text-secondary)] text-base md:text-lg">{t.subtitle}</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
-                    {PORTFOLIO[lang].map((item, i) => {
+                    {projects.map((item, i) => {
                         const handleKeyDown = (e: React.KeyboardEvent) => {
                             if (e.key === 'Enter' || e.key === ' ') {
                                 e.preventDefault();
-                                setSelectedProject(item);
+                                openProject(item.slug);
                             }
                         };
+
                         return (
                             <div
                                 onMouseMove={handleMouseMove}
-                                onClick={() => setSelectedProject(item)}
+                                onClick={() => openProject(item.slug)}
                                 onKeyDown={handleKeyDown}
                                 key={i}
                                 tabIndex={0}
@@ -53,12 +135,9 @@ export const PortfolioView = () => {
                                     <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)] via-transparent to-transparent z-10 opacity-90"></div>
                                     <img src={item.image} alt={item.title} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110" />
 
-                                    {/* Animated cursor pointer overlay - shows briefly on mobile, on hover for desktop */}
                                     <div className="absolute inset-0 bg-black/30 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 z-20 flex items-center justify-center animate-[fadeOut_3s_ease-in-out_2s_forwards] md:animate-none">
                                         <div className="relative">
-                                            {/* Pulsing ring */}
                                             <div className="absolute inset-0 rounded-full bg-white/20 animate-ping"></div>
-                                            {/* Lucide Pointer icon */}
                                             <div className="relative bg-white/90 backdrop-blur-sm rounded-full p-6 shadow-2xl">
                                                 <svg className="w-12 h-12 text-[var(--primary-color)] animate-pulse" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                                                     <path d="M22 14a8 8 0 0 1-8 8" />
@@ -71,7 +150,6 @@ export const PortfolioView = () => {
                                         </div>
                                     </div>
 
-                                    {/* Tech badge */}
                                     <div className="absolute top-6 right-6 md:top-8 md:right-8 z-20 pointer-events-none"><span className="px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-[var(--card-bg)] border border-[var(--card-border)] text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-[var(--text-primary)] backdrop-blur-xl shadow-xl">{item.tech.split(',')[0]}</span></div>
                                 </div>
                                 <div className="p-6 md:p-10 relative z-20 -mt-16 md:-mt-24 pointer-events-none">
@@ -82,7 +160,6 @@ export const PortfolioView = () => {
                                         <div className="bg-[var(--input-bg)] p-4 md:p-6 rounded-2xl border border-[var(--card-border)]"><span className="block text-[10px] uppercase tracking-widest text-[var(--text-tertiary)] mb-2 md:mb-3 font-bold">{t.solution}</span><span className="text-sm leading-relaxed block line-clamp-3">{item.solution}</span></div>
                                     </div>
 
-                                    {/* "View Details" button - visible on mobile, on hover for desktop */}
                                     <div className="mt-6 pointer-events-auto md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
                                         <div className="bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] text-white px-6 py-3 rounded-xl font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg cursor-pointer">
                                             <Icons.ExternalLink className="w-5 h-5" />
@@ -96,7 +173,6 @@ export const PortfolioView = () => {
                 </div>
             </div>
 
-            {/* CTA Button to Resources */}
             <div className="flex justify-center -mt-20 mb-32 md:-mt-24 md:mb-40">
                 <LiquidButton
                     onClick={() => navigateTo('/resources')}
@@ -109,7 +185,7 @@ export const PortfolioView = () => {
                 </LiquidButton>
             </div>
 
-            {selectedProject && (<PortfolioModal project={selectedProject} onClose={() => setSelectedProject(null)} lang={lang} />)}
+            {selectedProject && <PortfolioModal project={selectedProject} onClose={closeProject} lang={lang} />}
         </>
     );
 };

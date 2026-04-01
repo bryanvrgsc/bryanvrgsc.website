@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { ResourcesView } from '../../components/views/ResourcesView';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'en' } },
+  ];
+}
+
+const { lang } = Astro.params as { lang: 'es' | 'en' };
+
+const meta = {
+  es: {
+    title: 'Recursos — Bryan Vargas',
+    description:
+      'Herramientas, librerías y recursos seleccionados para desarrolladores por Bryan Vargas.',
+  },
+  en: {
+    title: 'Resources — Bryan Vargas',
+    description:
+      'Curated tools, libraries, and resources for developers by Bryan Vargas.',
+  },
+};
+---
+
+<BaseLayout title={meta[lang].title} description={meta[lang].description} {lang}>
+  <ResourcesView client:load {lang} />
+</BaseLayout>

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useStore } from '@nanostores/react';
-import { settings } from '../../store';
 import { Icons } from '../Icons';
 import { LiquidButton, PhoneInput, BudgetInput } from '../common';
 import { UI_TEXT } from '../../constants/ui-text';
 import { SOCIAL_COLORS, DYNAMIC_COLORS, getDynamicButtonStyles } from '../../constants/colors';
 import { useMousePosition } from '../../utils/helpers';
+import type { Language } from '../../types';
 
 /**
  * ContactView Component
@@ -15,8 +14,11 @@ import { useMousePosition } from '../../utils/helpers';
  * Integrates with Formspree for form submission.
  */
 
-export const ContactView = () => {
-    const { lang } = useStore(settings);
+interface ContactViewProps {
+    lang?: Language;
+}
+
+export const ContactView = ({ lang = 'es' }: ContactViewProps) => {
     const handleMouseMove = useMousePosition();
     const t = UI_TEXT[lang].contact;
 

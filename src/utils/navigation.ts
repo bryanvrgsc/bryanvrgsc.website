@@ -1,37 +1,46 @@
-/**
- * Navigation utilities for hash-based routing (GitHub Pages compatible)
- */
+import { navigate } from 'astro:transitions/client';
 
 /**
- * Navigate to a path using hash routing
- * @param path - The path to navigate to (e.g., '/services', '/portfolio')
+ * Navigation utilities for Astro i18n routing.
+ */
+
+function getCurrentLang(): 'es' | 'en' {
+    if (typeof window === 'undefined') {
+        return 'es';
+    }
+
+    return window.location.pathname.split('/')[1] === 'en' ? 'en' : 'es';
+}
+
+/**
+ * Navigate to a path preserving the current language prefix.
  */
 export function navigateTo(path: string): void {
-    // Ensure path starts with '/'
+    if (typeof window === 'undefined') {
+        return;
+    }
+
+    const lang = getCurrentLang();
     const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-
-    // Update hash without triggering page reload
-    window.location.hash = `#${normalizedPath}`;
-
-    // Scroll to top on navigation
+    navigate(`/${lang}${normalizedPath}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 /**
- * Get current path from hash
- * @returns Current path without the hash symbol
+ * Get the current path without the language prefix.
  */
 export function getCurrentPath(): string {
-    return window.location.hash.replace(/^#/, '') || '/';
+    if (typeof window === 'undefined') {
+        return '/';
+    }
+
+    return window.location.pathname.replace(/^\/(es|en)/, '') || '/';
 }
 
 /**
- * Check if a path is currently active
- * @param path - The path to check
- * @param currentPath - The current path (optional, will use window.location.hash if not provided)
- * @returns true if the path is active
+ * Check if a path is currently active.
  */
-export function isPathActive(path: string, currentPath?: string): boolean {
-    const current = currentPath || getCurrentPath();
+export function isPathActive(path: string): boolean {
+    const current = getCurrentPath();
     return current === path || current.startsWith(`${path}/`);
 }

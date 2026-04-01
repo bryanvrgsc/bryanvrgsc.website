@@ -1,25 +1,28 @@
 ---
+import { ClientRouter } from 'astro:transitions';
+import SEO from '../components/SEO.astro';
+import { CanvasBackground } from '../components/layout/CanvasBackground';
+import { Header } from '../components/layout/Header';
+import { Dock } from '../components/layout/Dock';
+import { ScrollToTop } from '../components/layout/ScrollToTop';
+import { ShowDockButton } from '../components/layout/ShowDockButton';
+import { ThemeToggle } from '../components/ui/ThemeToggle';
+import { LanguageToggle } from '../components/ui/LanguageToggle';
+import AppInit from '../components/layout/AppInit';
+
 interface Props {
   title: string;
-  description?: string;
+  description: string;
+  lang: 'es' | 'en';
   image?: string;
-  canonicalURL?: string;
+  type?: 'website' | 'profile';
 }
 
-const {
-  title,
-  description = "Ultra-fast, secure landing page built with Astro and Cloudflare Pages",
-  image = "/og-image.avif",
-  canonicalURL = Astro.site
-    ? new URL(Astro.url.pathname, Astro.site).href
-    : Astro.url.pathname,
-} = Astro.props;
-
-const imageUrl = Astro.site ? new URL(image, Astro.site).href : image;
+const { title, description, lang, image, type } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -44,26 +47,8 @@ const imageUrl = Astro.site ? new URL(image, Astro.site).href : image;
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-
-    <!-- Primary Meta Tags -->
-    <title>{title}</title>
-    <meta name="title" content={title} />
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonicalURL} />
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalURL} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={imageUrl} />
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={canonicalURL} />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={imageUrl} />
+    <SEO {title} {description} {lang} {image} {type} />
+    <ClientRouter />
 
     <!-- Security Headers (configured via HTTP headers in middleware) -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
@@ -139,7 +124,19 @@ const imageUrl = Astro.site ? new URL(image, Astro.site).href : image;
     </script>
   </head>
   <body>
-    <slot />
+    <CanvasBackground client:load transition:persist="canvas" />
+    <Header client:load transition:persist="header" {lang} />
+    <ThemeToggle client:load transition:persist="theme-toggle" />
+    <LanguageToggle client:load transition:persist="lang-toggle" {lang} />
+
+    <main class="relative z-10 w-full">
+      <slot />
+    </main>
+
+    <Dock client:load transition:persist="dock" {lang} />
+    <ScrollToTop client:load transition:persist="scroll-top" />
+    <ShowDockButton client:load transition:persist="show-dock-btn" />
+    <AppInit client:only="react" transition:persist="app-init" />
   </body>
 </html>
 

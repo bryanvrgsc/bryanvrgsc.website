@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { HomeView } from '../../components/views/HomeView';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'en' } },
+  ];
+}
+
+const { lang } = Astro.params as { lang: 'es' | 'en' };
+
+const meta = {
+  es: {
+    title: 'Bryan Vargas — Desarrollador Full-Stack',
+    description:
+      'Portafolio de Bryan Vargas, desarrollador full-stack especializado en Astro, React y Cloudflare.',
+  },
+  en: {
+    title: 'Bryan Vargas — Full-Stack Developer',
+    description:
+      'Portfolio of Bryan Vargas, full-stack developer specialized in Astro, React, and Cloudflare.',
+  },
+};
+---
+
+<BaseLayout title={meta[lang].title} description={meta[lang].description} {lang}>
+  <HomeView client:load {lang} />
+</BaseLayout>
