@@ -79,6 +79,9 @@ const { title, description, lang, image, type } = Astro.props;
     <!-- Prevent theme flash: Apply theme before body renders -->
     <script is:inline>
       (function () {
+        if (window.__bryanThemeScriptInitialized) return;
+        window.__bryanThemeScriptInitialized = true;
+
         // Theme application function
         function applyTheme() {
           var savedTheme = null;
@@ -108,6 +111,11 @@ const { title, description, lang, image, type } = Astro.props;
 
         // Chrome fix: Re-apply after a microtask to ensure matchMedia is ready
         Promise.resolve().then(applyTheme);
+
+        // Astro client-side navigation swaps in a fresh document shell.
+        // Re-apply the stored theme so dark mode variables survive route changes.
+        document.addEventListener("astro:after-swap", applyTheme);
+        document.addEventListener("astro:page-load", applyTheme);
 
         // Also listen for system theme changes (for when theme is 'system')
         // Listen for system theme changes
