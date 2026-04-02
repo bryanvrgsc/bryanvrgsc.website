@@ -1,5 +1,10 @@
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { getPortfolioBasePath, getPortfolioSlugPath } from '../../src/scripts/portfolio-history';
 
-describe.skip('portfolio-history', () => {
-  it('is covered in Task 2', () => {});
+describe('portfolio-history', () => {
+  it('builds localized portfolio paths', () => {
+    expect(getPortfolioBasePath('es')).toBe('/es/portfolio');
+    expect(getPortfolioBasePath('en')).toBe('/en/portfolio');
+    expect(getPortfolioSlugPath('es', 'gymapp')).toBe('/es/portfolio/gymapp');
+  });
 });

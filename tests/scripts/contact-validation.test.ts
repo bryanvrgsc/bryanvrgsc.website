@@ -1,5 +1,14 @@
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { validateContactFields } from '../../src/scripts/contact-validation';
 
-describe.skip('contact-validation', () => {
-  it('is covered in Task 2', () => {});
+describe('contact-validation', () => {
+  it('returns field errors for invalid contact data', () => {
+    expect(
+      validateContactFields({ name: '', email: 'wrong', message: '' }),
+    ).toEqual({
+      name: 'required',
+      email: 'invalid',
+      message: 'required',
+    });
+  });
 });
