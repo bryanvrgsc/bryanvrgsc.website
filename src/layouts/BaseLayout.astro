@@ -9,6 +9,7 @@ import { ShowDockButton } from '../components/layout/ShowDockButton';
 import { ThemeToggle } from '../components/ui/ThemeToggle';
 import { LanguageToggle } from '../components/ui/LanguageToggle';
 import AppInit from '../components/layout/AppInit';
+import { BACKGROUND_ENHANCEMENT_MEDIA_QUERY } from '../utils/performance';
 
 interface Props {
   title: string;
@@ -118,7 +119,7 @@ const { title, description, lang, image, type } = Astro.props;
   </head>
   <body>
     <CanvasBackground
-      client:media="(min-width: 768px)"
+      client:media={BACKGROUND_ENHANCEMENT_MEDIA_QUERY}
       transition:persist="canvas"
     />
     <Header client:idle transition:persist="header" {lang} />
@@ -132,7 +133,7 @@ const { title, description, lang, image, type } = Astro.props;
     <Dock client:idle transition:persist="dock" {lang} />
     <ScrollToTop client:idle transition:persist="scroll-top" />
     <ShowDockButton client:idle transition:persist="show-dock-btn" />
-    <AppInit client:idle transition:persist="app-init" />
+    <AppInit client:load transition:persist="app-init" />
   </body>
 </html>
 

@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
-import { checkPerformance, initThemeListener } from '../../store';
+import { initThemeListener } from '../../store';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { Analytics } from '@vercel/analytics/react';
+import { initAdaptivePerformance } from '../../utils/performance';
 
 export default function AppInit() {
     const [showAnalytics, setShowAnalytics] = useState(false);
 
     useEffect(() => {
         initThemeListener();
-        checkPerformance();
+        const cleanupPerformance = initAdaptivePerformance();
+
+        return cleanupPerformance;
     }, []);
 
     useEffect(() => {

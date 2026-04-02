@@ -8,9 +8,9 @@ export const settings = map<{ lang: Language; theme: Theme; _systemThemeUpdate?:
   theme: 'system'
 });
 
-// Performance Store: "Lite Mode" for low-end devices
+// Performance Store: start in lite mode and progressively enhance when allowed.
 export const performanceMode = map<{ lite: boolean }>({
-  lite: false
+  lite: true
 });
 
 // Dock Visibility Store
@@ -102,144 +102,7 @@ const handleSystemThemeChange = () => {
   }
 };
 
-// Helper to detect device capabilities and enable Lite Mode
-// OPTIMIZED: Faster detection with caching and immediate signals
-export const checkPerformance = async () => {
-  if (typeof window === 'undefined') return;
-
-  const CACHE_KEY = 'performance-mode-cache';
-  const CACHE_VERSION = 'v4'; // Incremented to force re-test with forceMobile
-
-  // 1. Check sessionStorage cache first (instant)
-  try {
-    const cached = sessionStorage.getItem(CACHE_KEY);
-    if (cached) {
-      const { version, lite } = JSON.parse(cached);
-      if (version === CACHE_VERSION) {
-        console.log(`Performance: Using cached mode (lite: ${lite})`);
-        enableLiteMode(lite);
-        return;
-      }
-    }
-  } catch (e) {
-    // sessionStorage not available, continue with detection
-  }
-
-  // 2. Accessibility Preference (User explicitly asked for less motion)
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prefersReducedMotion) {
-    console.log('Performance: Lite Mode enabled (Prefers Reduced Motion)');
-    cacheAndEnableLiteMode(true, CACHE_KEY, CACHE_VERSION);
-    return;
-  }
-
-  // 3. Immediate signals for low-end devices (no async needed)
-  const immediateSignals = detectImmediateLowEndSignals();
-  if (immediateSignals.isDefinitelyLowEnd) {
-    console.log(`%cPerformance: Lite Mode enabled (${immediateSignals.reason})`, "color: #ff9800; font-weight: bold;");
-    cacheAndEnableLiteMode(true, CACHE_KEY, CACHE_VERSION);
-    return;
-  }
-
-  // 4. Advanced GPU Detection with timeout
-  try {
-    const { getGPUTier } = await import('detect-gpu');
-
-    // Detect if this is a touch/mobile device
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-
-    // Race between GPU detection and 2 second timeout
-    // Force mobile benchmarks for touch devices (helps with accuracy on tablets)
-    const gpuTier = await Promise.race([
-      getGPUTier({ forceMobile: isTouchDevice } as any),
-      new Promise<null>((_, reject) =>
-        setTimeout(() => reject(new Error('GPU detection timeout')), 2000)
-      )
-    ]);
-
-    if (!gpuTier) {
-      // Timeout - assume capable device
-      console.log('Performance: GPU detection timed out, assuming capable device');
-      cacheAndEnableLiteMode(false, CACHE_KEY, CACHE_VERSION);
-      return;
-    }
-
-    console.log(`Hardware Detection: Tier ${gpuTier.tier}, FPS: ${gpuTier.fps}, GPU: ${gpuTier.gpu}`);
-
-    // Determine if device is low-end based on GPU tier and FPS
-    const isLowTier = gpuTier.tier <= 1;
-    const isLowFPS = gpuTier.fps !== undefined && gpuTier.fps < 30;
-    const isTrulyLowEnd = gpuTier.tier === 0 || isLowFPS;
-
-    // Apple GPU handling:
-    // - Tier 2-3 Apple GPUs (modern devices) are powerful, skip Lite Mode
-    // - Tier 0-1 Apple GPUs (older iPads/iPhones) should still use Lite Mode
-    const isAppleGPU = gpuTier.gpu && gpuTier.gpu.toLowerCase().includes('apple');
-    const isModernAppleDevice = isAppleGPU && gpuTier.tier >= 2;
-
-    // Refined Tier 1 logic:
-    // Many laptops with integrated GPUs are Tier 1 but can handle 60fps.
-    // We only enable Lite Mode if Tier 1 AND (FPS is low OR it's a mobile device)
-    const isStrugglingTier1 = gpuTier.tier === 1 && (isTouchDevice || (gpuTier.fps !== undefined && gpuTier.fps < 45));
-
-    // Enable Lite Mode if:
-    // 1. Device is truly low-end (tier 0 or fps < 30), OR
-    // 2. Device is struggling Tier 1, unless it's a modern Apple device
-    const shouldEnableLiteMode = isTrulyLowEnd || (isStrugglingTier1 && !isModernAppleDevice);
-
-    console.group(`Performance Check [Tier ${gpuTier.tier}]`);
-    console.log(`GPU: ${gpuTier.gpu}`);
-    console.log(`FPS: ${gpuTier.fps}`);
-    console.log(`Mode: ${shouldEnableLiteMode ? 'Lite' : 'High Performance'}`);
-    console.groupEnd();
-
-    cacheAndEnableLiteMode(shouldEnableLiteMode, CACHE_KEY, CACHE_VERSION);
-
-  } catch (error) {
-    console.warn('GPU Detection failed, keeping default mode.', error);
-    cacheAndEnableLiteMode(false, CACHE_KEY, CACHE_VERSION);
-  }
-};
-
-// Detect immediate low-end signals without async operations
-const detectImmediateLowEndSignals = (): { isDefinitelyLowEnd: boolean; reason: string } => {
-  // Check device memory (Chrome/Edge only)
-  const deviceMemory = (navigator as any).deviceMemory;
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-  // For mobile, we are more strict (4GB can still feel slow if system uses it all)
-  const memoryThreshold = isMobile ? 4 : 2;
-
-  if (deviceMemory && deviceMemory <= memoryThreshold) {
-    return { isDefinitelyLowEnd: true, reason: `Low memory: ${deviceMemory}GB` };
-  }
-
-  // Check hardware concurrency (CPU cores)
-  const cores = navigator.hardwareConcurrency;
-  if (cores && cores <= 2) {
-    return { isDefinitelyLowEnd: true, reason: `Low CPU cores: ${cores}` };
-  }
-
-  // Check connection type (slow network often = older device)
-  const connection = (navigator as any).connection;
-  if (connection && connection.effectiveType === '2g') {
-    return { isDefinitelyLowEnd: true, reason: '2G connection detected' };
-  }
-
-  return { isDefinitelyLowEnd: false, reason: '' };
-};
-
-// Cache result and enable/disable lite mode
-const cacheAndEnableLiteMode = (enable: boolean, key: string, version: string) => {
-  try {
-    sessionStorage.setItem(key, JSON.stringify({ version, lite: enable }));
-  } catch (e) {
-    // sessionStorage not available
-  }
-  enableLiteMode(enable);
-};
-
-const enableLiteMode = (enable: boolean) => {
+export const enableLiteMode = (enable: boolean) => {
   performanceMode.setKey('lite', enable);
   if (enable) {
     document.documentElement.classList.add('lite-mode');
