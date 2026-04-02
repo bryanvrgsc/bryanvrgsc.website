@@ -11,4 +11,18 @@ describe('contact-validation', () => {
       message: 'required',
     });
   });
+
+  it('accepts a valid email surrounded by spaces', () => {
+    expect(
+      validateContactFields({
+        name: 'Bryan',
+        email: ' user@example.com ',
+        message: 'Hello',
+      }),
+    ).toEqual({
+      name: undefined,
+      email: undefined,
+      message: undefined,
+    });
+  });
 });
