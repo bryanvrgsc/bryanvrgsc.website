@@ -63,7 +63,6 @@ export const TechCard = ({ title, children, accentColor = "primary", className =
                 <div className={`h-[1px] flex-grow bg-gradient-to-r ${gradientDivider} to-transparent opacity-30`}></div>
             </div>
             <div className={`font-mono text-sm md:text-[15px] leading-relaxed ${styles.text} opacity-90 relative z-10 h-full flex flex-col justify-start`}>{children}</div>
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay pointer-events-none"></div>
             <div className={`absolute -right-20 -bottom-20 w-64 h-64 bg-gradient-to-tl ${gradientBlob} to-transparent rounded-full blur-3xl pointer-events-none ${blobHoverOpacity} transition-opacity duration-700`}></div>
         </div>
     );

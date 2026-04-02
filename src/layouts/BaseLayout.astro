@@ -30,21 +30,6 @@ const { title, description, lang, image, type } = Astro.props;
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
 
-    <!-- Preconnect to Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!-- Preload critical fonts -->
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
-    />
-
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <SEO {title} {description} {lang} {image} {type} />
@@ -132,19 +117,22 @@ const { title, description, lang, image, type } = Astro.props;
     </script>
   </head>
   <body>
-    <CanvasBackground client:load transition:persist="canvas" />
-    <Header client:load transition:persist="header" {lang} />
-    <ThemeToggle client:load transition:persist="theme-toggle" />
-    <LanguageToggle client:load transition:persist="lang-toggle" {lang} />
+    <CanvasBackground
+      client:media="(min-width: 768px)"
+      transition:persist="canvas"
+    />
+    <Header client:idle transition:persist="header" {lang} />
+    <ThemeToggle client:idle transition:persist="theme-toggle" />
+    <LanguageToggle client:idle transition:persist="lang-toggle" {lang} />
 
     <main class="relative z-10 w-full">
       <slot />
     </main>
 
-    <Dock client:load transition:persist="dock" {lang} />
-    <ScrollToTop client:load transition:persist="scroll-top" />
-    <ShowDockButton client:load transition:persist="show-dock-btn" />
-    <AppInit client:only="react" transition:persist="app-init" />
+    <Dock client:idle transition:persist="dock" {lang} />
+    <ScrollToTop client:idle transition:persist="scroll-top" />
+    <ShowDockButton client:idle transition:persist="show-dock-btn" />
+    <AppInit client:idle transition:persist="app-init" />
   </body>
 </html>
 
