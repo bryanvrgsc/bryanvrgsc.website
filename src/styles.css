@@ -400,18 +400,36 @@ body {
   transform: scale(0.92) !important;
 }
 
-/* Background Noise */
-.bg-noise {
+/* Adaptive Background */
+.adaptive-background {
   position: fixed;
   inset: 0;
-  opacity: 0.035;
   pointer-events: none;
+  overflow: hidden;
   z-index: -2;
-  mix-blend-mode: overlay;
-  /* Removed unused SVG filter */
-  /* filter: url(#noiseFilter); */
+  background:
+    radial-gradient(42rem 42rem at 12% 18%, color-mix(in srgb, var(--primary-color) 12%, transparent), transparent 70%),
+    radial-gradient(34rem 34rem at 88% 14%, color-mix(in srgb, var(--accent-color) 8%, transparent), transparent 72%),
+    linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+}
+
+.adaptive-background::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--primary-color) 4%, transparent), transparent 28%),
+    radial-gradient(28rem 28rem at 75% 85%, color-mix(in srgb, var(--primary-color) 8%, transparent), transparent 72%);
+}
+
+.adaptive-background-canvas {
+  opacity: 0.7;
   transform: translate3d(0, 0, 0);
-  /* Force GPU Layer */
+}
+
+[data-theme='dark'] .adaptive-background-canvas,
+.dark .adaptive-background-canvas {
+  opacity: 0.92;
 }
 
 /* GlassElement Styles (Moved from module to fix import error) */
@@ -493,13 +511,6 @@ body {
   /* Note: Do NOT use 'contain' property here as it breaks fixed positioning (dock) */
 }
 
-/* Lite mode background - GPU optimized */
-.lite-mode .lite-background {
-  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%) !important;
-  will-change: auto;
-  transform: translateZ(0);
-}
-
 /* 1. Disable Background Blur (Most expensive) */
 .lite-mode .glass-element-box,
 .lite-mode .bento-card,
@@ -538,7 +549,7 @@ body {
 /* 4. Disable Noise & Sheen Animations */
 .lite-mode .liquid-glass-wrapper::after,
 .lite-mode .animate-sheen-slow,
-.lite-mode .bg-noise {
+.lite-mode .adaptive-background-canvas {
   display: none !important;
 }
 
@@ -809,6 +820,10 @@ body {
 
 /* Reduce motion preference */
 @media (prefers-reduced-motion: reduce) {
+
+  .adaptive-background-canvas {
+    display: none !important;
+  }
 
   .animate-fade-in,
   .animate-slide-up-fade,
