@@ -2,9 +2,13 @@ import type { Document } from '../constants/resources';
 import type { Language } from '../types';
 
 export type ResourceFilter = 'all' | 'paper' | 'slides';
+type ResourceDocument = Pick<
+  Document,
+  'type' | 'title' | 'description' | 'category'
+>;
 
 export const filterDocuments = (
-  docs: Document[],
+  docs: ResourceDocument[],
   filter: ResourceFilter,
   category: string,
   searchTerm: string,
