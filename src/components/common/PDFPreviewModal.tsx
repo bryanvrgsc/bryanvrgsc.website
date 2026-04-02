@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import { Icons } from '../Icons';
 import { DYNAMIC_COLORS } from '../../constants/colors';
 import { PDFViewer } from '../ui/PDFViewer';
+import { downloadPDF, normalizePublicAssetUrl, openPDFInNewTab } from '../../utils/pdf-utils';
+import { lockBodyScroll } from '../../utils/modal';
 
 interface PDFPreviewModalProps {
     isOpen: boolean;
@@ -58,20 +60,24 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
     const [isLoading, setIsLoading] = useState(true);
     const [showInfo, setShowInfo] = useState(true);
     const t = translations[lang];
+    const resolvedPdfUrl = normalizePublicAssetUrl(pdfUrl);
 
     useEffect(() => {
+        if (!isOpen) {
+            return;
+        }
+
+        const unlock = lockBodyScroll();
         if (isOpen) {
-            document.body.style.overflow = 'hidden';
             setIsLoading(true);
             // Auto-hide info panel on mobile to show PDF immediately
             if (window.innerWidth < 768) {
                 setShowInfo(false);
             }
         }
-        return () => {
-            document.body.style.overflow = '';
-        };
-    }, [isOpen]);
+
+        return unlock;
+    }, [isOpen, pdfUrl]);
 
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
@@ -86,17 +92,11 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
     if (!isOpen) return null;
 
     const handleDownload = () => {
-        const link = document.createElement('a');
-        link.href = pdfUrl;
-        link.download = filename;
-        link.target = '_blank';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        downloadPDF(resolvedPdfUrl, filename);
     };
 
     const handleOpenInNewTab = () => {
-        window.open(pdfUrl, '_blank');
+        openPDFInNewTab(resolvedPdfUrl);
     };
 
     const typeColor = type === 'paper' ? DYNAMIC_COLORS.raw.light.primary : '#8b5cf6';
@@ -191,7 +191,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
 
                         {/* PDF Viewer - Enhanced performance with PDF.js */}
                         <PDFViewer
-                            url={pdfUrl}
+                            url={resolvedPdfUrl}
                             onLoadSuccess={() => setIsLoading(false)}
                             className="bg-[var(--bg-secondary)]"
                             showZoomControls={true}

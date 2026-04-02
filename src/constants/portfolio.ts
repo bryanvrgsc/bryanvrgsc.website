@@ -104,7 +104,7 @@ export const PORTFOLIO = {
             tech: "SQL, ETL, PowerBI, Data Warehousing",
             result: "Integral vision & 360° impact analysis.",
             image: IMG.datawarehouse.cover,
-            presentationUrl: "docs/work/data_warehouse_final.pdf",
+            presentationUrl: "/docs/work/data_warehouse_final.pdf",
             screenshots: IMG.datawarehouse.screenshots,
             details: {
                 currentFeatures: [
@@ -114,10 +114,10 @@ export const PORTFOLIO = {
                     "Satisfaction surveys & key indicators"
                 ],
                 documents: [
-                    { label: "Protocol Presentation", url: "docs/work/data_warehouse_protocolo.pdf" },
-                    { label: "First Partial Presentation", url: "docs/work/data_warehouse_parcial1.pdf" },
-                    { label: "Second Partial Presentation", url: "docs/work/data_warehouse_parcial2.pdf" },
-                    { label: "Final Presentation", url: "docs/work/data_warehouse_final.pdf" }
+                    { label: "Protocol Presentation", url: "/docs/work/data_warehouse_protocolo.pdf" },
+                    { label: "First Partial Presentation", url: "/docs/work/data_warehouse_parcial1.pdf" },
+                    { label: "Second Partial Presentation", url: "/docs/work/data_warehouse_parcial2.pdf" },
+                    { label: "Final Presentation", url: "/docs/work/data_warehouse_final.pdf" }
                 ]
             }
         },
@@ -150,7 +150,7 @@ export const PORTFOLIO = {
             result: "Full-stack mobile commerce.",
             image: IMG.ios_store.cover,
             repoUrl: "https://github.com/bryanvrgsc/swift_proyecto_final_apps",
-            presentationUrl: "docs/work/ios_store_presentation.pdf",
+            presentationUrl: "/docs/work/ios_store_presentation.pdf",
             screenshots: IMG.ios_store.screenshots,
             details: {
                 currentFeatures: [
@@ -178,7 +178,7 @@ export const PORTFOLIO = {
             image: IMG.appointment_app.cover,
             repoUrl: "https://github.com/bryanvrgsc/flutter_proyecto_final_apps",
             videoUrl: "https://drive.google.com/file/d/1VYnOJINVIiF5S1bowKk9b6_3pj_YH1JV/preview",
-            presentationUrl: "docs/work/appointment_app_presentation.pdf",
+            presentationUrl: "/docs/work/appointment_app_presentation.pdf",
             screenshots: IMG.appointment_app.screenshots,
             details: {
                 currentFeatures: [
@@ -241,7 +241,7 @@ export const PORTFOLIO = {
             tech: "SQL, ETL, PowerBI, Data Warehousing",
             result: "Visión integral y análisis de impacto 360°.",
             image: IMG.datawarehouse.cover,
-            presentationUrl: "docs/work/data_warehouse_final.pdf",
+            presentationUrl: "/docs/work/data_warehouse_final.pdf",
             screenshots: IMG.datawarehouse.screenshots,
             details: {
                 currentFeatures: [
@@ -251,10 +251,10 @@ export const PORTFOLIO = {
                     "Encuestas de satisfacción e indicadores clave"
                 ],
                 documents: [
-                    { label: "Presentación Protocolo", url: "docs/work/data_warehouse_protocolo.pdf" },
-                    { label: "Presentación Primer Parcial", url: "docs/work/data_warehouse_parcial1.pdf" },
-                    { label: "Presentación Segundo Parcial", url: "docs/work/data_warehouse_parcial2.pdf" },
-                    { label: "Presentación Final", url: "docs/work/data_warehouse_final.pdf" }
+                    { label: "Presentación Protocolo", url: "/docs/work/data_warehouse_protocolo.pdf" },
+                    { label: "Presentación Primer Parcial", url: "/docs/work/data_warehouse_parcial1.pdf" },
+                    { label: "Presentación Segundo Parcial", url: "/docs/work/data_warehouse_parcial2.pdf" },
+                    { label: "Presentación Final", url: "/docs/work/data_warehouse_final.pdf" }
                 ]
             }
         },
@@ -287,7 +287,7 @@ export const PORTFOLIO = {
             result: "Experiencia de compra completa.",
             image: IMG.ios_store.cover,
             repoUrl: "https://github.com/bryanvrgsc/swift_proyecto_final_apps",
-            presentationUrl: "docs/work/ios_store_presentation.pdf",
+            presentationUrl: "/docs/work/ios_store_presentation.pdf",
             screenshots: IMG.ios_store.screenshots,
             details: {
                 currentFeatures: [
@@ -315,7 +315,7 @@ export const PORTFOLIO = {
             image: IMG.appointment_app.cover,
             repoUrl: "https://github.com/bryanvrgsc/flutter_proyecto_final_apps",
             videoUrl: "https://drive.google.com/file/d/1VYnOJINVIiF5S1bowKk9b6_3pj_YH1JV/preview",
-            presentationUrl: "docs/work/appointment_app_presentation.pdf",
+            presentationUrl: "/docs/work/appointment_app_presentation.pdf",
             screenshots: IMG.appointment_app.screenshots,
             details: {
                 currentFeatures: [
