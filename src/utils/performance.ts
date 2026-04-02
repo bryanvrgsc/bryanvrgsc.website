@@ -1,6 +1,7 @@
 import { enableLiteMode } from '../store';
 
 type EffectiveConnectionType = 'slow-2g' | '2g' | '3g' | '4g';
+type DeviceFormFactor = 'phone' | 'tablet' | 'desktop';
 
 type NavigatorWithPerformanceHints = Navigator & {
   connection?: {
@@ -15,6 +16,11 @@ interface IdleDeadlineLike {
   timeRemaining: () => number;
 }
 
+interface GraphicsCapability {
+  supported: boolean;
+  maxTextureSize: number;
+}
+
 type IdleCallbackHandle = number;
 type IdleCallbackFn = (
   callback: (deadline: IdleDeadlineLike) => void,
@@ -27,12 +33,9 @@ export interface AdaptivePerformanceDecision {
   reason: string;
 }
 
-export const BACKGROUND_ENHANCEMENT_MEDIA_QUERY =
-  '(min-width: 960px) and (min-height: 640px) and (hover: hover) and (pointer: fine)';
-
-const MIN_FULL_MODE_MEMORY_GB = 4;
-const MIN_FULL_MODE_CORES = 4;
+const MIN_SCREEN_AREA = 230_000;
 const SLOW_CONNECTIONS = new Set<EffectiveConnectionType>(['slow-2g', '2g']);
+let graphicsCapabilityCache: GraphicsCapability | null = null;
 
 const requestIdle = (
   callback: (deadline: IdleDeadlineLike) => void,
@@ -73,9 +76,132 @@ const cancelIdle = (handle: IdleCallbackHandle) => {
   window.clearTimeout(handle);
 };
 
+const getFormFactor = (): DeviceFormFactor => {
+  const shortestSide = Math.min(window.innerWidth, window.innerHeight);
+  const longestSide = Math.max(window.innerWidth, window.innerHeight);
+  const isTouchDevice = navigator.maxTouchPoints > 0;
+
+  if (isTouchDevice && shortestSide < 768) {
+    return 'phone';
+  }
+
+  if (isTouchDevice && longestSide < 1400) {
+    return 'tablet';
+  }
+
+  return 'desktop';
+};
+
+const getGraphicsCapability = (): GraphicsCapability => {
+  if (graphicsCapabilityCache) {
+    return graphicsCapabilityCache;
+  }
+
+  if (typeof document === 'undefined') {
+    return { supported: false, maxTextureSize: 0 };
+  }
+
+  const canvas = document.createElement('canvas');
+  const gl = (
+    canvas.getContext('webgl', {
+      antialias: false,
+      depth: false,
+      stencil: false,
+      failIfMajorPerformanceCaveat: true,
+      powerPreference: 'low-power'
+    }) as WebGLRenderingContext | null
+  ) || (canvas.getContext('experimental-webgl') as WebGLRenderingContext | null);
+
+  if (!gl) {
+    graphicsCapabilityCache = { supported: false, maxTextureSize: 0 };
+    return graphicsCapabilityCache;
+  }
+
+  const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE) || 0;
+  const loseContext = gl.getExtension('WEBGL_lose_context');
+  loseContext?.loseContext();
+
+  graphicsCapabilityCache = {
+    supported: true,
+    maxTextureSize
+  };
+
+  return graphicsCapabilityCache;
+};
+
+const getCapabilityScore = () => {
+  const navigatorWithHints = navigator as NavigatorWithPerformanceHints;
+  const connection = navigatorWithHints.connection;
+  const formFactor = getFormFactor();
+  const screenArea = window.innerWidth * window.innerHeight;
+  const graphics = getGraphicsCapability();
+
+  let score = 0;
+  const reasons: string[] = [formFactor];
+
+  if (screenArea < MIN_SCREEN_AREA) {
+    score -= 1;
+    reasons.push('compact-screen');
+  }
+
+  if (typeof navigatorWithHints.deviceMemory === 'number') {
+    if (navigatorWithHints.deviceMemory >= 8) {
+      score += 2;
+      reasons.push(`memory:${navigatorWithHints.deviceMemory}gb`);
+    } else if (navigatorWithHints.deviceMemory >= 4) {
+      score += 1;
+      reasons.push(`memory:${navigatorWithHints.deviceMemory}gb`);
+    } else if (navigatorWithHints.deviceMemory <= 2) {
+      score -= 2;
+      reasons.push(`low-memory:${navigatorWithHints.deviceMemory}gb`);
+    } else {
+      score -= 1;
+      reasons.push(`tight-memory:${navigatorWithHints.deviceMemory}gb`);
+    }
+  }
+
+  if (typeof navigator.hardwareConcurrency === 'number') {
+    if (navigator.hardwareConcurrency >= 8) {
+      score += 2;
+      reasons.push(`cpu:${navigator.hardwareConcurrency}`);
+    } else if (navigator.hardwareConcurrency >= 6) {
+      score += 1;
+      reasons.push(`cpu:${navigator.hardwareConcurrency}`);
+    } else if (navigator.hardwareConcurrency <= 2) {
+      score -= 2;
+      reasons.push(`low-cpu:${navigator.hardwareConcurrency}`);
+    } else if (navigator.hardwareConcurrency <= 4) {
+      score -= 1;
+      reasons.push(`mid-cpu:${navigator.hardwareConcurrency}`);
+    }
+  }
+
+  if (!graphics.supported) {
+    score -= 2;
+    reasons.push('no-webgl');
+  } else if (graphics.maxTextureSize >= 8192) {
+    score += 2;
+    reasons.push(`gpu:${graphics.maxTextureSize}`);
+  } else if (graphics.maxTextureSize >= 4096) {
+    score += 1;
+    reasons.push(`gpu:${graphics.maxTextureSize}`);
+  } else {
+    score -= 1;
+    reasons.push(`weak-gpu:${graphics.maxTextureSize}`);
+  }
+
+  if (connection?.effectiveType === '3g') {
+    score -= 1;
+    reasons.push('3g');
+  }
+
+  return { formFactor, score, reasons };
+};
+
 /**
  * Opt-in heuristic for the rich background animation.
- * The site starts in a safe fallback and only upgrades on desktop-class conditions.
+ * The site starts in a safe fallback and only upgrades when runtime signals
+ * suggest the device can handle the canvas comfortably, regardless of form factor.
  */
 export const getAdaptivePerformanceDecision = (): AdaptivePerformanceDecision => {
   if (typeof window === 'undefined') {
@@ -98,25 +224,13 @@ export const getAdaptivePerformanceDecision = (): AdaptivePerformanceDecision =>
     return { lite: true, reason: `slow-connection:${connection.effectiveType}` };
   }
 
-  if (!window.matchMedia(BACKGROUND_ENHANCEMENT_MEDIA_QUERY).matches) {
-    return { lite: true, reason: 'non-desktop-viewport' };
-  }
+  const { score, reasons } = getCapabilityScore();
+  const shouldUseLiteMode = score < 2;
 
-  if (
-    typeof navigatorWithHints.deviceMemory === 'number' &&
-    navigatorWithHints.deviceMemory < MIN_FULL_MODE_MEMORY_GB
-  ) {
-    return { lite: true, reason: `low-memory:${navigatorWithHints.deviceMemory}gb` };
-  }
-
-  if (
-    typeof navigatorWithHints.hardwareConcurrency === 'number' &&
-    navigatorWithHints.hardwareConcurrency < MIN_FULL_MODE_CORES
-  ) {
-    return { lite: true, reason: `low-cpu:${navigatorWithHints.hardwareConcurrency}-cores` };
-  }
-
-  return { lite: false, reason: 'desktop-class-capable' };
+  return {
+    lite: shouldUseLiteMode,
+    reason: `${shouldUseLiteMode ? 'lite' : 'full'}:${reasons.join('|')}:score=${score}`
+  };
 };
 
 /**
