@@ -80,12 +80,13 @@ const { title, description, lang, image, type } = Astro.props;
             theme === "dark" || (theme === "system" && mediaQuery.matches);
 
           var root = document.documentElement;
+          root.setAttribute("data-theme", isDark ? "dark" : "light");
           if (isDark) {
-            root.setAttribute("data-theme", "dark");
             root.classList.add("dark");
+            root.style.colorScheme = "dark";
           } else {
-            root.removeAttribute("data-theme");
             root.classList.remove("dark");
+            root.style.colorScheme = "light";
           }
 
           return mediaQuery;

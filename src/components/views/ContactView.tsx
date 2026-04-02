@@ -228,13 +228,18 @@ export const ContactView = ({ lang = 'es' }: ContactViewProps) => {
                         {/* Row 1: Name/Company | Email */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
                             <div className="relative group">
+                                <label htmlFor="name" className="sr-only">
+                                    {lang === 'en' ? 'Name or company' : 'Nombre o empresa'}
+                                </label>
                                 <input
                                     id="name"
+                                    name="name"
                                     type="text"
                                     placeholder={t.placeholders.name}
                                     value={formData.name}
                                     onChange={handleChange}
                                     onBlur={() => handleBlur('name')}
+                                    autoComplete="name organization"
                                     disabled={status === 'submitting'}
                                     required
                                     aria-invalid={touched.name && !!fieldErrors.name}
@@ -249,13 +254,19 @@ export const ContactView = ({ lang = 'es' }: ContactViewProps) => {
                                 )}
                             </div>
                             <div className="relative group">
+                                <label htmlFor="email" className="sr-only">
+                                    {lang === 'en' ? 'Email address' : 'Correo electrónico'}
+                                </label>
                                 <input
                                     id="email"
+                                    name="email"
                                     type="email"
                                     placeholder={t.placeholders.email}
                                     value={formData.email}
                                     onChange={handleChange}
                                     onBlur={() => handleBlur('email')}
+                                    autoComplete="email"
+                                    spellCheck={false}
                                     disabled={status === 'submitting'}
                                     required
                                     aria-invalid={touched.email && !!fieldErrors.email}
@@ -282,14 +293,19 @@ export const ContactView = ({ lang = 'es' }: ContactViewProps) => {
 
                         {/* Row 3: Message */}
                         <div className="relative group">
+                            <label htmlFor="message" className="sr-only">
+                                {lang === 'en' ? 'Project details' : 'Detalles del proyecto'}
+                            </label>
                             <textarea
                                 id="message"
+                                name="message"
                                 placeholder={t.placeholders.message}
                                 rows={4}
                                 value={formData.message}
                                 onChange={handleChange}
                                 onBlur={() => handleBlur('message')}
                                 disabled={status === 'submitting'}
+                                autoComplete="off"
                                 required
                                 aria-invalid={touched.message && !!fieldErrors.message}
                                 aria-describedby={touched.message && fieldErrors.message ? 'message-error' : undefined}
@@ -317,6 +333,7 @@ export const ContactView = ({ lang = 'es' }: ContactViewProps) => {
                         {/* Submit Button */}
                         <LiquidButton
                             type="submit"
+                            disabled={status === 'submitting'}
                             className="w-full py-5 md:py-6 text-lg md:text-xl font-bold tracking-wide rounded-full"
                             style={getDynamicButtonStyles().light as React.CSSProperties}
                         >

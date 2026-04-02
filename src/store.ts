@@ -49,13 +49,16 @@ export const applyTheme = (theme: Theme) => {
   const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
   const isDark = theme === 'dark' || (theme === 'system' && mediaQuery.matches);
 
-  root.removeAttribute('data-theme');
+  root.setAttribute('data-theme', isDark ? 'dark' : 'light');
   root.classList.remove('dark');
 
   if (isDark) {
-    root.setAttribute('data-theme', 'dark');
     root.classList.add('dark');
+    root.style.colorScheme = 'dark';
+    return;
   }
+
+  root.style.colorScheme = 'light';
 };
 
 // Listen for system theme changes and auto-update when theme is 'system'

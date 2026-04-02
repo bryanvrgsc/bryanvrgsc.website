@@ -7,7 +7,6 @@ import { DYNAMIC_COLORS } from '../../constants/colors';
 import { PDFPreviewModal } from '../common/PDFPreviewModal';
 import { useMousePosition } from '../../utils/helpers';
 import { LiquidButton } from '../common/LiquidButton';
-import { navigateTo } from '../../utils/navigation';
 import { normalizePublicAssetUrl } from '../../utils/pdf-utils';
 import type { Language } from '../../types';
 
@@ -93,11 +92,14 @@ export const ResourcesView = ({ lang = 'es' }: ResourcesViewProps) => {
                             placeholder={t.searchPlaceholder}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
+                            aria-label={lang === 'en' ? 'Search resources' : 'Buscar recursos'}
                             className="w-full bg-[var(--input-bg)] border border-[var(--card-border)] text-[var(--text-primary)] rounded-[1.5rem] py-4 pl-14 pr-6 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]/30 focus:border-[var(--primary-color)] transition-all placeholder:text-[var(--text-secondary)]/50 shadow-sm hover:shadow-md"
                         />
                         {searchTerm && (
                             <button
+                                type="button"
                                 onClick={() => setSearchTerm('')}
+                                aria-label={lang === 'en' ? 'Clear search' : 'Limpiar búsqueda'}
                                 className="absolute inset-y-0 right-5 flex items-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                             >
                                 <Icons.X className="w-5 h-5" />
@@ -110,6 +112,7 @@ export const ResourcesView = ({ lang = 'es' }: ResourcesViewProps) => {
                         <div className="flex bg-[var(--input-bg)] p-1.5 rounded-2xl border border-[var(--card-border)] shadow-sm">
                             {(['all', 'paper', 'slides'] as FilterType[]).map((filterType) => (
                                 <button
+                                    type="button"
                                     key={filterType}
                                     onClick={() => setFilter(filterType)}
                                     className="px-6 py-2 rounded-xl font-semibold text-sm transition-all duration-300"
@@ -128,6 +131,7 @@ export const ResourcesView = ({ lang = 'es' }: ResourcesViewProps) => {
                         <div className="flex flex-wrap justify-center gap-2 max-w-3xl">
                             {categories.map((cat) => (
                                 <button
+                                    type="button"
                                     key={cat}
                                     onClick={() => setActiveCategory(cat)}
                                     className="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 border"
@@ -152,14 +156,14 @@ export const ResourcesView = ({ lang = 'es' }: ResourcesViewProps) => {
                         const badge = getTypeBadge(doc.type);
                         // ... rest of the card content (same as before)
                         return (
-                            <div
+                            <button
+                                type="button"
                                 key={doc.id}
                                 onMouseMove={handleMouseMove}
                                 onMouseEnter={() => preloadPDF(doc.path)}
                                 onClick={() => setPreviewDoc(doc)}
-                                tabIndex={0}
-                                role="button"
-                                className="bento-card rounded-[2rem] md:rounded-[2.5rem] overflow-hidden group p-0 border-0 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)]"
+                                aria-label={`${doc.title[lang]} - ${lang === 'en' ? 'View document details' : 'Ver detalle del documento'}`}
+                                className="bento-card w-full text-left rounded-[2rem] md:rounded-[2.5rem] overflow-hidden group p-0 border-0 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary-color)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)]"
                             >
                                 <div className="h-[300px] md:h-[350px] overflow-hidden relative bg-[var(--input-bg)]">
                                     <div className="absolute inset-0 z-0">
@@ -207,7 +211,7 @@ export const ResourcesView = ({ lang = 'es' }: ResourcesViewProps) => {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </button>
                         );
                     })}
                 </div>
@@ -225,7 +229,7 @@ export const ResourcesView = ({ lang = 'es' }: ResourcesViewProps) => {
                 {/* CTA Button to Contact */}
                 <div className="flex justify-center mt-12 md:mt-20">
                     <LiquidButton
-                        onClick={() => navigateTo('/contact')}
+                        href={`/${lang}/contact`}
                         className="px-8 py-4 md:px-12 md:py-6 text-sm md:text-lg rounded-full backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-500 group/btn"
                     >
                         <span className="flex items-center gap-3 text-[var(--text-primary)]">

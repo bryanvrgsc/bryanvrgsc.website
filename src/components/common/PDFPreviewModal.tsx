@@ -21,7 +21,7 @@ interface PDFPreviewModalProps {
 // Translations
 const translations = {
     en: {
-        loading: 'Loading document...',
+        loading: 'Loading document…',
         summary: 'Summary',
         openNewTab: 'Open in new tab',
         download: 'Download',
@@ -30,7 +30,7 @@ const translations = {
         slides: 'Presentation'
     },
     es: {
-        loading: 'Cargando documento...',
+        loading: 'Cargando documento…',
         summary: 'Resumen',
         openNewTab: 'Abrir en nueva ventana',
         download: 'Descargar',
