@@ -39,6 +39,7 @@ const DockItem = React.memo(({
         ref={itemRef}
         data-id={item.id}
         href={item.href}
+        aria-current={isActive ? 'page' : undefined}
         onClick={(e) => { e.preventDefault(); onNavigate(item.href); }}
         className={`dock-item group relative flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-full transition-all duration-500 ease-[cubic-bezier(0.25,1,0.3,1)]
             ${isActive
@@ -335,6 +336,7 @@ export const Dock = React.memo(({ lang = 'es' }: DockProps) => {
                     <LiquidButton
                         type="button"
                         primary={activeId === 'contact'}
+                        aria-current={activeId === 'contact' ? 'page' : undefined}
                         className={`rounded-full px-6 py-2.5 md:px-8 md:py-3 text-xs md:text-sm font-bold transition-all duration-500 shadow-lg shadow-black/5 active:shadow-sm
                             ${activeId === 'contact'
                                 ? 'scale-105'

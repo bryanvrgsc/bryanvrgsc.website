@@ -18,7 +18,7 @@ export const ThemeToggle = () => {
     };
 
     return (
-        <button onClick={cycleTheme} className="fixed top-3 right-3 md:top-6 md:right-8 z-50 w-11 h-11 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-[var(--card-bg)] backdrop-blur-xl border border-[var(--card-border)] shadow-lg hover:scale-110 transition-transform duration-300 group">
+        <button onClick={cycleTheme} aria-label={theme === 'system' ? 'Theme: System. Switch to dark' : theme === 'dark' ? 'Theme: Dark. Switch to light' : 'Theme: Light. Switch to system'} className="fixed top-3 right-3 md:top-6 md:right-8 z-50 w-11 h-11 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-[var(--card-bg)] backdrop-blur-xl border border-[var(--card-border)] shadow-lg hover:scale-110 transition-transform duration-300 group">
             <div className="text-[var(--text-primary)] transition-colors">
                 {theme === 'system' && <Icons.Monitor className="w-5 h-5 md:w-6 md:h-6 opacity-70 group-hover:opacity-100" />}
                 {theme === 'dark' && <Icons.Moon className="w-5 h-5 md:w-6 md:h-6 opacity-70 group-hover:opacity-100" />}
