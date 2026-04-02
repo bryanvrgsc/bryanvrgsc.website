@@ -17,6 +17,9 @@ import { DYNAMIC_COLORS, getDynamicButtonStyles } from '../../constants/colors';
 export interface LiquidButtonProps {
     children?: React.ReactNode;
     onClick?: () => void;
+    href?: string;
+    target?: React.HTMLAttributeAnchorTarget;
+    rel?: string;
     className?: string;
     type?: "button" | "submit" | "reset";
     style?: React.CSSProperties;
@@ -28,6 +31,9 @@ export interface LiquidButtonProps {
 export const LiquidButton: React.FC<LiquidButtonProps> = ({
     children,
     onClick,
+    href,
+    target,
+    rel,
     className = "",
     type = "button",
     style,
@@ -59,20 +65,8 @@ export const LiquidButton: React.FC<LiquidButtonProps> = ({
         ...style
     };
 
-    return (
-        <button
-            type={type}
-            onClick={onClick}
-            disabled={disabled}
-            style={mergedStyle}
-            className={`
-                relative group inline-flex items-center justify-center font-medium 
-                transition-all duration-500 ease-[cubic-bezier(0.25,1,0.3,1)] 
-                active:scale-95 border-none outline-none focus:outline-none
-                disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100
-                ${className}
-            `}
-        >
+    const content = (
+        <>
             {/* Outer Glow (Spills out) */}
             <div
                 className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-60 transition-opacity duration-500 blur-xl pointer-events-none"
@@ -162,6 +156,41 @@ export const LiquidButton: React.FC<LiquidButtonProps> = ({
             >
                 {children}
             </span>
+        </>
+    );
+
+    const sharedClassName = `
+        relative group inline-flex items-center justify-center font-medium 
+        transition-all duration-500 ease-[cubic-bezier(0.25,1,0.3,1)] 
+        active:scale-95 border-none outline-none focus:outline-none
+        disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100
+        ${className}
+    `;
+
+    if (href) {
+        return (
+            <a
+                href={href}
+                target={target}
+                rel={rel}
+                onClick={onClick}
+                style={mergedStyle}
+                className={sharedClassName}
+            >
+                {content}
+            </a>
+        );
+    }
+
+    return (
+        <button
+            type={type}
+            onClick={onClick}
+            disabled={disabled}
+            style={mergedStyle}
+            className={sharedClassName}
+        >
+            {content}
         </button>
     );
 };
