@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Icons } from '../Icons';
 import { DYNAMIC_COLORS } from '../../constants/colors';
+import { normalizePublicAssetUrl } from '../../utils/pdf-utils';
 
 /**
  * PDFViewer Component
@@ -25,6 +26,7 @@ export const PDFViewer = ({
     className?: string,
     showZoomControls?: boolean
 }) => {
+    const resolvedUrl = normalizePublicAssetUrl(url);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const [currentPage, setCurrentPage] = useState(1);
@@ -65,10 +67,16 @@ export const PDFViewer = ({
     useEffect(() => {
         if (typeof window === 'undefined') return;
 
+        let isActive = true;
+        let loadingTask: any = null;
+
         const loadPDF = async () => {
             try {
                 setLoading(true);
                 setError(false);
+                setCurrentPage(1);
+                setTotalPages(0);
+                setPdfDoc(null);
 
                 // Dynamic import of PDF.js
                 const pdfjsLib = await import('pdfjs-dist');
@@ -78,14 +86,24 @@ export const PDFViewer = ({
                 const { default: workerUrl } = await import('pdfjs-dist/build/pdf.worker.min.mjs?url');
                 pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
 
-                console.log('PDF.js loading document with local worker:', url);
-                const loadingTask = pdfjsLib.getDocument(url);
+                console.log('PDF.js loading document with local worker:', resolvedUrl);
+                loadingTask = pdfjsLib.getDocument(resolvedUrl);
                 const pdf = await loadingTask.promise;
+
+                if (!isActive) {
+                    await pdf.destroy();
+                    return;
+                }
+
                 setPdfDoc(pdf);
                 setTotalPages(pdf.numPages);
                 setLoading(false);
                 onLoadSuccess?.(pdf.numPages);
             } catch (err) {
+                if (!isActive) {
+                    return;
+                }
+
                 console.error('Error loading PDF:', err);
                 setError(true);
                 setLoading(false);
@@ -93,7 +111,14 @@ export const PDFViewer = ({
         };
 
         loadPDF();
-    }, [url]);
+
+        return () => {
+            isActive = false;
+            if (loadingTask) {
+                loadingTask.destroy();
+            }
+        };
+    }, [resolvedUrl]);
 
     // Render current page
     useEffect(() => {
@@ -197,7 +222,7 @@ export const PDFViewer = ({
             <div className="relative w-full h-full bg-[var(--bg-secondary)] flex items-center justify-center">
                 <div className="text-center p-4">
                     <p className="text-[var(--text-secondary)] mb-4">No se pudo cargar el PDF</p>
-                    <a href={url} target="_blank" rel="noreferrer" className="font-bold hover:underline" style={{ color: DYNAMIC_COLORS.raw.light.primary }}>
+                    <a href={resolvedUrl} target="_blank" rel="noreferrer" className="font-bold hover:underline" style={{ color: DYNAMIC_COLORS.raw.light.primary }}>
                         Descargar PDF
                     </a>
                 </div>

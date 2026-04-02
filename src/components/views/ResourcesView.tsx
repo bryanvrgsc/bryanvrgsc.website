@@ -8,6 +8,7 @@ import { PDFPreviewModal } from '../common/PDFPreviewModal';
 import { useMousePosition } from '../../utils/helpers';
 import { LiquidButton } from '../common/LiquidButton';
 import { navigateTo } from '../../utils/navigation';
+import { normalizePublicAssetUrl } from '../../utils/pdf-utils';
 import type { Language } from '../../types';
 
 /**
@@ -34,19 +35,20 @@ export const ResourcesView = ({ lang = 'es' }: ResourcesViewProps) => {
     const categories = ['all', ...Array.from(new Set(DOCUMENTS.map(doc => doc.category[lang])))];
 
     const preloadPDF = async (url: string) => {
-        if (preloadedDocs.current.has(url)) return;
-        preloadedDocs.current.add(url);
+        const normalizedUrl = normalizePublicAssetUrl(url);
+        if (preloadedDocs.current.has(normalizedUrl)) return;
+        preloadedDocs.current.add(normalizedUrl);
 
         try {
             const pdfjsLib = await import('pdfjs-dist');
             const { default: workerUrl } = await import('pdfjs-dist/build/pdf.worker.min.mjs?url');
             pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
 
-            const loadingTask = pdfjsLib.getDocument(url);
+            const loadingTask = pdfjsLib.getDocument(normalizedUrl);
             await loadingTask.promise;
         } catch (err) {
-            console.warn(`Failed to preload: ${url}`, err);
-            preloadedDocs.current.delete(url);
+            console.warn(`Failed to preload: ${normalizedUrl}`, err);
+            preloadedDocs.current.delete(normalizedUrl);
         }
     };
 
@@ -239,7 +241,7 @@ export const ResourcesView = ({ lang = 'es' }: ResourcesViewProps) => {
                 <PDFPreviewModal
                     isOpen={!!previewDoc}
                     onClose={() => setPreviewDoc(null)}
-                    pdfUrl={previewDoc.path}
+                    pdfUrl={normalizePublicAssetUrl(previewDoc.path)}
                     title={previewDoc.title[lang]}
                     filename={previewDoc.filename}
                     description={previewDoc.detailedDescription[lang]}

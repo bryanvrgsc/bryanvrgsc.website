@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Icons } from '../Icons';
 import { UI_TEXT } from '../../constants/ui-text';
 import { PORTFOLIO } from '../../constants';
@@ -24,6 +24,7 @@ interface PortfolioViewProps {
 export const PortfolioView = ({ lang = 'es', initialSlug }: PortfolioViewProps) => {
     const handleMouseMove = useMousePosition();
     const [openSlug, setOpenSlug] = useState<string | null>(initialSlug ?? null);
+    const hasInitializedHistory = useRef(false);
     const t = UI_TEXT[lang].portfolio;
     const projects = PORTFOLIO[lang];
 
@@ -33,31 +34,30 @@ export const PortfolioView = ({ lang = 'es', initialSlug }: PortfolioViewProps) 
     );
 
     useEffect(() => {
+        hasInitializedHistory.current = false;
         setOpenSlug(initialSlug ?? null);
     }, [initialSlug]);
 
     useEffect(() => {
-        if (typeof window === 'undefined' || !openSlug) {
+        if (typeof window === 'undefined' || hasInitializedHistory.current || !initialSlug) {
             return;
         }
 
         const basePath = `/${lang}/portfolio`;
-        const slugPath = `${basePath}/${openSlug}`;
-        const currentPath = window.location.pathname;
-        const currentState = window.history.state;
+        const slugPath = `${basePath}/${initialSlug}`;
 
-        if (currentPath === slugPath && currentState?.modalSlug === openSlug) {
+        if (window.location.pathname !== slugPath) {
+            hasInitializedHistory.current = true;
             return;
         }
 
-        if (currentPath === slugPath) {
-            window.history.replaceState({ portfolioBase: true }, '', basePath);
-            window.history.pushState({ modalSlug: openSlug }, '', slugPath);
-            return;
+        if (window.history.state?.modalSlug !== initialSlug) {
+            window.history.replaceState({ portfolioBase: true, modalManaged: true }, '', basePath);
+            window.history.pushState({ modalSlug: initialSlug, modalManaged: true }, '', slugPath);
         }
 
-        window.history.pushState({ modalSlug: openSlug }, '', slugPath);
-    }, [openSlug, lang]);
+        hasInitializedHistory.current = true;
+    }, [initialSlug, lang]);
 
     useEffect(() => {
         if (typeof window === 'undefined') {
@@ -85,8 +85,17 @@ export const PortfolioView = ({ lang = 'es', initialSlug }: PortfolioViewProps) 
     }, [lang]);
 
     const openProject = useCallback((slug: string) => {
+        if (typeof window !== 'undefined') {
+            const basePath = `/${lang}/portfolio`;
+            const slugPath = `${basePath}/${slug}`;
+
+            if (window.location.pathname !== slugPath || window.history.state?.modalSlug !== slug) {
+                window.history.pushState({ modalSlug: slug, modalManaged: true }, '', slugPath);
+            }
+        }
+
         setOpenSlug(slug);
-    }, []);
+    }, [lang]);
 
     const closeProject = useCallback(() => {
         if (typeof window === 'undefined') {
@@ -97,8 +106,7 @@ export const PortfolioView = ({ lang = 'es', initialSlug }: PortfolioViewProps) 
         const basePath = `/${lang}/portfolio`;
 
         if (window.location.pathname.startsWith(`${basePath}/`)) {
-            window.history.back();
-            return;
+            window.history.replaceState({ portfolioBase: true, modalManaged: true }, '', basePath);
         }
 
         setOpenSlug(null);
