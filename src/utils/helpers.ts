@@ -13,7 +13,7 @@ import { performanceMode } from '../store';
 export function useMousePosition() {
     const { lite } = useStore(performanceMode);
 
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
         // Optimization: Skip heavy DOM updates in Lite Mode
         if (lite) return;
 

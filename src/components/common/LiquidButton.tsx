@@ -162,7 +162,7 @@ export const LiquidButton: React.FC<LiquidButtonProps> = ({
     const sharedClassName = `
         relative group inline-flex items-center justify-center font-medium 
         transition-all duration-500 ease-[cubic-bezier(0.25,1,0.3,1)] 
-        active:scale-95 border-none outline-none focus:outline-none
+        active:scale-95 border-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary-color)]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)]
         disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100
         ${className}
     `;

@@ -133,6 +133,7 @@ export const BudgetInput: React.FC<BudgetInputProps> = ({
                         type="button"
                         onClick={() => !disabled && setIsOpen(!isOpen)}
                         disabled={disabled}
+                        aria-label="Select budget currency"
                         className={`h-full px-4 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-2xl text-[var(--text-primary)] focus:outline-none ${DYNAMIC_COLORS.focusBorder} focus:bg-[var(--glass-glow)] transition-all text-sm focus:ring-1 ${DYNAMIC_COLORS.focusRing} disabled:opacity-50 flex items-center gap-2 min-w-[100px]`}
                     >
                         <span className="text-xl">{selectedCurrency.flag}</span>
@@ -165,8 +166,9 @@ export const BudgetInput: React.FC<BudgetInputProps> = ({
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
                                             placeholder="Search currency..."
+                                            name="currency-search"
+                                            aria-label="Search currency"
                                             className={`w-full pl-9 pr-3 py-2 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none ${DYNAMIC_COLORS.focusBorder}`}
-                                            autoFocus
                                         />
                                     </div>
                                 </div>
@@ -207,6 +209,9 @@ export const BudgetInput: React.FC<BudgetInputProps> = ({
                     onValueChange={handleValueChange}
                     placeholder={placeholder}
                     disabled={disabled}
+                    name="budget"
+                    aria-label="Estimated budget"
+                    autoComplete="off"
                     decimalsLimit={2}
                     prefix={selectedCurrency.symbol + ' '}
                     className={`flex-1 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-2xl px-5 py-5 text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none ${DYNAMIC_COLORS.focusBorder} focus:bg-[var(--glass-glow)] transition-all text-sm focus:ring-1 ${DYNAMIC_COLORS.focusRing} disabled:opacity-50`}

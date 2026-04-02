@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Dev Server (Astro)",
+      "runtimeExecutable": "/Users/bryanvargas/.nvm/versions/node/v24.14.1/bin/node",
+      "runtimeArgs": ["/Users/bryanvargas/Developer/bryanvrgsc-Website/node_modules/astro/bin/astro.mjs", "dev"],
+      "port": 4321
+    },
+    {
+      "name": "Preview Server (Astro)",
+      "runtimeExecutable": "/Users/bryanvargas/.nvm/versions/node/v24.14.1/bin/node",
+      "runtimeArgs": ["/Users/bryanvargas/Developer/bryanvrgsc-Website/node_modules/astro/bin/astro.mjs", "preview"],
+      "port": 4321
+    }
+  ]
+}

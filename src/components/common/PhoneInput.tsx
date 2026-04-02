@@ -123,6 +123,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                         type="button"
                         onClick={() => !disabled && setIsOpen(!isOpen)}
                         disabled={disabled}
+                        aria-label="Select country code"
                         className={`h-full px-4 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-2xl text-[var(--text-primary)] focus:outline-none ${DYNAMIC_COLORS.focusBorder} focus:bg-[var(--glass-glow)] transition-all text-sm focus:ring-1 ${DYNAMIC_COLORS.focusRing} disabled:opacity-50 flex items-center gap-2 min-w-[100px]`}
                     >
                         <span className="text-xl">{getFlagEmoji(selectedCountry.iso2)}</span>
@@ -154,8 +155,9 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
                                             placeholder="Search country..."
+                                            name="country-search"
+                                            aria-label="Search country"
                                             className={`w-full pl-9 pr-3 py-2 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none ${DYNAMIC_COLORS.focusBorder}`}
-                                            autoFocus
                                         />
                                     </div>
                                 </div>
@@ -194,6 +196,8 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                     onChange={handlePhoneChange}
                     placeholder={placeholder}
                     disabled={disabled}
+                    name="phone"
+                    aria-label="Phone number"
                     autoComplete="tel-national"
                     className={`flex-1 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-2xl px-5 py-5 text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none ${DYNAMIC_COLORS.focusBorder} focus:bg-[var(--glass-glow)] transition-all text-sm focus:ring-1 ${DYNAMIC_COLORS.focusRing} disabled:opacity-50`}
                 />
