@@ -146,7 +146,7 @@ export const ResourcesView = ({ lang = 'es' }: ResourcesViewProps) => {
                 </div>
 
                 {/* Documents Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 min-h-[400px]">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 min-h-[400px]" aria-live="polite">
                     {filteredDocs.map((doc) => {
                         const DocIcon = getDocIcon(doc.type);
                         const badge = getTypeBadge(doc.type);

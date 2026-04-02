@@ -165,7 +165,7 @@ export const ContactView = ({ lang = 'es' }: ContactViewProps) => {
 
     if (status === 'success') {
         return (
-            <div className="max-w-3xl mx-auto pt-24 md:pt-32 px-4 md:px-6 pb-32 md:pb-40 animate-slide-up">
+            <div className="max-w-3xl mx-auto pt-24 md:pt-32 px-4 md:px-6 pb-32 md:pb-40 animate-slide-up" aria-live="polite">
                 <div onMouseMove={handleMouseMove} className="bento-card p-8 md:p-12 rounded-[2.5rem] md:rounded-[3.5rem] text-center relative overflow-hidden flex flex-col items-center justify-center min-h-[400px] md:min-h-[500px]">
                     <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b pointer-events-none" style={{ backgroundImage: `linear-gradient(to bottom, ${DYNAMIC_COLORS.raw.light.primary}0D, transparent)` }}></div>
                     <div
@@ -238,13 +238,14 @@ export const ContactView = ({ lang = 'es' }: ContactViewProps) => {
                                     disabled={status === 'submitting'}
                                     required
                                     aria-invalid={touched.name && !!fieldErrors.name}
+                                    aria-describedby={touched.name && fieldErrors.name ? 'name-error' : undefined}
                                     className={`w-full bg-[var(--input-bg)] border rounded-2xl px-5 py-5 text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none transition-all text-sm focus:ring-1 disabled:opacity-50 ${touched.name && fieldErrors.name
                                         ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50'
                                         : `border-[var(--input-border)] ${DYNAMIC_COLORS.focusBorder} focus:bg-[var(--glass-glow)] ${DYNAMIC_COLORS.focusRing}`
                                         }`}
                                 />
                                 {touched.name && fieldErrors.name && (
-                                    <p className="absolute -bottom-6 left-0 text-xs text-red-500 font-medium">{fieldErrors.name}</p>
+                                    <p id="name-error" className="absolute -bottom-6 left-0 text-xs text-red-500 font-medium" role="alert">{fieldErrors.name}</p>
                                 )}
                             </div>
                             <div className="relative group">
@@ -258,13 +259,14 @@ export const ContactView = ({ lang = 'es' }: ContactViewProps) => {
                                     disabled={status === 'submitting'}
                                     required
                                     aria-invalid={touched.email && !!fieldErrors.email}
+                                    aria-describedby={touched.email && fieldErrors.email ? 'email-error' : undefined}
                                     className={`w-full bg-[var(--input-bg)] border rounded-2xl px-5 py-5 text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none transition-all text-sm focus:ring-1 disabled:opacity-50 ${touched.email && fieldErrors.email
                                         ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50'
                                         : `border-[var(--input-border)] ${DYNAMIC_COLORS.focusBorder} focus:bg-[var(--glass-glow)] ${DYNAMIC_COLORS.focusRing}`
                                         }`}
                                 />
                                 {touched.email && fieldErrors.email && (
-                                    <p className="absolute -bottom-6 left-0 text-xs text-red-500 font-medium">{fieldErrors.email}</p>
+                                    <p id="email-error" className="absolute -bottom-6 left-0 text-xs text-red-500 font-medium" role="alert">{fieldErrors.email}</p>
                                 )}
                             </div>
                         </div>
@@ -290,13 +292,14 @@ export const ContactView = ({ lang = 'es' }: ContactViewProps) => {
                                 disabled={status === 'submitting'}
                                 required
                                 aria-invalid={touched.message && !!fieldErrors.message}
+                                aria-describedby={touched.message && fieldErrors.message ? 'message-error' : undefined}
                                 className={`w-full bg-[var(--input-bg)] border rounded-2xl px-5 py-5 text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none transition-all resize-none text-sm focus:ring-1 disabled:opacity-50 ${touched.message && fieldErrors.message
                                     ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50'
                                     : `border-[var(--input-border)] ${DYNAMIC_COLORS.focusBorder} focus:bg-[var(--glass-glow)] ${DYNAMIC_COLORS.focusRing}`
                                     }`}
                             ></textarea>
                             {touched.message && fieldErrors.message && (
-                                <p className="absolute -bottom-6 left-0 text-xs text-red-500 font-medium">{fieldErrors.message}</p>
+                                <p id="message-error" className="absolute -bottom-6 left-0 text-xs text-red-500 font-medium" role="alert">{fieldErrors.message}</p>
                             )}
                         </div>
 

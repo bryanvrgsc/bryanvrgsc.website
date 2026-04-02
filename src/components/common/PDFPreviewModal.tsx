@@ -103,7 +103,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
     const typeLabel = type === 'paper' ? t.paper : t.slides;
 
     return createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 md:p-6 animate-fadeIn">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 md:p-6 animate-fadeIn" role="dialog" aria-modal="true" aria-label={title}>
             {/* Backdrop - clickable to close */}
             <div
                 className="absolute inset-0 bg-black/70 backdrop-blur-xl cursor-pointer"
@@ -119,6 +119,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
                     <div className="flex items-center gap-3 md:gap-4 min-w-0 flex-1">
                         <button
                             onClick={onClose}
+                            aria-label="Close"
                             className="flex-shrink-0 p-2 md:p-2.5 rounded-xl bg-[var(--input-bg)] hover:bg-[var(--dock-item-bg)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-300 border border-[var(--card-border)]"
                         >
                             <Icons.X className="w-5 h-5 md:w-6 md:h-6" />
