@@ -107,8 +107,7 @@ const getGraphicsCapability = (): GraphicsCapability => {
       antialias: false,
       depth: false,
       stencil: false,
-      failIfMajorPerformanceCaveat: true,
-      powerPreference: 'low-power'
+      powerPreference: 'default'
     }) as WebGLRenderingContext | null
   ) || (canvas.getContext('experimental-webgl') as WebGLRenderingContext | null);
 
@@ -170,10 +169,9 @@ const getCapabilityScore = () => {
     } else if (navigator.hardwareConcurrency <= 2) {
       score -= 2;
       reasons.push(`low-cpu:${navigator.hardwareConcurrency}`);
-    } else if (navigator.hardwareConcurrency <= 4) {
-      score -= 1;
-      reasons.push(`mid-cpu:${navigator.hardwareConcurrency}`);
     }
+    // 3–5 cores: neutral — avoids penalizing iOS devices where Safari may report
+    // fewer cores than the physical count (e.g. A17 Pro reporting 4)
   }
 
   if (!graphics.supported) {
