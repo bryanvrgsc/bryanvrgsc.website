@@ -1,10 +1,12 @@
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 /* Global Config */
 :root {
   --apple-ease: cubic-bezier(0.25, 1, 0.3, 1);
   /* Smoother spring feel */
 
   /* Color scheme for DarkReader and browser detection */
-  color-scheme: light dark;
+  color-scheme: light;
   --primary-color: #0284c7;
   --secondary-color: #0369a1;
   --accent-color: #38bdf8;
@@ -66,8 +68,8 @@
     radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.6) 0%, transparent 100%);
 }
 
-[data-theme='dark'],
-.dark {
+[data-theme='dark'] {
+  color-scheme: dark;
   --primary-color: #38bdf8;
   --secondary-color: #0ea5e9;
   --accent-color: #7dd3fc;
@@ -431,8 +433,7 @@ body {
   transform: translate3d(0, 0, 0);
 }
 
-[data-theme='dark'] .adaptive-background-canvas,
-.dark .adaptive-background-canvas {
+[data-theme='dark'] .adaptive-background-canvas {
   opacity: 0.92;
 }
 

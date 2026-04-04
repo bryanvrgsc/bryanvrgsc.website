@@ -9,6 +9,8 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "pages:deploy": "pnpm build && wrangler pages deploy ./dist"
   },
   "dependencies": {
@@ -35,7 +37,9 @@
     "@types/node": "^25.0.2",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "jsdom": "^26.0.0",
     "vite-imagetools": "^9.0.2",
+    "vitest": "^3.2.0",
     "wrangler": "^4.54.0"
   }
 }
