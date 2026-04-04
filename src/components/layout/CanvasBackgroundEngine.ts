@@ -1,4 +1,5 @@
 import { NETWORK_COLORS } from '../../constants/colors';
+import { resolveDocumentTheme } from '../../utils/theme';
 
 class NetworkNode {
   x: number;
@@ -148,8 +149,16 @@ class SpatialGrid {
   }
 }
 
-const getIsDarkTheme = () =>
-  document.documentElement.getAttribute('data-theme') === 'dark';
+const getIsDarkTheme = () => {
+  const root = document.documentElement;
+  const theme = resolveDocumentTheme({
+    dataTheme: root.getAttribute('data-theme'),
+    hasDarkClass: root.classList.contains('dark'),
+    systemPrefersDark: window.matchMedia('(prefers-color-scheme: dark)').matches
+  });
+
+  return theme === 'dark';
+};
 
 const getNetworkPalette = () => (getIsDarkTheme() ? NETWORK_COLORS.dark : NETWORK_COLORS.light);
 

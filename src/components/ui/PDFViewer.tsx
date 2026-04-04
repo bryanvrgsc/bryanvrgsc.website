@@ -211,7 +211,7 @@ export const PDFViewer = ({
                         className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4"
                         style={{ borderBottomColor: DYNAMIC_COLORS.raw.light.primary }}
                     ></div>
-                    <p className="text-[var(--text-secondary)]">Cargando presentación...</p>
+                    <p className="text-[var(--text-secondary)]">Cargando presentación…</p>
                 </div>
             </div>
         );

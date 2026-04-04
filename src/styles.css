@@ -347,7 +347,11 @@ body {
     /* Deeper shadow */
     0 4px 12px -2px rgba(0, 0, 0, 0.04),
     inset 0 0 0 1.5px var(--card-border);
-  transition: all 0.7s var(--apple-ease);
+  transition:
+    background 0.7s var(--apple-ease),
+    border-color 0.7s var(--apple-ease),
+    box-shadow 0.7s var(--apple-ease),
+    transform 0.7s var(--apple-ease);
   position: relative;
   overflow: hidden;
   color: var(--text-primary);
@@ -395,7 +399,7 @@ body {
 
 /* Dock Item Animation */
 .dock-item {
-  transition: all 0.4s var(--apple-ease);
+  transition: transform 0.4s var(--apple-ease);
 }
 
 .dock-item:active {
@@ -445,7 +449,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.5s cubic-bezier(0.25, 1, 0.3, 1);
+  transition:
+    background 0.5s cubic-bezier(0.25, 1, 0.3, 1),
+    box-shadow 0.5s cubic-bezier(0.25, 1, 0.3, 1),
+    transform 0.5s cubic-bezier(0.25, 1, 0.3, 1);
   overflow: visible;
   isolation: isolate;
 }
@@ -525,6 +532,15 @@ body {
   /* Remove transparency */
   /* Disable transitions */
   transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* 2. Dark mode solid background */

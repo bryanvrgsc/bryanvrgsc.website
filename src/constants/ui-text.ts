@@ -64,7 +64,7 @@ export const UI_TEXT: Record<'en' | 'es', UIText> = {
         resources: {
             title: "Resources",
             subtitle: "Strategic thinking and tech deep dives.",
-            searchPlaceholder: "Search documents...",
+            searchPlaceholder: "Search documents…",
             allCategories: "All Categories",
             allDocuments: "All Documents",
             papers: "Papers",
@@ -81,12 +81,12 @@ export const UI_TEXT: Record<'en' | 'es', UIText> = {
                 name: "Name / Company",
                 email: "Email",
                 phone: "Phone number",
-                message: "Tell us about your project...",
+                message: "Tell us about your project…",
                 budget: "Estimated budget"
             },
             button: {
                 default: "Schedule Call",
-                sending: "Sending...",
+                sending: "Sending…",
             },
             responseTime: "Average response time: 2 hours.",
             errors: {
@@ -168,7 +168,7 @@ export const UI_TEXT: Record<'en' | 'es', UIText> = {
         resources: {
             title: "Recursos",
             subtitle: "Pensamiento estratégico y tecnología profunda.",
-            searchPlaceholder: "Buscar documentos...",
+            searchPlaceholder: "Buscar documentos…",
             allCategories: "Todos los Temas",
             allDocuments: "Todos los Documentos",
             papers: "Artículos",
@@ -185,12 +185,12 @@ export const UI_TEXT: Record<'en' | 'es', UIText> = {
                 name: "Nombre / Empresa",
                 email: "Correo electrónico",
                 phone: "Número de teléfono",
-                message: "Cuéntanos sobre tu proyecto...",
+                message: "Cuéntanos sobre tu proyecto…",
                 budget: "Presupuesto estimado"
             },
             button: {
                 default: "Agendar Llamada",
-                sending: "Enviando...",
+                sending: "Enviando…",
             },
             responseTime: "Tiempo de respuesta promedio: 2 horas.",
             errors: {

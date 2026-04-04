@@ -5,7 +5,6 @@ import { SERVICES, ENGAGEMENT_MODELS } from '../../constants';
 import { getCategoryTheme, useMousePosition } from '../../utils/helpers';
 import { DYNAMIC_COLORS } from '../../constants/colors';
 import { LiquidButton } from '../common/LiquidButton';
-import { navigateTo } from '../../utils/navigation';
 import type { Language } from '../../types';
 
 /**
@@ -92,7 +91,7 @@ export const ServicesView = ({ lang = 'es' }: ServicesViewProps) => {
             {/* CTA Button to Portfolio */}
             <div className="flex justify-center mt-12 md:mt-20">
                 <LiquidButton
-                    onClick={() => navigateTo('/portfolio')}
+                    href={`/${lang}/portfolio`}
                     className="px-8 py-4 md:px-12 md:py-6 text-sm md:text-lg rounded-full backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-500 group/btn"
                 >
                     <span className="flex items-center gap-3 text-[var(--text-primary)]">

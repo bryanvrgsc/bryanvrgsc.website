@@ -6,7 +6,6 @@ import { PortfolioModal } from '../modals';
 import { DYNAMIC_COLORS } from '../../constants/colors';
 import { useMousePosition } from '../../utils/helpers';
 import { LiquidButton } from '../common/LiquidButton';
-import { navigateTo } from '../../utils/navigation';
 import type { Language, PortfolioProject } from '../../types';
 
 /**
@@ -121,23 +120,14 @@ export const PortfolioView = ({ lang = 'es', initialSlug }: PortfolioViewProps) 
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
                     {projects.map((item, i) => {
-                        const handleKeyDown = (e: React.KeyboardEvent) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
-                                openProject(item.slug);
-                            }
-                        };
-
                         return (
-                            <div
+                            <button
+                                type="button"
                                 onMouseMove={handleMouseMove}
                                 onClick={() => openProject(item.slug)}
-                                onKeyDown={handleKeyDown}
                                 key={i}
-                                tabIndex={0}
-                                role="button"
                                 aria-label={`${item.title} - ${t.viewDetails}`}
-                                className="bento-card rounded-[2rem] md:rounded-[3rem] overflow-hidden group p-0 border-0 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)]"
+                                className="bento-card w-full text-left rounded-[2rem] md:rounded-[3rem] overflow-hidden group p-0 border-0 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary-color)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)]"
                             >
                                 <div className="h-[250px] md:h-[400px] overflow-hidden relative">
                                     <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)] via-transparent to-transparent z-10 opacity-90"></div>
@@ -175,7 +165,7 @@ export const PortfolioView = ({ lang = 'es', initialSlug }: PortfolioViewProps) 
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </button>
                         );
                     })}
                 </div>
@@ -183,7 +173,7 @@ export const PortfolioView = ({ lang = 'es', initialSlug }: PortfolioViewProps) 
 
             <div className="flex justify-center -mt-20 mb-32 md:-mt-24 md:mb-40">
                 <LiquidButton
-                    onClick={() => navigateTo('/resources')}
+                    href={`/${lang}/resources`}
                     className="px-8 py-4 md:px-12 md:py-6 text-sm md:text-lg rounded-full backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-500 group/btn"
                 >
                     <span className="flex items-center gap-3 text-[var(--text-primary)]">
