@@ -1,3 +1,5 @@
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 /* Global Config */
 :root {
   --apple-ease: cubic-bezier(0.25, 1, 0.3, 1);
