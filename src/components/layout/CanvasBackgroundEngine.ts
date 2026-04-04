@@ -151,7 +151,7 @@ class SpatialGrid {
 const getIsDarkTheme = () => {
   const root = document.documentElement;
 
-  if (root.classList.contains('dark') || root.getAttribute('data-theme') === 'dark') {
+  if (root.getAttribute('data-theme') === 'dark') {
     return true;
   }
 

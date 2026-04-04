@@ -68,8 +68,7 @@
     radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.6) 0%, transparent 100%);
 }
 
-[data-theme='dark'],
-.dark {
+[data-theme='dark'] {
   color-scheme: dark;
   --primary-color: #38bdf8;
   --secondary-color: #0ea5e9;
@@ -430,8 +429,7 @@ body {
   transform: translate3d(0, 0, 0);
 }
 
-[data-theme='dark'] .adaptive-background-canvas,
-.dark .adaptive-background-canvas {
+[data-theme='dark'] .adaptive-background-canvas {
   opacity: 0.92;
 }
 
