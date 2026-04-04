@@ -9,9 +9,11 @@ pnpm dev          # Dev server at http://localhost:4321
 pnpm build        # astro check (TypeScript) + astro build — the canonical verification step
 pnpm preview      # Preview production build locally
 pnpm astro check  # Type-check only, no build
+pnpm test         # vitest run — unit tests for src/scripts/ state helpers
+pnpm test:watch   # vitest in watch mode
 ```
 
-There is no test suite. `pnpm build` is the verification gate before any PR.
+`pnpm build` is the verification gate before any PR. Tests (`pnpm test`) cover the `src/scripts/` pure-JS state helpers.
 
 ## Architecture
 
@@ -50,6 +52,10 @@ An inline `<script is:inline>` in `BaseLayout.astro` applies the stored theme be
 ### Layout Persistence (Astro View Transitions)
 
 `BaseLayout.astro` uses `transition:persist` on shell components so they survive client-side navigation without remounting: `CanvasBackground`, `Header`, `Dock`, `ThemeToggle`, `LanguageToggle`, `AppInit`.
+
+### Pure State Helpers (`src/scripts/`)
+
+Framework-free functions extracted from React components for testability. Each file in `src/scripts/` has a matching test in `tests/scripts/`. These handle logic like theme cycling, dock toggling, contact validation, performance scoring, and resource filtering — no DOM, no React, no nanostores. Tests run with vitest + jsdom (`vitest.config.ts`).
 
 ### Content Data
 
