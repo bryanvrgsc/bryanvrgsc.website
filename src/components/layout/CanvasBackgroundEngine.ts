@@ -148,15 +148,8 @@ class SpatialGrid {
   }
 }
 
-const getIsDarkTheme = () => {
-  const root = document.documentElement;
-
-  if (root.getAttribute('data-theme') === 'dark') {
-    return true;
-  }
-
-  return window.matchMedia('(prefers-color-scheme: dark)').matches;
-};
+const getIsDarkTheme = () =>
+  document.documentElement.getAttribute('data-theme') === 'dark';
 
 const getNetworkPalette = () => (getIsDarkTheme() ? NETWORK_COLORS.dark : NETWORK_COLORS.light);
 
