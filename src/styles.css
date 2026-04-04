@@ -6,7 +6,7 @@
   /* Smoother spring feel */
 
   /* Color scheme for DarkReader and browser detection */
-  color-scheme: light dark;
+  color-scheme: light;
   --primary-color: #0284c7;
   --secondary-color: #0369a1;
   --accent-color: #38bdf8;
@@ -70,6 +70,7 @@
 
 [data-theme='dark'],
 .dark {
+  color-scheme: dark;
   --primary-color: #38bdf8;
   --secondary-color: #0ea5e9;
   --accent-color: #7dd3fc;

@@ -49,12 +49,10 @@ export const applyTheme = (theme: Theme) => {
   const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
   const isDark = theme === 'dark' || (theme === 'system' && mediaQuery.matches);
 
-  root.removeAttribute('data-theme');
-  root.classList.remove('dark');
-
   if (isDark) {
     root.setAttribute('data-theme', 'dark');
-    root.classList.add('dark');
+  } else {
+    root.removeAttribute('data-theme');
   }
 };
 

@@ -9,6 +9,7 @@ import { ShowDockButton } from '../components/layout/ShowDockButton';
 import { ThemeToggle } from '../components/ui/ThemeToggle';
 import { LanguageToggle } from '../components/ui/LanguageToggle';
 import AppInit from '../components/layout/AppInit';
+import SpeedInsights from '@vercel/speed-insights/astro';
 
 interface Props {
   title: string;
@@ -82,10 +83,8 @@ const { title, description, lang, image, type } = Astro.props;
           var root = document.documentElement;
           if (isDark) {
             root.setAttribute("data-theme", "dark");
-            root.classList.add("dark");
           } else {
             root.removeAttribute("data-theme");
-            root.classList.remove("dark");
           }
 
           return mediaQuery;
@@ -130,6 +129,7 @@ const { title, description, lang, image, type } = Astro.props;
     <ScrollToTop client:idle transition:persist="scroll-top" />
     <ShowDockButton client:idle transition:persist="show-dock-btn" />
     <AppInit client:load transition:persist="app-init" />
+    <SpeedInsights />
   </body>
 </html>
 
