@@ -74,6 +74,40 @@ export const PortfolioModal = ({ project, onClose, lang }: PortfolioModalProps) 
         return () => window.removeEventListener('keydown', handleEscape);
     }, [handleClose]);
 
+    // Focus trap: cycle focus within modal
+    useEffect(() => {
+        const modal = document.querySelector('[role="dialog"]') as HTMLElement | null;
+        if (!modal) return;
+
+        const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+        const handleTab = (e: KeyboardEvent) => {
+            if (e.key !== 'Tab') return;
+
+            const focusable = modal.querySelectorAll(focusableSelector);
+            if (focusable.length === 0) return;
+
+            const first = focusable[0] as HTMLElement;
+            const last = focusable[focusable.length - 1] as HTMLElement;
+
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        };
+
+        window.addEventListener('keydown', handleTab);
+
+        // Focus the close button on mount
+        const closeBtn = modal.querySelector('button[aria-label="Close"]') as HTMLElement | null;
+        closeBtn?.focus();
+
+        return () => window.removeEventListener('keydown', handleTab);
+    }, []);
+
     if (!project || typeof document === 'undefined') return null;
 
     const images = project.screenshots && project.screenshots.length > 0 ? project.screenshots : [project.image];
@@ -90,8 +124,8 @@ export const PortfolioModal = ({ project, onClose, lang }: PortfolioModalProps) 
             <div className={`bg-[var(--card-bg)] backdrop-blur-3xl border border-[var(--card-border)] w-full max-w-6xl max-h-[90vh] rounded-[2rem] shadow-2xl overflow-hidden relative flex flex-col landscape:flex-row md:flex-row transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-6 scale-[0.985]'}`}>
                 <button onClick={handleClose} aria-label="Close" className="absolute top-4 right-4 z-50 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-md transition-colors border border-white/10"><Icons.X className="w-6 h-6" /></button>
                 <div className="w-full landscape:w-1/2 md:w-1/2 h-[40vh] landscape:h-auto md:h-auto bg-black relative flex flex-col">
-                    <div className="flex-grow relative overflow-hidden group"><img src={images[activeScreenshot]} alt="Project Screenshot" className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105" /><div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-50"></div></div>
-                    {images.length > 1 && (<div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 px-4 z-20">{images.map((img: string, idx: number) => (<button key={idx} onClick={() => setActiveScreenshot(idx)} className={`w-12 h-12 rounded-lg overflow-hidden border-2 transition-all ${activeScreenshot === idx ? `scale-110` : 'border-white/30 opacity-70 hover:opacity-100'}`} style={activeScreenshot === idx ? { borderColor: DYNAMIC_COLORS.raw.light.primary } : {}}><img src={img} alt="thumb" className="w-full h-full object-cover" /></button>))}</div>)}
+                    <div className="flex-grow relative overflow-hidden group"><img src={images[activeScreenshot]} alt={`${project.title} screenshot`} className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105" /><div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-50"></div></div>
+                    {images.length > 1 && (<div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 px-4 z-20">{images.map((img: string, idx: number) => (<button key={idx} onClick={() => setActiveScreenshot(idx)} className={`w-12 h-12 rounded-lg overflow-hidden border-2 transition-all ${activeScreenshot === idx ? `scale-110` : 'border-white/30 opacity-70 hover:opacity-100'}`} style={activeScreenshot === idx ? { borderColor: DYNAMIC_COLORS.raw.light.primary } : {}}><img src={img} alt={`${project.title} screenshot ${idx + 1}`} className="w-full h-full object-cover" /></button>))}</div>)}
                 </div>
                 <div className="w-full landscape:w-1/2 md:w-1/2 p-6 md:p-10 overflow-y-auto custom-scrollbar flex flex-col flex-1 min-h-0">
                     <div className="mb-6"><span className="font-bold uppercase tracking-widest text-xs mb-2 block" style={{ color: DYNAMIC_COLORS.raw.light.primary }}>{t.caseStudy}</span><h2 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-2 leading-tight">{project.title}</h2><div className="flex flex-wrap gap-2 mt-3">{project.tech.split(',').map((t: string, i: number) => (<span key={i} className="px-3 py-1 rounded-full bg-[var(--input-bg)] border border-[var(--card-border)] text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">{t.trim()}</span>))}</div></div>
