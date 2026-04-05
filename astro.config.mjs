@@ -1,4 +1,4 @@
-import { defineConfig } from 'astro/config';
+import { defineConfig, envField } from 'astro/config';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import { imagetools } from 'vite-imagetools';
@@ -47,5 +47,12 @@ export default defineConfig({
   image: {
     domains: ['images.unsplash.com'],
     remotePatterns: [{ protocol: 'https' }],
+  },
+
+  env: {
+    schema: {
+      PUBLIC_FORMSPREE_ID: envField.string({ context: "client", access: "public", optional: true }),
+      PUBLIC_RECAPTCHA_SITE_KEY: envField.string({ context: "client", access: "public", optional: true }),
+    },
   },
 });

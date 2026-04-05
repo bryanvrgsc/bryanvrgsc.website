@@ -10,12 +10,10 @@
     "preview": "astro preview",
     "astro": "astro",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "pages:deploy": "pnpm build && wrangler pages deploy ./dist"
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
-    "@astrojs/cloudflare": "^13.1.4",
     "@astrojs/react": "^5.0.2",
     "@astrojs/sitemap": "^3.7.2",
     "@nanostores/react": "^1.0.0",
@@ -39,7 +37,6 @@
     "@types/react-dom": "^19.2.3",
     "jsdom": "^26.0.0",
     "vite-imagetools": "^9.0.2",
-    "vitest": "^3.2.0",
-    "wrangler": "^4.54.0"
+    "vitest": "^3.2.0"
   }
 }

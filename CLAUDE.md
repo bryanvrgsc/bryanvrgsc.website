@@ -19,7 +19,7 @@ pnpm test:watch   # vitest in watch mode
 
 ### Framework & Rendering
 
-Astro v5 in `output: 'static'` mode. All pages are pre-rendered. React components are hydrated as islands using `client:load` / `client:idle` directives. The single layout is `src/layouts/BaseLayout.astro`.
+Astro 6 in `output: 'static'` mode. All pages are pre-rendered. React components are hydrated as islands using `client:load` / `client:idle` directives. The single layout is `src/layouts/BaseLayout.astro`.
 
 ### Routing & i18n
 
@@ -77,6 +77,6 @@ PUBLIC_RECAPTCHA_SITE_KEY=your_recaptcha_site_key
 
 ## Deployment
 
-Deployed to **Vercel**. Config in `vercel.json` (build command, headers, cache rules). The `wrangler.toml` and `pnpm pages:deploy` script are legacy Cloudflare Pages artifacts — ignore them.
+Deployed to **Vercel**. Config in `vercel.json` (build command, headers, cache rules).
 
 Security headers are set in two places: `vercel.json` (Vercel edge) and `src/middleware/index.ts` (Astro middleware, runs at SSR/dev). They must stay in sync.
