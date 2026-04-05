@@ -1,10 +1,15 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { lockBodyScroll } from '../../src/utils/modal';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 describe('lockBodyScroll', () => {
-    beforeEach(() => {
+    let lockBodyScroll: () => () => void;
+
+    beforeEach(async () => {
+        vi.resetModules();
         document.body.style.overflow = '';
         document.body.style.paddingRight = '';
+        // Re-import to get fresh module state
+        const mod = await import('../../src/utils/modal');
+        lockBodyScroll = mod.lockBodyScroll;
     });
 
     it('sets overflow hidden on body', () => {
