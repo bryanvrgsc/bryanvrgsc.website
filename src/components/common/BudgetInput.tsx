@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import CurrencyInput from 'react-currency-input-field';
 import { DYNAMIC_COLORS } from '../../constants/colors';
 
@@ -80,26 +80,29 @@ export const BudgetInput: React.FC<BudgetInputProps> = ({
     const [isOpen, setIsOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
 
-    // Autofill currency based on detected country
-    useEffect(() => {
-        if (!currency || currency === 'USD') {
-            fetch('https://ipapi.co/json/')
-                .then(res => res.json())
-                .then(data => {
-                    if (data.country_code) {
-                        const detectedCurrency = CURRENCIES.find(
-                            c => c.countries.includes(data.country_code)
-                        );
-                        if (detectedCurrency) {
-                            onChange(value, detectedCurrency.code);
-                        }
+    // Autofill currency based on detected country — deferred until user opens dropdown
+    const [hasDetected, setHasDetected] = useState(false);
+
+    const detectCurrency = () => {
+        if (hasDetected || (currency && currency !== 'USD')) return;
+
+        fetch('https://ipapi.co/json/')
+            .then(res => res.json())
+            .then(data => {
+                if (data.country_code) {
+                    const detectedCurrency = CURRENCIES.find(
+                        c => c.countries.includes(data.country_code)
+                    );
+                    if (detectedCurrency) {
+                        onChange(value, detectedCurrency.code);
                     }
-                })
-                .catch(() => {
-                    // Silently fail, keep default
-                });
-        }
-    }, []);
+                }
+            })
+            .catch(() => {
+                // Silently fail, keep default
+            })
+            .finally(() => setHasDetected(true));
+    };
 
     // Filter currencies based on search query
     const filteredCurrencies = CURRENCIES.filter(curr => {
@@ -131,7 +134,7 @@ export const BudgetInput: React.FC<BudgetInputProps> = ({
                 <div className="relative">
                     <button
                         type="button"
-                        onClick={() => !disabled && setIsOpen(!isOpen)}
+                        onClick={() => { if (!disabled) { detectCurrency(); setIsOpen(!isOpen); } }}
                         disabled={disabled}
                         aria-label="Select budget currency"
                         className={`h-full px-4 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-2xl text-[var(--text-primary)] focus:outline-none ${DYNAMIC_COLORS.focusBorder} focus:bg-[var(--glass-glow)] transition-all text-sm focus:ring-1 ${DYNAMIC_COLORS.focusRing} disabled:opacity-50 flex items-center gap-2 min-w-[100px]`}
