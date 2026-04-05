@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Icons } from '../Icons';
 import { PDFViewer } from '../ui/PDFViewer';
@@ -30,6 +30,7 @@ export const PortfolioModal = ({ project, onClose, lang }: PortfolioModalProps) 
                 ? normalizePublicAssetUrl(selectedProject.details.documents[0].url)
                 : null;
 
+    const modalRef = useRef<HTMLDivElement>(null);
     const [activeScreenshot, setActiveScreenshot] = useState(0);
     const [currentPdf, setCurrentPdf] = useState<string | null>(getInitialPdf(project));
     const [isVisible, setIsVisible] = useState(false);
@@ -76,13 +77,14 @@ export const PortfolioModal = ({ project, onClose, lang }: PortfolioModalProps) 
 
     // Focus trap: cycle focus within modal
     useEffect(() => {
-        const modal = document.querySelector('[role="dialog"]') as HTMLElement | null;
+        const modal = modalRef.current;
         if (!modal) return;
 
         const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
         const handleTab = (e: KeyboardEvent) => {
             if (e.key !== 'Tab') return;
+            if (!modal.contains(document.activeElement)) return;
 
             const focusable = modal.querySelectorAll(focusableSelector);
             if (focusable.length === 0) return;
@@ -99,6 +101,7 @@ export const PortfolioModal = ({ project, onClose, lang }: PortfolioModalProps) 
             }
         };
 
+        // Attach to window but guard with modal.contains() to avoid intercepting Tab globally
         window.addEventListener('keydown', handleTab);
 
         // Focus the close button on mount
@@ -119,7 +122,7 @@ export const PortfolioModal = ({ project, onClose, lang }: PortfolioModalProps) 
     const pdfEmbedSrc = !isPdf && currentDocumentUrl ? getEmbedUrl(currentDocumentUrl) : null;
 
     return createPortal(
-        <div className={`fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-6 transition-opacity duration-200 ${isVisible ? 'opacity-100' : 'opacity-0'}`} role="dialog" aria-modal="true" aria-label={project.title}>
+        <div ref={modalRef} className={`fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-6 transition-opacity duration-200 ${isVisible ? 'opacity-100' : 'opacity-0'}`} role="dialog" aria-modal="true" aria-label={project.title}>
             <div className={`absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-200 ${isVisible ? 'opacity-100' : 'opacity-0'}`} onClick={handleClose}></div>
             <div className={`bg-[var(--card-bg)] backdrop-blur-3xl border border-[var(--card-border)] w-full max-w-6xl max-h-[90vh] rounded-[2rem] shadow-2xl overflow-hidden relative flex flex-col landscape:flex-row md:flex-row transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-6 scale-[0.985]'}`}>
                 <button onClick={handleClose} aria-label="Close" className="absolute top-4 right-4 z-50 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-md transition-colors border border-white/10"><Icons.X className="w-6 h-6" /></button>
