@@ -28,5 +28,5 @@ const image = project?.image;
 ---
 
 <BaseLayout {title} {description} {lang} {image}>
-  <PortfolioView client:load {lang} initialSlug={slug} />
+  <PortfolioView client:idle {lang} initialSlug={slug} />
 </BaseLayout>

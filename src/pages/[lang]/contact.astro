@@ -26,5 +26,5 @@ const meta = {
 ---
 
 <BaseLayout title={meta[lang].title} description={meta[lang].description} {lang}>
-  <ContactView client:load {lang} />
+  <ContactView client:idle {lang} />
 </BaseLayout>

@@ -26,5 +26,5 @@ const meta = {
 ---
 
 <BaseLayout title={meta[lang].title} description={meta[lang].description} {lang}>
-  <ResourcesView client:load {lang} />
+  <ResourcesView client:idle {lang} />
 </BaseLayout>
