@@ -26,5 +26,5 @@ const meta = {
 ---
 
 <BaseLayout title={meta[lang].title} description={meta[lang].description} {lang}>
-  <PortfolioView client:load {lang} />
+  <PortfolioView client:idle {lang} />
 </BaseLayout>

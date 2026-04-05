@@ -6,6 +6,9 @@ export const onRequest: MiddlewareHandler = async (_context, next) => {
     // Security Headers
     const headers = {
         // Content Security Policy
+        // NOTE: 'unsafe-inline' is required for:
+        //   script-src: Astro View Transitions + inline FOUC-prevention script (no nonce support in static mode)
+        //   style-src: Tailwind dynamic classes, theme system inline styles, Google Fonts
         'Content-Security-Policy': [
             "default-src 'self'",
             "script-src 'self' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://formspree.io https://va.vercel-scripts.com",

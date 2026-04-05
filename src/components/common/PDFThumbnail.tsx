@@ -1,13 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import * as pdfjsLib from 'pdfjs-dist';
-
-// @ts-ignore - Vite will handle this import
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
-
-// Configure PDF.js worker
-if (typeof window !== 'undefined') {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-}
 
 interface PDFThumbnailProps {
     url: string;
@@ -24,6 +15,10 @@ export const PDFThumbnail: React.FC<PDFThumbnailProps> = ({ url, className, styl
 
         const renderThumbnail = async () => {
             try {
+                const pdfjsLib = await import('pdfjs-dist');
+                const { default: workerUrl } = await import('pdfjs-dist/build/pdf.worker.min.mjs?url');
+                pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
+
                 const loadingTask = pdfjsLib.getDocument(url);
                 const pdf = await loadingTask.promise;
 
