@@ -131,7 +131,7 @@ export const PortfolioView = ({ lang = 'es', initialSlug }: PortfolioViewProps) 
                             >
                                 <div className="h-[250px] md:h-[400px] overflow-hidden relative">
                                     <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)] via-transparent to-transparent z-10 opacity-90"></div>
-                                    <img src={item.image} alt={item.title} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110" />
+                                    <img src={item.image} alt={item.title} loading={i === 0 ? 'eager' : 'lazy'} decoding={i === 0 ? 'sync' : 'async'} fetchPriority={i === 0 ? 'high' : 'low'} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110" />
 
                                     <div className="absolute inset-0 bg-black/30 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 z-20 flex items-center justify-center animate-[fadeOut_3s_ease-in-out_2s_forwards] md:animate-none">
                                         <div className="relative">
