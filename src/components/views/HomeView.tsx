@@ -76,16 +76,16 @@ export const HomeView = ({ lang = 'es' }: HomeViewProps) => {
                         } : {};
 
                         return (
-                            <div key={step.id} className="group flex items-center gap-3 cursor-pointer" onClick={() => scrollToSection(step.id)}>
+                            <button key={step.id} type="button" className="group flex items-center gap-3 cursor-pointer bg-transparent border-0 p-0" onClick={() => scrollToSection(step.id)} aria-label={step.label}>
                                 <div
                                     className={`w-2.5 h-2.5 md:w-3.5 md:h-3.5 rounded-full transition-all duration-500 ease-in-out border border-[var(--card-border)] ${isActive ? 'scale-125' : 'bg-[var(--dock-item-bg)] hover:bg-[var(--text-tertiary)] group-hover:scale-110'}`}
                                     style={activeStyle}
                                 ></div>
                                 <span className={`hidden md:inline-block text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all duration-500 ${isActive ? 'text-[var(--text-primary)] opacity-100 translate-x-0' : 'text-[var(--text-tertiary)] opacity-0 -translate-x-2 group-hover:opacity-70 group-hover:translate-x-0'}`}>{step.label}</span>
-                            </div>
+                            </button>
                         );
                     })}
-                    <div className="absolute left-[4px] md:left-[6px] top-2 bottom-2 w-[1px] bg-[var(--card-border)] -z-10 opacity-30"></div>
+                    <div aria-hidden="true" className="absolute left-[4px] md:left-[6px] top-2 bottom-2 w-[1px] bg-[var(--card-border)] -z-10 opacity-30"></div>
                 </div>,
                 document.body
             )}
@@ -141,13 +141,13 @@ export const HomeView = ({ lang = 'es' }: HomeViewProps) => {
                                     }}
                                 >
                                     {/* Grid Pattern Background */}
-                                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `radial-gradient(${stat.color} 1px, transparent 1px)`, backgroundSize: '16px 16px' }}></div>
+                                    <div aria-hidden="true" className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `radial-gradient(${stat.color} 1px, transparent 1px)`, backgroundSize: '16px 16px' }}></div>
 
                                     <div className="flex justify-between items-start w-full relative z-10">
                                         <div className="p-2 md:p-2.5 rounded-xl transition-all duration-500 group-hover:scale-110" style={{ backgroundColor: stat.bg, color: stat.color }}>
                                             <stat.Icon className="w-4 h-4 md:w-6 md:h-6" />
                                         </div>
-                                        <div className="flex items-center justify-center">
+                                        <div aria-hidden="true" className="flex items-center justify-center">
                                             <div className="relative flex h-2 w-2 md:h-2.5 md:w-2.5">
                                                 <div className="absolute hidden h-full w-full rounded-full opacity-75 md:inline-flex md:animate-ping" style={{ backgroundColor: stat.color }}></div>
                                                 <div className="relative inline-flex rounded-full h-2 w-2 md:h-2.5 md:w-2.5" style={{ backgroundColor: stat.color, opacity: 0.8 }}></div>
@@ -166,8 +166,8 @@ export const HomeView = ({ lang = 'es' }: HomeViewProps) => {
                                 </div>
                             ))}
                         </div>
-                        <a href="#mission" className="mt-8 md:mt-10 lg:mt-16 animate-bounce p-2 md:p-3 rounded-full border border-[var(--card-border)] bg-[var(--card-bg)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors backdrop-blur-md shadow-sm">
-                            <Icons.ArrowUp className="w-4 h-4 md:w-5 md:h-5 rotate-180" />
+                        <a href="#mission" aria-label={lang === 'es' ? 'Ir a la siguiente sección' : 'Go to next section'} className="mt-8 md:mt-10 lg:mt-16 animate-bounce p-2 md:p-3 rounded-full border border-[var(--card-border)] bg-[var(--card-bg)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors backdrop-blur-md shadow-sm">
+                            <Icons.ArrowUp aria-hidden="true" className="w-4 h-4 md:w-5 md:h-5 rotate-180" />
                         </a>
                     </div>
                 </section>
@@ -182,7 +182,7 @@ export const HomeView = ({ lang = 'es' }: HomeViewProps) => {
                         <div className="order-1 md:order-2 h-[300px] md:h-full w-full rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-[var(--card-border)] relative group shadow-2xl">
                             <div className="absolute inset-0 bg-gradient-to-t via-transparent to-transparent z-10 mix-blend-multiply" style={{ backgroundImage: `linear-gradient(to top, ${DYNAMIC_COLORS.raw.dark.primary}99, transparent, transparent)` }}></div>
                             <img src={missionTeam.src} alt="Mission Team" loading="lazy" decoding="async" fetchPriority="low" className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,1,0.3,1)] group-hover:scale-105" />
-                            <div className="absolute bottom-4 left-4 md:bottom-8 md:left-8 z-20">
+                            <div aria-hidden="true" className="absolute bottom-4 left-4 md:bottom-8 md:left-8 z-20">
                                 <div
                                     className="backdrop-blur-xl text-white text-[10px] md:text-xs font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full uppercase tracking-widest shadow-lg flex items-center gap-2"
                                     style={{
@@ -204,7 +204,7 @@ export const HomeView = ({ lang = 'es' }: HomeViewProps) => {
                         <div className="order-1 h-[300px] md:h-full w-full rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-[var(--card-border)] relative group shadow-2xl">
                             <div className="absolute inset-0 bg-gradient-to-t via-transparent to-transparent z-10 mix-blend-multiply" style={{ backgroundImage: `linear-gradient(to top, ${DYNAMIC_COLORS.raw.dark.secondary}99, transparent, transparent)` }}></div>
                             <img src={futureVision.src} alt="Future Vision" loading="lazy" decoding="async" fetchPriority="low" className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,1,0.3,1)] group-hover:scale-105" />
-                            <div className="absolute bottom-4 right-4 md:bottom-8 md:right-8 z-20">
+                            <div aria-hidden="true" className="absolute bottom-4 right-4 md:bottom-8 md:right-8 z-20">
                                 <div
                                     className="backdrop-blur-xl text-white text-[10px] md:text-xs font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full uppercase tracking-widest shadow-lg flex items-center gap-2"
                                     style={{
@@ -235,7 +235,7 @@ export const HomeView = ({ lang = 'es' }: HomeViewProps) => {
                         <div className="order-1 md:order-2 h-[300px] md:h-full w-full rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-[var(--card-border)] relative group shadow-2xl">
                             <div className="absolute inset-0 bg-gradient-to-t via-transparent to-transparent z-10 mix-blend-multiply" style={{ backgroundImage: `linear-gradient(to top, ${DYNAMIC_COLORS.raw.dark.primary}99, transparent, transparent)` }}></div>
                             <img src={coreValues.src} alt="Core Values" loading="lazy" decoding="async" fetchPriority="low" className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,1,0.3,1)] group-hover:scale-105" />
-                            <div className="absolute bottom-4 left-4 md:bottom-8 md:left-8 z-20">
+                            <div aria-hidden="true" className="absolute bottom-4 left-4 md:bottom-8 md:left-8 z-20">
                                 <div
                                     className="backdrop-blur-xl text-white text-[10px] md:text-xs font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full uppercase tracking-widest shadow-lg flex items-center gap-2"
                                     style={{

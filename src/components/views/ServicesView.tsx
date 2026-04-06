@@ -25,7 +25,7 @@ export const ServicesView = ({ lang = 'es' }: ServicesViewProps) => {
     return (
         <div className="max-w-7xl mx-auto pt-24 md:pt-32 px-4 md:px-6 pb-40 md:pb-52 animate-slide-up">
             <div className="flex flex-col items-center text-center mb-8 md:mb-16 px-2 md:px-0">
-                <div><h2 className="text-4xl md:text-5xl font-bold text-[var(--text-primary)] mb-3 tracking-tight">{t.title}</h2><p className="text-[var(--text-secondary)] text-base md:text-lg">{t.subtitle}</p></div>
+                <div><h1 className="text-4xl md:text-5xl font-bold text-[var(--text-primary)] mb-3 tracking-tight">{t.title}</h1><p className="text-[var(--text-secondary)] text-base md:text-lg">{t.subtitle}</p></div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
                 {SERVICES[lang].map((s) => {
@@ -39,7 +39,7 @@ export const ServicesView = ({ lang = 'es' }: ServicesViewProps) => {
                             style={theme.colors as React.CSSProperties}
                         >
                             {/* Animated Pulse Indicator */}
-                            <div className={`absolute top-6 right-6 md:top-10 md:right-10 flex items-center justify-center z-20 ${theme.text}`}>
+                            <div aria-hidden="true" className={`absolute top-6 right-6 md:top-10 md:right-10 flex items-center justify-center z-20 ${theme.text}`}>
                                 <div className="relative flex h-2 w-2 md:h-2.5 md:w-2.5">
                                     <div className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-current"></div>
                                     <div className="relative inline-flex rounded-full h-2 w-2 md:h-2.5 md:w-2.5 bg-current opacity-80"></div>

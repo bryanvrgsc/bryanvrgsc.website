@@ -73,6 +73,17 @@
       "source": "/index.html",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [{ "type": "header", "key": "accept-language", "value": "(?<lang>en).*" }],
+      "destination": "/en/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "destination": "/es/",
+      "permanent": false
     }
   ]
 }
