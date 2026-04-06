@@ -1,0 +1,24 @@
+{
+  "name": "Bryan Vargas — Full-Stack Developer",
+  "short_name": "bryanvrgsc",
+  "description": "Portafolio profesional de Bryan Vargas — Apps, Cloud & Business Intelligence.",
+  "start_url": "/es/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#0284c7",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

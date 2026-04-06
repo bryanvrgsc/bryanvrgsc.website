@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="404 — Página no encontrada"
+  description="La página que buscas no existe."
+  lang="es"
+>
+  <div
+    id="not-found-root"
+    class="min-h-screen flex items-center justify-center px-4"
+  >
+    <!-- Content rendered by inline script for lang detection without hydration cost -->
+    <div class="text-center max-w-md mx-auto">
+      <p
+        id="nf-code"
+        class="text-8xl font-black text-[var(--primary-color)] mb-4 tabular-nums leading-none"
+      >
+        404
+      </p>
+      <h1
+        id="nf-title"
+        class="text-2xl md:text-3xl font-bold text-[var(--text-primary)] mb-3 tracking-tight"
+      >
+        Página no encontrada
+      </h1>
+      <p
+        id="nf-message"
+        class="text-[var(--text-secondary)] text-sm md:text-base mb-8 leading-relaxed"
+      >
+        La página que buscas no existe o fue movida.
+      </p>
+      <a
+        id="nf-back"
+        href="/es/"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-[var(--card-border)] bg-[var(--card-bg)] text-[var(--text-primary)] text-sm font-medium hover:bg-[var(--glass-glow)] transition-all duration-300 backdrop-blur-sm"
+      >
+        ← <span id="nf-back-label">Volver al inicio</span>
+      </a>
+    </div>
+  </div>
+</BaseLayout>
+
+<script is:inline>
+  (function () {
+    var lang = (window.location.pathname.split('/')[1] === 'en') ? 'en' : 'es';
+
+    var copy = {
+      en: {
+        title: 'Page Not Found',
+        message: "The page you're looking for doesn't exist or has been moved.",
+        backHome: 'Back to Home',
+        href: '/en/',
+      },
+      es: {
+        title: 'Página no encontrada',
+        message: 'La página que buscas no existe o fue movida.',
+        backHome: 'Volver al inicio',
+        href: '/es/',
+      },
+    };
+
+    var t = copy[lang];
+
+    document.getElementById('nf-title').textContent = t.title;
+    document.getElementById('nf-message').textContent = t.message;
+    document.getElementById('nf-back-label').textContent = t.backHome;
+    document.getElementById('nf-back').setAttribute('href', t.href);
+
+    // Update html lang attribute and page title
+    document.documentElement.setAttribute('lang', lang);
+    document.title = lang === 'en' ? '404 — Page Not Found' : '404 — Página no encontrada';
+  })();
+</script>

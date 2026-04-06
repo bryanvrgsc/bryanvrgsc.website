@@ -143,4 +143,13 @@ export interface UIText {
         resources: string;
         contact: string;
     };
+    footer: {
+        allRights: string;
+        builtWith: string;
+    };
+    notFound: {
+        title: string;
+        message: string;
+        backHome: string;
+    };
 }

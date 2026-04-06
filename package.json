@@ -10,7 +10,9 @@
     "preview": "astro preview",
     "astro": "astro",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
@@ -30,6 +32,7 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/country-telephone-data": "^0.6.3",
     "@types/node": "^25.0.2",
