@@ -124,11 +124,13 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                         onClick={() => !disabled && setIsOpen(!isOpen)}
                         disabled={disabled}
                         aria-label="Select country code"
+                        aria-expanded={isOpen}
+                        aria-haspopup="listbox"
                         className={`h-full px-4 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-2xl text-[var(--text-primary)] focus:outline-none ${DYNAMIC_COLORS.focusBorder} focus:bg-[var(--glass-glow)] transition-all text-sm focus:ring-1 ${DYNAMIC_COLORS.focusRing} disabled:opacity-50 flex items-center gap-2 min-w-[100px]`}
                     >
                         <span className="text-xl">{getFlagEmoji(selectedCountry.iso2)}</span>
                         <span className="font-mono text-sm">+{selectedCountry.dialCode}</span>
-                        <svg className="w-4 h-4 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg aria-hidden="true" className="w-4 h-4 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
@@ -137,17 +139,18 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                     {isOpen && (
                         <>
                             <div
+                                aria-hidden="true"
                                 className="fixed inset-0 z-10"
                                 onClick={() => {
                                     setIsOpen(false);
                                     setSearchQuery('');
                                 }}
                             />
-                            <div className="absolute top-full left-0 mt-2 w-72 bg-[var(--card-bg)] backdrop-blur-xl border border-[var(--card-border)] rounded-2xl shadow-xl z-20 overflow-hidden">
+                            <div role="listbox" aria-label="Select country code" className="absolute top-full left-0 mt-2 w-72 bg-[var(--card-bg)] backdrop-blur-xl border border-[var(--card-border)] rounded-2xl shadow-xl z-20 overflow-hidden">
                                 {/* Search Input */}
                                 <div className="p-3 border-b border-[var(--card-border)]">
                                     <div className="relative">
-                                        <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                         </svg>
                                         <input
