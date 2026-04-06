@@ -103,6 +103,15 @@ export const UI_TEXT: Record<'en' | 'es', UIText> = {
             work: "Portfolio",
             resources: "Resources",
             contact: "Contact"
+        },
+        footer: {
+            allRights: "All rights reserved.",
+            builtWith: "Built with",
+        },
+        notFound: {
+            title: "Page Not Found",
+            message: "The page you're looking for doesn't exist or has been moved.",
+            backHome: "Back to Home",
         }
     },
     es: {
@@ -207,6 +216,15 @@ export const UI_TEXT: Record<'en' | 'es', UIText> = {
             work: "Portafolio",
             resources: "Recursos",
             contact: "Contacto"
+        },
+        footer: {
+            allRights: "Todos los derechos reservados.",
+            builtWith: "Construido con",
+        },
+        notFound: {
+            title: "Página no encontrada",
+            message: "La página que buscas no existe o fue movida.",
+            backHome: "Volver al inicio",
         }
     }
 };

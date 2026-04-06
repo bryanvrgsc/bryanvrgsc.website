@@ -5,6 +5,17 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./tests/setup.ts'],
+    exclude: ['**/node_modules/**', '**/dist/**', 'tests/e2e/**'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html'],
+      include: ['src/scripts/**', 'src/utils/**'],
+      exclude: ['**/*.test.ts'],
+      thresholds: {
+        lines: 80,
+        functions: 80,
+      },
+    },
   },
   // Transform avif/image imports to return an object with a src property
   // (mirrors the Astro image import shape used in constants)
