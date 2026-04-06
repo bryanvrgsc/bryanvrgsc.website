@@ -86,6 +86,7 @@ export const PDFViewer = ({
                 const { default: workerUrl } = await import('pdfjs-dist/build/pdf.worker.min.mjs?url');
                 pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
 
+                console.log('PDF.js loading document with local worker:', resolvedUrl);
                 loadingTask = pdfjsLib.getDocument(resolvedUrl);
                 const pdf = await loadingTask.promise;
 
@@ -253,7 +254,7 @@ export const PDFViewer = ({
                         disabled={currentPage === 1}
                         className="group p-2.5 rounded-xl text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center shadow-lg hover:scale-105 active:scale-95"
                         style={{ backgroundColor: DYNAMIC_COLORS.raw.light.primary }}
-                        aria-label="Página Anterior"
+                        title="Página Anterior"
                     >
                         <Icons.ArrowUp className="w-5 h-5 rotate-[-90deg] group-hover:-translate-x-1 transition-transform" />
                     </button>
@@ -271,7 +272,7 @@ export const PDFViewer = ({
                         disabled={currentPage === totalPages}
                         className="group p-2.5 rounded-xl text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center shadow-lg hover:scale-105 active:scale-95"
                         style={{ backgroundColor: DYNAMIC_COLORS.raw.light.primary }}
-                        aria-label="Página Siguiente"
+                        title="Página Siguiente"
                     >
                         <Icons.ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </button>

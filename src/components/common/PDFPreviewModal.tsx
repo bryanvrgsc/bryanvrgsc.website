@@ -158,8 +158,6 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
                             : 'bg-[var(--input-bg)] hover:bg-[var(--dock-item-bg)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border-[var(--card-border)]'
                             }`}
                         title="Toggle info panel"
-                        aria-label="Toggle info panel"
-                        aria-pressed={showInfo}
                     >
                         <Icons.Info className="w-5 h-5 md:w-6 md:h-6" />
                     </button>
@@ -239,9 +237,8 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
                             <button
                                 onClick={() => setShowInfo(false)}
                                 className="p-2 rounded-lg bg-[var(--input-bg)] text-[var(--text-secondary)]"
-                                aria-label="Cerrar panel de información"
                             >
-                                <Icons.X className="w-5 h-5" aria-hidden="true" />
+                                <Icons.X className="w-5 h-5" />
                             </button>
                         </div>
 
