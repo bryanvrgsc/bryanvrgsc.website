@@ -262,7 +262,7 @@ export const BASE_COLORS = (() => {
             dockBg: 'rgba(240, 240, 245, 0.65)',
             dockItemBg: 'rgba(15, 23, 42, 0.05)',
             dockItemBgActive: lightPalette.surface,
-            dockText: '#475569',
+            dockText: '#64748b',
         },
 
         dark: {
@@ -273,7 +273,7 @@ export const BASE_COLORS = (() => {
             // Text
             textPrimary: '#f5f5f7',
             textSecondary: '#94a3b8',
-            textTertiary: '#718096',
+            textTertiary: '#4b5563',
 
             // Cards & Glass
             cardBg: 'rgba(22, 22, 22, 0.6)',
