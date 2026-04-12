@@ -20,9 +20,6 @@ dist-ssr
 .env.local
 .env.production
 
-# Vercel build output
-.vercel
-
 # Wrangler
 .wrangler
 wrangler.toml.local
