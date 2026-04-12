@@ -5,11 +5,15 @@ export const validateContactFields = (fields: {
 }) => {
   const email = fields.email.trim();
 
+  const emailValid =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/.test(email) &&
+    !email.includes('..');
+
   return {
     name: fields.name.trim() ? undefined : 'required',
     email: !email
       ? 'required'
-      : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+      : emailValid
         ? undefined
         : 'invalid',
     message: fields.message.trim() ? undefined : 'required',
