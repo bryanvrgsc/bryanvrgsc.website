@@ -21,7 +21,6 @@ interface Props {
 }
 
 const { title, description, lang, image, type } = Astro.props;
-const { nonce } = Astro.locals;
 ---
 
 <!doctype html>
@@ -70,7 +69,7 @@ const { nonce } = Astro.locals;
     <meta name="color-scheme" content="light dark" />
 
     <!-- Prevent theme flash: Apply theme before body renders -->
-    <script is:inline nonce={nonce}>
+    <script is:inline>
       (function () {
         if (window.__bryanThemeScriptInitialized) return;
         window.__bryanThemeScriptInitialized = true;

@@ -82,10 +82,7 @@ export const ContactView = ({ lang = 'es' }: ContactViewProps) => {
         } else if (fieldName === 'email') {
             if (!formData.email.trim()) {
                 error = t.errors.email;
-            } else if (
-                !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/.test(formData.email) ||
-                formData.email.includes('..')
-            ) {
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
                 error = t.errors.email;
             }
         } else if (fieldName === 'message' && !formData.message.trim()) {
@@ -123,13 +120,7 @@ export const ContactView = ({ lang = 'es' }: ContactViewProps) => {
         setStatus('submitting');
         setFieldErrors({});
         try {
-            const formspreeId = import.meta.env.PUBLIC_FORMSPREE_ID;
-            if (!formspreeId) {
-                setStatus('error');
-                setFieldErrors({ message: t.errors.generic });
-                return;
-            }
-            const response = await fetch(`https://formspree.io/f/${formspreeId}`, {
+            const response = await fetch("https://formspree.io/f/xzzwknze", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

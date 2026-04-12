@@ -1,26 +1,17 @@
 import type { MiddlewareHandler } from 'astro';
 
-export const onRequest: MiddlewareHandler = async (context, next) => {
-    // Generate a cryptographically random nonce for this request (16 bytes → 24-char base64).
-    // Uses only Web Crypto API so it works in Node.js, Vercel edge, and browsers alike.
-    const rawBytes = new Uint8Array(16);
-    crypto.getRandomValues(rawBytes);
-    const nonce = btoa(String.fromCharCode(...rawBytes));
-
-    context.locals.nonce = nonce;
-
+export const onRequest: MiddlewareHandler = async (_context, next) => {
     const response = await next();
 
     // Security Headers
     const headers = {
         // Content Security Policy
-        // NOTE: 'unsafe-inline' has been removed from script-src.
-        //   All inline <script is:inline> tags in templates receive a per-request nonce.
-        //   style-src keeps 'unsafe-inline' because React's style={} props emit inline
-        //   style attributes, which cannot be covered by nonces per the CSP spec.
+        // NOTE: 'unsafe-inline' is required for:
+        //   script-src: Astro View Transitions + inline FOUC-prevention script (no nonce support in static mode)
+        //   style-src: Tailwind dynamic classes, theme system inline styles, Google Fonts
         'Content-Security-Policy': [
             "default-src 'self'",
-            `script-src 'self' 'nonce-${nonce}' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://formspree.io https://va.vercel-scripts.com`,
+            "script-src 'self' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://formspree.io https://va.vercel-scripts.com",
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
             "font-src 'self' https://fonts.gstatic.com",
             "img-src 'self' data: blob: https:",

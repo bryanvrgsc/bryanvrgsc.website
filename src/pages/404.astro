@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-const { nonce } = Astro.locals;
 ---
 
 <BaseLayout
@@ -43,7 +42,7 @@ const { nonce } = Astro.locals;
   </div>
 </BaseLayout>
 
-<script is:inline nonce={nonce}>
+<script is:inline>
   (function () {
     var lang = (window.location.pathname.split('/')[1] === 'en') ? 'en' : 'es';
 

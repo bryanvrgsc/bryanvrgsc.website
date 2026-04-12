@@ -1,5 +1,4 @@
 ---
-const { nonce } = Astro.locals;
 ---
 
 <!doctype html>
@@ -15,7 +14,7 @@ const { nonce } = Astro.locals;
     <noscript>
       <meta http-equiv="refresh" content="0;url=/es/" />
     </noscript>
-    <script is:inline nonce={nonce}>
+    <script is:inline>
       (function () {
         var lang = navigator.language || navigator.languages?.[0] || 'es';
         var target = lang.startsWith('en') ? '/en/' : '/es/';
