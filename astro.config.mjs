@@ -1,12 +1,10 @@
 import { defineConfig, envField } from 'astro/config';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
-import vercel from '@astrojs/vercel';
 import { imagetools } from 'vite-imagetools';
 
 export default defineConfig({
-  output: 'server',
-  adapter: vercel(),
+  output: 'static',
   site: 'https://bryanvrgsc.com',
 
   i18n: {
@@ -48,6 +46,7 @@ export default defineConfig({
 
   image: {
     domains: ['images.unsplash.com'],
+    remotePatterns: [{ protocol: 'https' }],
   },
 
   env: {
