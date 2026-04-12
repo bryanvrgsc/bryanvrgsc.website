@@ -1,10 +1,12 @@
 import { defineConfig, envField } from 'astro/config';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
+import vercel from '@astrojs/vercel';
 import { imagetools } from 'vite-imagetools';
 
 export default defineConfig({
-  output: 'static',
+  output: 'server',
+  adapter: vercel(),
   site: 'https://bryanvrgsc.com',
 
   i18n: {
