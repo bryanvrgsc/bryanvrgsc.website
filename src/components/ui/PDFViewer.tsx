@@ -222,7 +222,7 @@ export const PDFViewer = ({
             <div className="relative w-full h-full bg-[var(--bg-secondary)] flex items-center justify-center">
                 <div className="text-center p-4">
                     <p className="text-[var(--text-secondary)] mb-4">No se pudo cargar el PDF</p>
-                    <a href={resolvedUrl} target="_blank" rel="noreferrer" className="font-bold hover:underline" style={{ color: DYNAMIC_COLORS.raw.light.primary }}>
+                    <a href={resolvedUrl} target="_blank" rel="noopener noreferrer" className="font-bold hover:underline" style={{ color: DYNAMIC_COLORS.raw.light.primary }}>
                         Descargar PDF
                     </a>
                 </div>

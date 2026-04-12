@@ -80,30 +80,6 @@ export const BudgetInput: React.FC<BudgetInputProps> = ({
     const [isOpen, setIsOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
 
-    // Autofill currency based on detected country — deferred until user opens dropdown
-    const [hasDetected, setHasDetected] = useState(false);
-
-    const detectCurrency = () => {
-        if (hasDetected || (currency && currency !== 'USD')) return;
-
-        fetch('https://ipapi.co/json/')
-            .then(res => res.json())
-            .then(data => {
-                if (data.country_code) {
-                    const detectedCurrency = CURRENCIES.find(
-                        c => c.countries.includes(data.country_code)
-                    );
-                    if (detectedCurrency) {
-                        onChange(value, detectedCurrency.code);
-                    }
-                }
-            })
-            .catch(() => {
-                // Silently fail, keep default
-            })
-            .finally(() => setHasDetected(true));
-    };
-
     // Filter currencies based on search query
     const filteredCurrencies = CURRENCIES.filter(curr => {
         if (!searchQuery) return true;
@@ -134,7 +110,7 @@ export const BudgetInput: React.FC<BudgetInputProps> = ({
                 <div className="relative">
                     <button
                         type="button"
-                        onClick={() => { if (!disabled) { detectCurrency(); setIsOpen(!isOpen); } }}
+                        onClick={() => { if (!disabled) { setIsOpen(!isOpen); } }}
                         disabled={disabled}
                         aria-label="Select budget currency"
                         aria-expanded={isOpen}
