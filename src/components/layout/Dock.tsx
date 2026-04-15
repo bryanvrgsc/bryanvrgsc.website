@@ -41,13 +41,13 @@ const DockItem = React.memo(({
         href={item.href}
         aria-current={isActive ? 'page' : undefined}
         onClick={(e) => { e.preventDefault(); onNavigate(item.href); }}
-        className={`dock-item group relative flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-full transition-all duration-500 ease-[cubic-bezier(0.25,1,0.3,1)]
+        className={`dock-item group relative flex flex-col items-center justify-center gap-1 px-2 sm:px-3 md:px-4 py-2 rounded-full transition-all duration-500 ease-[cubic-bezier(0.25,1,0.3,1)]
             ${isActive
                 ? 'text-[var(--text-primary)]'
                 : 'text-[#8E8E93] hover:text-[var(--text-primary)] hover:scale-105'}`}
     >
         <item.Icon className={`w-5 h-5 md:w-6 md:h-6 transition-all duration-500 relative z-10 ${isActive ? 'stroke-[2px]' : 'stroke-[1.5px]'}`} />
-        <span className={`text-[10px] md:text-[11px] font-medium tracking-tight transition-all duration-500 relative z-10 ${isActive ? 'opacity-100' : 'opacity-60'}`}>
+        <span className={`text-[9px] sm:text-[10px] md:text-[11px] font-medium tracking-tight transition-all duration-500 relative z-10 ${isActive ? 'opacity-100' : 'opacity-60'}`}>
             {item.label}
         </span>
     </a>
@@ -289,7 +289,7 @@ export const Dock = React.memo(({ lang = 'es' }: DockProps) => {
                 aria-label="Main Navigation"
             >
                 <GlassDock>
-                    <div ref={containerRef} className="relative flex items-center gap-2 md:gap-3 overflow-visible">
+                    <div ref={containerRef} className="relative flex items-center gap-1 sm:gap-2 md:gap-3 overflow-visible">
                         {/* Animated Sliding Liquid Indicator */}
                         <div
                             className="liquid-indicator absolute top-1/2 rounded-full pointer-events-none will-change-transform"
@@ -337,7 +337,7 @@ export const Dock = React.memo(({ lang = 'es' }: DockProps) => {
                         type="button"
                         primary={activeId === 'contact'}
                         aria-current={activeId === 'contact' ? 'page' : undefined}
-                        className={`rounded-full px-6 py-2.5 md:px-8 md:py-3 text-xs md:text-sm font-bold transition-all duration-500 shadow-lg shadow-black/5 active:shadow-sm
+                        className={`rounded-full px-3 sm:px-5 md:px-8 py-2 sm:py-2.5 md:py-3 text-[10px] sm:text-xs md:text-sm font-bold transition-all duration-500 shadow-lg shadow-black/5 active:shadow-sm
                             ${activeId === 'contact'
                                 ? 'scale-105'
                                 : 'hover:scale-105 opacity-90 hover:opacity-100'}`}
