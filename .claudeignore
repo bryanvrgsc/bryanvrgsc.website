@@ -1,0 +1,5 @@
+# Documentation and reference assets that are not needed for coding assistance
+DEPLOYMENT.md
+docs/superpowers/**
+src/components/README.md
+public/docs/**
