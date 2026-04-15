@@ -2,7 +2,7 @@
 
 <img src="public/assets/firma-header.gif" alt="Bryan Vargas" width="480" />
 
-# Bryan Vargas — Portfolio
+# Bryan Vargas — Website
 
 Ultra-fast, secure personal portfolio built with **Astro** and deployed on **Vercel**.
 
