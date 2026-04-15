@@ -86,8 +86,11 @@ export const GlassDock = ({ children }: { children?: React.ReactNode }) => {
     // Force measure function - can be called anytime
     const measureSize = useCallback(() => {
         if (hiddenRef.current) {
-            const newWidth = hiddenRef.current.offsetWidth;
+            const naturalWidth = hiddenRef.current.offsetWidth;
             const newHeight = hiddenRef.current.offsetHeight;
+            // Cap width to viewport minus 32px margin so dock never overflows on narrow screens
+            const maxWidth = typeof window !== 'undefined' ? window.innerWidth - 32 : naturalWidth;
+            const newWidth = Math.min(naturalWidth, maxWidth);
             if (newWidth > 0 && newHeight > 0) {
                 lastValidSize.current = { width: newWidth, height: newHeight };
                 setSize({ width: newWidth, height: newHeight });
@@ -140,7 +143,7 @@ export const GlassDock = ({ children }: { children?: React.ReactNode }) => {
             {/* Hidden Layout for Sizing: Renders children invisibly to calculate natural width */}
             <div
                 ref={hiddenRef}
-                className="absolute bottom-2 opacity-0 pointer-events-none flex items-center gap-2 md:gap-3 p-1.5 md:p-2 whitespace-nowrap"
+                className="absolute bottom-2 opacity-0 pointer-events-none flex items-center gap-1 sm:gap-2 md:gap-3 p-1 sm:p-1.5 md:p-2 whitespace-nowrap"
                 aria-hidden="true"
                 style={{ visibility: 'hidden' }}
             >
@@ -156,7 +159,7 @@ export const GlassDock = ({ children }: { children?: React.ReactNode }) => {
                     width={displaySize.width || 300}
                     height={displaySize.height || 60}
                     radius={(displaySize.height || 60) / 2}
-                    className="visible-dock-container flex items-center gap-2 md:gap-3 p-1.5 md:p-2"
+                    className="visible-dock-container flex items-center gap-1 sm:gap-2 md:gap-3 p-1 sm:p-1.5 md:p-2"
                 >
                     {children}
                 </GlassElement>
