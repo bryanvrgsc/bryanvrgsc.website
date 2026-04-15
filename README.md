@@ -1,23 +1,36 @@
-# Bryan Vargas - Portfolio
+<div align="center">
+
+<img src="public/assets/firma-header.gif" alt="Bryan Vargas" width="480" />
+
+# Bryan Vargas — Portfolio
 
 Ultra-fast, secure personal portfolio built with **Astro** and deployed on **Vercel**.
 
+[![Deploy](https://img.shields.io/badge/Vercel-deployed-000000?style=flat&logo=vercel&logoColor=white)](https://vercel.com)
+[![Astro](https://img.shields.io/badge/Astro-6-FF5D01?style=flat&logo=astro&logoColor=white)](https://astro.build)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat&logo=react&logoColor=black)](https://react.dev)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?style=flat&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat)](LICENSE)
+
+</div>
+
 ## Tech Stack
 
-- **Framework**: [Astro](https://astro.build) v5 (static output)
-- **UI**: React 19 islands
-- **Styling**: [Tailwind CSS](https://tailwindcss.com) v4 + CSS custom properties
-- **Hosting**: [Vercel](https://vercel.com)
-- **Package Manager**: [pnpm](https://pnpm.io)
-- **Contact Form**: Formspree + reCAPTCHA v3
-- **Analytics**: Vercel Analytics + Speed Insights
+| | Tool | Purpose |
+|---|---|---|
+| ![Astro](https://img.shields.io/badge/-Astro-FF5D01?style=flat&logo=astro&logoColor=white) | [Astro v6](https://astro.build) | Framework — `output: 'static'` |
+| ![React](https://img.shields.io/badge/-React-61DAFB?style=flat&logo=react&logoColor=black) | [React 19](https://react.dev) | UI islands |
+| ![Tailwind](https://img.shields.io/badge/-Tailwind-06B6D4?style=flat&logo=tailwindcss&logoColor=white) | [Tailwind CSS v4](https://tailwindcss.com) | Styling + CSS custom properties |
+| ![Vercel](https://img.shields.io/badge/-Vercel-000000?style=flat&logo=vercel&logoColor=white) | [Vercel](https://vercel.com) | Hosting + Analytics + Speed Insights |
+| ![pnpm](https://img.shields.io/badge/-pnpm-F69220?style=flat&logo=pnpm&logoColor=white) | [pnpm](https://pnpm.io) | Package manager |
+| ![Formspree](https://img.shields.io/badge/-Formspree-E44332?style=flat&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0yMCA0SDRjLTEuMSAwLTIgLjktMiAydjEyYzAgMS4xLjkgMiAyIDJoMTZjMS4xIDAgMi0uOSAyLTJWNmMwLTEuMS0uOS0yLTItMnptMCAydjEuNWwtOCA1LTgtNVY2aDE2em0wIDEySDRWOWw4IDUgOC01djlheiIvPjwvc3ZnPg==&logoColor=white) | Formspree + reCAPTCHA v3 | Contact form |
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+
-- pnpm (`npm install -g pnpm`)
+- ![Node.js](https://img.shields.io/badge/-Node.js_18+-339933?style=flat&logo=nodedotjs&logoColor=white)
+- ![pnpm](https://img.shields.io/badge/-pnpm-F69220?style=flat&logo=pnpm&logoColor=white) (`npm install -g pnpm`)
 
 ### Installation
 
@@ -58,11 +71,13 @@ vercel --prod
 
 ## Security
 
-Security headers are enforced at two layers:
-- **Vercel edge**: `vercel.json` headers config
-- **Astro middleware**: `src/middleware/index.ts`
+![Security Headers](https://img.shields.io/badge/security_headers-A%2B-brightgreen?style=flat&logo=shield&logoColor=white)
 
-Includes CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, and Permissions-Policy.
+Security headers enforced at two layers:
+- ![Vercel](https://img.shields.io/badge/-Vercel_edge-000000?style=flat&logo=vercel&logoColor=white) `vercel.json` headers config
+- ![Astro](https://img.shields.io/badge/-Astro_middleware-FF5D01?style=flat&logo=astro&logoColor=white) `src/middleware/index.ts`
+
+Includes CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy.
 
 ## License
 
